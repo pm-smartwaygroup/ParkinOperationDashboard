@@ -1,0 +1,1313 @@
+@font-face {
+  font-family: "Cairo";
+  src: url("/public/fonts/cairo-400.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Cairo";
+  src: url("/public/fonts/cairo-500.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Cairo";
+  src: url("/public/fonts/cairo-600.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Cairo";
+  src: url("/public/fonts/cairo-700.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Cairo";
+  src: url("/public/fonts/cairo-800.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+}
+
+:root {
+  color-scheme: light;
+  --green-900: #075f2d;
+  --green-800: #086b32;
+  --green-700: #0d7b3a;
+  --green-500: #43b96a;
+  --navy-950: #081b2f;
+  --navy-800: #19314e;
+  --navy-600: #52637b;
+  --white: #ffffff;
+  --surface: #ffffff;
+  --border: #d8dee7;
+  --border-strong: #bdc8d5;
+  --error: #b42318;
+  --error-soft: #fff3f2;
+  --success-soft: #ecfdf3;
+  --shadow: 0 24px 80px rgb(5 27 46 / 20%);
+  --radius-panel: 30px;
+  --radius-control: 13px;
+  --transition: 180ms ease;
+  font-family:
+    Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  font-synthesis: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  background: var(--navy-950);
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0;
+  color: var(--navy-950);
+  background: var(--navy-950);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button,
+select,
+label,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button,
+select {
+  cursor: pointer;
+}
+
+img,
+svg {
+  display: block;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.login-page {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: minmax(0, 53.5fr) minmax(500px, 46.5fr);
+  overflow: hidden;
+}
+
+.marketing-panel {
+  --marketing-bg-position: center center;
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow: hidden;
+  isolation: isolate;
+  background-color: #f7c48e;
+}
+
+.marketing-panel::before {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  content: "";
+  background-image: url("/public/assets/parkin-valet-hero.jpg");
+  background-repeat: no-repeat;
+  background-position: var(--marketing-bg-position);
+  background-size: cover;
+  pointer-events: none;
+  transform: scaleX(1);
+  transform-origin: center;
+  transition: transform 420ms ease;
+}
+
+.marketing-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-height: inherit;
+  width: min(100%, 760px);
+  flex-direction: column;
+  padding: clamp(52px, 6vw, 92px) clamp(34px, 5vw, 74px);
+}
+
+.marketing-heading {
+  max-width: 430px;
+}
+
+.marketing-heading h1 {
+  margin: 0;
+  color: #05090d;
+  font-size: clamp(2.25rem, 3.2vw, 3.15rem);
+  font-weight: 750;
+  letter-spacing: -0.045em;
+  line-height: 1.18;
+  text-wrap: balance;
+}
+
+.marketing-heading h1 span {
+  display: block;
+}
+
+.marketing-heading strong {
+  color: var(--green-800);
+  font-weight: inherit;
+}
+
+.accent-line {
+  display: flex;
+  width: 80px;
+  height: 5px;
+  margin: 29px 0 30px;
+  overflow: hidden;
+  border-radius: 999px;
+}
+
+.accent-line span:first-child {
+  width: 56%;
+  background: var(--green-900);
+}
+
+.accent-line span:last-child {
+  flex: 1;
+  background: #5ec986;
+}
+
+.marketing-heading p {
+  max-width: 380px;
+  margin: 0;
+  color: var(--navy-800);
+  font-size: clamp(1rem, 1.2vw, 1.18rem);
+  font-weight: 520;
+  line-height: 1.55;
+}
+
+.feature-list {
+  display: grid;
+  gap: clamp(18px, 2.2vh, 27px);
+  width: min(100%, 410px);
+  margin-top: clamp(42px, 6vh, 74px);
+}
+
+.feature-item {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 23px;
+  align-items: center;
+}
+
+.feature-icon {
+  display: grid;
+  width: 80px;
+  height: 80px;
+  place-items: center;
+  color: var(--green-900);
+  border: 1px solid rgb(255 255 255 / 80%);
+  border-radius: 18px;
+  background: rgb(255 255 255 / 94%);
+  box-shadow: 0 10px 34px rgb(8 27 47 / 10%);
+  backdrop-filter: blur(7px);
+}
+
+.feature-icon svg {
+  width: 39px;
+  height: 39px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.feature-item h2 {
+  margin: 0 0 7px;
+  color: #05090d;
+  font-size: clamp(1.04rem, 1.2vw, 1.18rem);
+  font-weight: 760;
+  line-height: 1.2;
+}
+
+.feature-item p {
+  max-width: 260px;
+  margin: 0;
+  color: var(--navy-800);
+  font-size: clamp(0.9rem, 1vw, 1rem);
+  font-weight: 520;
+  line-height: 1.48;
+}
+
+.auth-panel {
+  position: relative;
+  z-index: 2;
+  min-width: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow: auto;
+  border-radius: var(--radius-panel) 0 0 var(--radius-panel);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  scrollbar-width: thin;
+}
+
+.auth-shell {
+  display: flex;
+  width: min(100%, 680px);
+  min-height: 100%;
+  margin-inline: auto;
+  flex-direction: column;
+  padding:
+    max(38px, env(safe-area-inset-top))
+    clamp(38px, 5vw, 72px)
+    max(42px, env(safe-area-inset-bottom));
+}
+
+.language-control {
+  position: relative;
+  display: flex;
+  align-self: flex-end;
+  align-items: center;
+  min-width: 184px;
+  height: 58px;
+  padding-inline-start: 20px;
+  color: #11161a;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--white);
+  transition:
+    border-color var(--transition),
+    box-shadow var(--transition);
+}
+
+.language-control:focus-within {
+  border-color: var(--green-700);
+  box-shadow: 0 0 0 4px rgb(13 123 58 / 12%);
+}
+
+.language-control > svg {
+  width: 25px;
+  height: 25px;
+  flex: 0 0 auto;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+  pointer-events: none;
+}
+
+.language-control select {
+  width: 100%;
+  height: 100%;
+  padding: 0 38px 0 14px;
+  color: #11161a;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font-size: 1rem;
+  font-weight: 700;
+  appearance: auto;
+}
+
+.form-wrap {
+  width: 100%;
+  margin: auto 0;
+  padding: 22px 0 16px;
+}
+
+.parkin-logo {
+  width: clamp(245px, 24vw, 320px);
+  height: auto;
+  margin: 0 auto 20px;
+  object-fit: contain;
+}
+
+.welcome-copy {
+  margin-bottom: clamp(42px, 5vh, 58px);
+  text-align: center;
+}
+
+.welcome-copy h2 {
+  margin: 0 0 10px;
+  color: #05090d;
+  font-size: clamp(2rem, 3vw, 2.55rem);
+  font-weight: 760;
+  letter-spacing: -0.035em;
+  line-height: 1.15;
+}
+
+.welcome-copy p {
+  margin: 0;
+  color: var(--navy-600);
+  font-size: clamp(0.98rem, 1.2vw, 1.12rem);
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+#login-form {
+  display: grid;
+  gap: 27px;
+}
+
+.field-group {
+  min-width: 0;
+}
+
+.field-group > label,
+.label-row label {
+  color: #070b0e;
+  font-size: 0.98rem;
+  font-weight: 750;
+  line-height: 1.3;
+}
+
+.label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.label-row a {
+  color: var(--green-800);
+  font-size: 0.93rem;
+  font-weight: 680;
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+.label-row a:hover {
+  color: var(--green-900);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.input-shell {
+  display: flex;
+  width: 100%;
+  height: 74px;
+  margin-top: 13px;
+  align-items: center;
+  gap: 17px;
+  padding: 0 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--white);
+  transition:
+    border-color var(--transition),
+    box-shadow var(--transition),
+    background-color var(--transition);
+}
+
+.input-shell:focus-within {
+  border-color: var(--green-700);
+  box-shadow: 0 0 0 4px rgb(13 123 58 / 11%);
+}
+
+.input-shell.is-invalid {
+  border-color: var(--error);
+  background: var(--error-soft);
+  box-shadow: 0 0 0 4px rgb(180 35 24 / 8%);
+}
+
+.input-shell > svg {
+  width: 27px;
+  height: 27px;
+  flex: 0 0 auto;
+  color: #05090d;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.75;
+}
+
+.input-shell input {
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  color: var(--navy-950);
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font-size: 1rem;
+  font-weight: 520;
+}
+
+.input-shell input::placeholder {
+  color: #68778c;
+  opacity: 1;
+}
+
+.password-toggle {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 auto;
+  place-items: center;
+  padding: 0;
+  color: #05090d;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  transition: background-color var(--transition);
+}
+
+.password-toggle:hover {
+  background: #f1f5f3;
+}
+
+.password-toggle:focus-visible {
+  outline: 3px solid rgb(13 123 58 / 24%);
+  outline-offset: 1px;
+}
+
+.password-toggle svg {
+  width: 25px;
+  height: 25px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.password-toggle .eye-closed {
+  display: none;
+}
+
+.password-toggle.is-visible .eye-open {
+  display: none;
+}
+
+.password-toggle.is-visible .eye-closed {
+  display: block;
+}
+
+.field-error {
+  min-height: 20px;
+  margin: 7px 2px 0;
+  color: var(--error);
+  font-size: 0.83rem;
+  font-weight: 620;
+  line-height: 1.35;
+}
+
+.field-error:empty {
+  min-height: 0;
+  margin-top: 0;
+}
+
+.form-options {
+  margin-top: -8px;
+}
+
+.remember-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  color: var(--navy-600);
+  font-size: 0.94rem;
+  font-weight: 560;
+  cursor: pointer;
+  user-select: none;
+}
+
+.remember-control input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.custom-checkbox {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  color: var(--white);
+  border: 2px solid var(--border-strong);
+  border-radius: 6px;
+  background: var(--white);
+  transition:
+    border-color var(--transition),
+    background-color var(--transition),
+    box-shadow var(--transition);
+}
+
+.custom-checkbox svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.4;
+  opacity: 0;
+  transform: scale(0.75);
+  transition:
+    opacity var(--transition),
+    transform var(--transition);
+}
+
+.remember-control input:checked + .custom-checkbox {
+  border-color: var(--green-800);
+  background: var(--green-800);
+}
+
+.remember-control input:checked + .custom-checkbox svg {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.remember-control input:focus-visible + .custom-checkbox {
+  box-shadow: 0 0 0 4px rgb(13 123 58 / 13%);
+}
+
+.sign-in-button {
+  display: grid;
+  width: 100%;
+  min-height: 74px;
+  grid-template-columns: 36px 1fr 36px;
+  align-items: center;
+  padding: 0 25px;
+  color: var(--white);
+  border: 0;
+  border-radius: 12px;
+  background: linear-gradient(100deg, var(--green-900), var(--green-800));
+  box-shadow: 0 12px 28px rgb(7 95 45 / 20%);
+  font-size: 1.08rem;
+  font-weight: 720;
+  transition:
+    transform var(--transition),
+    box-shadow var(--transition),
+    filter var(--transition);
+}
+
+.sign-in-button:hover {
+  box-shadow: 0 16px 34px rgb(7 95 45 / 28%);
+  filter: brightness(1.04);
+  transform: translateY(-1px);
+}
+
+.sign-in-button:active {
+  transform: translateY(0);
+}
+
+.sign-in-button:focus-visible {
+  outline: 4px solid rgb(13 123 58 / 22%);
+  outline-offset: 3px;
+}
+
+.sign-in-button:disabled {
+  cursor: wait;
+  filter: saturate(0.75);
+  transform: none;
+}
+
+.sign-in-button .button-label {
+  grid-column: 2;
+}
+
+.sign-in-button > svg {
+  width: 25px;
+  height: 25px;
+  grid-column: 3;
+  justify-self: end;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+  transition: transform var(--transition);
+}
+
+[dir="rtl"] .sign-in-button > svg {
+  transform: scaleX(-1);
+}
+
+.sign-in-button:hover > svg {
+  transform: translateX(3px);
+}
+
+[dir="rtl"] .sign-in-button:hover > svg {
+  transform: scaleX(-1) translateX(3px);
+}
+
+.button-spinner {
+  display: none;
+  width: 22px;
+  height: 22px;
+  grid-column: 1;
+  justify-self: start;
+  border: 2px solid rgb(255 255 255 / 40%);
+  border-top-color: var(--white);
+  border-radius: 50%;
+  animation: spin 700ms linear infinite;
+}
+
+.sign-in-button.is-loading .button-spinner {
+  display: block;
+}
+
+.form-status {
+  display: none;
+  min-height: 46px;
+  margin-top: -12px;
+  padding: 12px 14px;
+  color: var(--green-900);
+  border: 1px solid #a6e4ba;
+  border-radius: 10px;
+  background: var(--success-soft);
+  font-size: 0.88rem;
+  font-weight: 650;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.form-status.is-visible {
+  display: block;
+}
+
+.security-note {
+  display: grid;
+  grid-template-columns: 1fr 54px 1fr;
+  gap: 22px;
+  align-items: center;
+  margin-top: clamp(28px, 4vh, 44px);
+}
+
+.security-line {
+  height: 1px;
+  background: var(--border);
+}
+
+.security-icon {
+  display: grid;
+  width: 54px;
+  height: 54px;
+  place-items: center;
+  color: var(--green-700);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: #fbfdfc;
+  box-shadow: 0 5px 14px rgb(8 27 47 / 5%);
+}
+
+.security-icon svg {
+  width: 29px;
+  height: 29px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.6;
+}
+
+.security-copy {
+  margin: 18px 0 0;
+  color: var(--navy-600);
+  font-size: 0.93rem;
+  font-weight: 520;
+  text-align: center;
+}
+
+.auth-shell footer {
+  margin-top: auto;
+  padding-top: 20px;
+  color: var(--navy-600);
+  font-size: 0.9rem;
+  font-weight: 520;
+  text-align: center;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-height: 880px) and (min-width: 921px) {
+  .marketing-content {
+    padding-block: 40px;
+  }
+
+  .accent-line {
+    margin-block: 20px;
+  }
+
+  .feature-list {
+    gap: 15px;
+    margin-top: 32px;
+  }
+
+  .feature-item {
+    grid-template-columns: 64px 1fr;
+    gap: 18px;
+  }
+
+  .feature-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 15px;
+  }
+
+  .feature-icon svg {
+    width: 32px;
+    height: 32px;
+  }
+
+  .auth-shell {
+    padding-block: 25px 26px;
+  }
+
+  .language-control {
+    height: 50px;
+  }
+
+  .form-wrap {
+    padding-top: 8px;
+  }
+
+  .parkin-logo {
+    width: 230px;
+    margin-bottom: 8px;
+  }
+
+  .welcome-copy {
+    margin-bottom: 26px;
+  }
+
+  #login-form {
+    gap: 16px;
+  }
+
+  .input-shell,
+  .sign-in-button {
+    height: 60px;
+    min-height: 60px;
+  }
+
+  .security-note {
+    margin-top: 22px;
+  }
+
+  .security-copy {
+    margin-top: 10px;
+  }
+}
+
+@media (max-width: 1100px) and (min-width: 921px) {
+  .login-page {
+    grid-template-columns: minmax(0, 50fr) minmax(480px, 50fr);
+  }
+
+  .marketing-content {
+    padding-inline: 38px;
+  }
+
+  .feature-item {
+    grid-template-columns: 66px 1fr;
+    gap: 18px;
+  }
+
+  .feature-icon {
+    width: 66px;
+    height: 66px;
+  }
+
+  .auth-shell {
+    padding-inline: 38px;
+  }
+}
+
+@media (max-width: 920px) {
+  html,
+  body {
+    background: var(--white);
+  }
+
+  .login-page {
+    display: block;
+    min-height: 100dvh;
+    overflow: visible;
+    background: var(--white);
+  }
+
+  .marketing-panel {
+    --marketing-bg-position: center 64%;
+    min-height: clamp(280px, 38vh, 380px);
+  }
+
+  .marketing-content {
+    display: block;
+    min-height: auto;
+    width: 100%;
+    padding:
+      max(42px, env(safe-area-inset-top))
+      clamp(24px, 7vw, 58px)
+      72px;
+  }
+
+  .marketing-heading {
+    max-width: 460px;
+  }
+
+  .marketing-heading h1 {
+    font-size: clamp(2.1rem, 6vw, 3rem);
+  }
+
+  .marketing-heading p,
+  .accent-line,
+  .feature-list {
+    display: none;
+  }
+
+  .auth-panel {
+    min-height: auto;
+    margin-top: -30px;
+    overflow: visible;
+    border-radius: var(--radius-panel) var(--radius-panel) 0 0;
+    box-shadow: 0 -18px 58px rgb(8 27 47 / 12%);
+  }
+
+  .auth-shell {
+    width: min(100%, 680px);
+    min-height: auto;
+    padding:
+      25px
+      clamp(28px, 8vw, 70px)
+      max(34px, env(safe-area-inset-bottom));
+  }
+
+  .language-control {
+    height: 52px;
+  }
+
+  .form-wrap {
+    margin: 0;
+    padding-top: 8px;
+  }
+
+  .parkin-logo {
+    width: min(280px, 65vw);
+    margin-bottom: 8px;
+  }
+
+  .welcome-copy {
+    margin-bottom: 34px;
+  }
+
+  .security-note {
+    margin-top: 30px;
+  }
+
+  .auth-shell footer {
+    margin-top: 18px;
+  }
+}
+
+@media (max-width: 520px) {
+  .marketing-panel {
+    --marketing-bg-position: 55% 62%;
+    min-height: 270px;
+  }
+
+  .marketing-content {
+    padding: max(34px, env(safe-area-inset-top)) 23px 62px;
+  }
+
+  .marketing-heading h1 {
+    max-width: 310px;
+    font-size: clamp(2rem, 9.5vw, 2.55rem);
+    line-height: 1.13;
+  }
+
+  .auth-panel {
+    margin-top: -24px;
+    border-radius: 24px 24px 0 0;
+  }
+
+  .auth-shell {
+    padding-inline: 21px;
+  }
+
+  .language-control {
+    min-width: 156px;
+    height: 48px;
+    padding-inline-start: 14px;
+  }
+
+  .language-control > svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .language-control select {
+    padding-inline-start: 10px;
+    font-size: 0.92rem;
+  }
+
+  .parkin-logo {
+    width: 215px;
+    margin-top: 2px;
+  }
+
+  .welcome-copy {
+    margin-bottom: 29px;
+  }
+
+  .welcome-copy h2 {
+    font-size: 1.9rem;
+  }
+
+  .welcome-copy p {
+    font-size: 0.94rem;
+  }
+
+  #login-form {
+    gap: 20px;
+  }
+
+  .input-shell {
+    height: 60px;
+    gap: 13px;
+    margin-top: 10px;
+    padding-inline: 15px;
+  }
+
+  .input-shell > svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .input-shell input {
+    font-size: 0.94rem;
+  }
+
+  .label-row {
+    gap: 10px;
+  }
+
+  .label-row a {
+    font-size: 0.83rem;
+  }
+
+  .field-group > label,
+  .label-row label {
+    font-size: 0.92rem;
+  }
+
+  .sign-in-button {
+    min-height: 60px;
+  }
+
+  .security-note {
+    grid-template-columns: 1fr 48px 1fr;
+    gap: 13px;
+  }
+
+  .security-icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .security-copy,
+  .auth-shell footer {
+    font-size: 0.82rem;
+  }
+}
+
+@media (max-width: 370px) {
+  .label-row {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .parkin-logo {
+    width: 190px;
+  }
+
+  .input-shell {
+    padding-inline: 12px;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 920px) and (max-height: 600px) {
+  .login-page {
+    display: grid;
+    grid-template-columns: 43% 57%;
+    overflow: hidden;
+  }
+
+  .marketing-panel {
+    --marketing-bg-position: center;
+    min-height: 100dvh;
+  }
+
+  .marketing-content {
+    padding: 38px 28px;
+  }
+
+  .marketing-heading h1 {
+    font-size: clamp(2rem, 4vw, 2.6rem);
+  }
+
+  .auth-panel {
+    min-height: 100dvh;
+    margin-top: 0;
+    overflow: auto;
+    border-radius: var(--radius-panel) 0 0 var(--radius-panel);
+  }
+
+  .auth-shell {
+    padding: 20px 34px;
+  }
+
+  .language-control {
+    height: 46px;
+  }
+
+  .parkin-logo {
+    width: 200px;
+  }
+
+  .welcome-copy {
+    margin-bottom: 20px;
+  }
+
+  #login-form {
+    gap: 13px;
+  }
+
+  .input-shell,
+  .sign-in-button {
+    height: 56px;
+    min-height: 56px;
+  }
+
+  .security-note {
+    margin-top: 20px;
+  }
+}
+
+[dir="rtl"] .marketing-heading,
+[dir="rtl"] .feature-item {
+  text-align: right;
+}
+
+[dir="rtl"] .welcome-copy {
+  width: 100%;
+  text-align: center;
+}
+
+[dir="rtl"] .security-copy,
+[dir="rtl"] .auth-shell footer {
+  width: 100%;
+  text-align: center;
+}
+
+[dir="rtl"] .login-page {
+  direction: ltr;
+}
+
+[dir="rtl"] .marketing-panel,
+[dir="rtl"] .auth-panel {
+  direction: rtl;
+}
+
+[dir="rtl"] body,
+[dir="rtl"] button,
+[dir="rtl"] input,
+[dir="rtl"] select {
+  font-family: "Cairo", Tahoma, Arial, sans-serif;
+}
+
+[dir="rtl"] .marketing-panel::before {
+  background-image: url("/public/assets/parkin-valet-hero-ar.jpg");
+  transform: scaleX(1);
+}
+
+@media (min-width: 921px) {
+  [dir="rtl"] .login-page {
+    direction: rtl;
+  }
+
+  [dir="rtl"] .marketing-panel {
+    --marketing-bg-position: left center;
+  }
+
+  [dir="rtl"] .auth-panel {
+    border-radius: 0 var(--radius-panel) var(--radius-panel) 0;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 920px) and (max-height: 600px) {
+  [dir="rtl"] .login-page {
+    direction: rtl;
+  }
+
+  [dir="rtl"] .marketing-panel {
+    --marketing-bg-position: left center;
+  }
+
+  [dir="rtl"] .auth-panel {
+    border-radius: 0 var(--radius-panel) var(--radius-panel) 0;
+  }
+}
+
+[dir="rtl"] .language-control {
+  align-self: flex-start;
+}
+
+[dir="rtl"] .marketing-heading {
+  max-width: 620px;
+}
+
+[dir="rtl"] .feature-list {
+  width: min(100%, 460px);
+}
+
+[dir="rtl"] .feature-item p {
+  max-width: 330px;
+}
+
+[dir="rtl"] .marketing-heading p,
+[dir="rtl"] .feature-item p {
+  color: #ffffff;
+  text-shadow:
+    0 1px 3px rgb(0 0 0 / 90%),
+    0 4px 18px rgb(0 0 0 / 70%);
+}
+
+[dir="rtl"] .marketing-heading h1,
+[dir="rtl"] .feature-item h2 {
+  color: #05090d;
+  text-shadow:
+    0 1px 2px rgb(255 255 255 / 88%),
+    0 4px 18px rgb(255 255 255 / 58%);
+}
+
+[dir="rtl"] .marketing-heading h1 {
+  font-size: clamp(3rem, 4.15vw, 4.35rem);
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1.25;
+}
+
+[dir="rtl"] .marketing-heading h1 strong {
+  color: var(--green-700);
+  text-shadow:
+    0 1px 2px rgb(255 255 255 / 82%),
+    0 4px 18px rgb(255 255 255 / 52%);
+}
+
+[dir="rtl"] .marketing-heading p {
+  font-size: clamp(1.12rem, 1.35vw, 1.3rem);
+  font-weight: 600;
+  line-height: 1.75;
+}
+
+[dir="rtl"] .feature-item h2 {
+  margin-bottom: 8px;
+  font-size: clamp(1.2rem, 1.35vw, 1.42rem);
+  font-weight: 800;
+}
+
+[dir="rtl"] .feature-item p {
+  font-size: clamp(1rem, 1.08vw, 1.14rem);
+  font-weight: 600;
+  line-height: 1.7;
+}
+
+[dir="rtl"] .welcome-copy h2 {
+  font-size: clamp(2.2rem, 3.2vw, 2.75rem);
+  font-weight: 800;
+}
+
+[dir="rtl"] .welcome-copy p {
+  font-size: 1.05rem;
+  font-weight: 500;
+}
+
+[dir="rtl"] .field-group > label,
+[dir="rtl"] .label-row label {
+  font-size: 1.02rem;
+  font-weight: 700;
+}
+
+[dir="rtl"] .label-row a,
+[dir="rtl"] .remember-control {
+  font-size: 0.98rem;
+  font-weight: 600;
+}
+
+[dir="rtl"] .input-shell input,
+[dir="rtl"] .language-control select {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+[dir="rtl"] .sign-in-button {
+  font-size: 1.08rem;
+  font-weight: 700;
+}
+
+[dir="rtl"] .security-copy,
+[dir="rtl"] .auth-shell footer {
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+@media (max-width: 520px) {
+  [dir="rtl"] .marketing-heading h1 {
+    font-size: clamp(2.25rem, 10vw, 2.75rem);
+  }
+
+  [dir="rtl"] .welcome-copy h2 {
+    font-size: 2.05rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
