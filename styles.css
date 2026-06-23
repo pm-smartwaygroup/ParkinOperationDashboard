@@ -266,6 +266,25 @@ svg {
   line-height: 1.48;
 }
 
+@media (min-width: 1101px) and (min-height: 881px) {
+  .marketing-panel {
+    --marketing-bg-position: 80% center;
+  }
+
+  .marketing-content {
+    padding: 128px 53px;
+  }
+
+  .feature-list {
+    gap: 44px;
+    margin-top: 57px;
+  }
+
+  .feature-item p {
+    max-width: 205px;
+  }
+}
+
 .auth-panel {
   position: relative;
   z-index: 2;

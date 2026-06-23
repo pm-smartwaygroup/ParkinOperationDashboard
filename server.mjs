@@ -34,7 +34,7 @@ const server = createServer((request, response) => {
   createReadStream(filePath).pipe(response);
 });
 
-server.listen(port, "0.0.0.0", () => {
+server.listen(port, "192.168.3.108", () => {
   console.log(`Mac browser: http://localhost:${port}`);
   console.log(`Mobile/tablet: http://192.168.3.108:${port}`);
 });
