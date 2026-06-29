@@ -21,7 +21,7 @@
     <title>Parkin Dashboard | Sign in</title>
   </head>
   <body>
-    <main class="login-page">
+    <main class="login-page" id="login-page">
       <section class="marketing-panel" aria-labelledby="marketing-title">
         <div class="marketing-content">
           <div class="marketing-heading">
@@ -221,6 +221,873 @@
       </section>
     </main>
 
+    <section class="dashboard-page hidden" id="dashboard-page" aria-label="Parkin operations dashboard">
+      <aside class="dashboard-sidebar">
+        <div class="sidebar-top">
+          <a class="dashboard-logo" href="#dashboard" aria-label="Parkin dashboard">
+            <span class="sidebar-logo-stack" aria-hidden="true">
+              <img
+                class="sidebar-logo-base"
+                src="/public/assets/parkin-logo.png"
+                alt=""
+                width="800"
+                height="300"
+              />
+              <span class="sidebar-logo-green-crop">
+                <img src="/public/assets/parkin-logo.png" alt="" width="800" height="300" />
+              </span>
+            </span>
+          </a>
+          <button class="sidebar-collapse" type="button" aria-label="Collapse sidebar">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m15 6-6 6 6 6M20 6l-6 6 6 6" />
+            </svg>
+          </button>
+        </div>
+
+        <nav class="dashboard-nav" aria-label="Dashboard navigation">
+          <p>Operations</p>
+          <a class="is-active" href="#dashboard">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21H5v-8h14" /></svg>
+            <span>Dashboard</span>
+          </a>
+          <a href="#locations">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-5.3 7-11a7 7 0 0 0-14 0c0 5.7 7 11 7 11Z" /><circle cx="12" cy="10" r="2.5" /></svg>
+            <span>Locations</span>
+          </a>
+          <a href="#valet">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14l-2-5H7l-2 5Zm1 0v6m12-6v6M7 18h10M7 18a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm14 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z" /></svg>
+            <span>Valet Operations</span>
+          </a>
+          <a href="#drivers">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="7.5" r="4" /><path d="M4.5 21a7.5 7.5 0 0 1 15 0" /></svg>
+            <span>Drivers</span>
+            <em>3</em>
+          </a>
+          <a href="#customers">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm8-1a3.5 3.5 0 1 0 0-7m-13 18a7 7 0 0 1 14 0m1-7a6 6 0 0 1 5 6" /></svg>
+            <span>Customers</span>
+          </a>
+
+          <p>Parking Management</p>
+          <a href="#vehicles">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14l-2-5H7l-2 5Zm1 0v6m12-6v6M7 18h10M7 18a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm14 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z" /></svg>
+            <span>Vehicles</span>
+          </a>
+          <a href="#zones">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M9 18V6h4.2a3.6 3.6 0 0 1 0 7.2H9" /></svg>
+            <span>Parking Zones</span>
+          </a>
+          <a href="#bookings">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="16" rx="2" /><path d="M8 3v4m8-4v4M4 10h16m5 5h4" /></svg>
+            <span>Bookings</span>
+            <em>12</em>
+          </a>
+
+          <p>Business</p>
+          <a href="#companies">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21h16M6 21V7l6-3 6 3v14M9 10h1m4 0h1M9 14h1m4 0h1" /></svg>
+            <span>Valet Companies</span>
+          </a>
+          <a href="#revenue">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10m5 10V6m5 14v-8m5 8V4M3 20h18" /></svg>
+            <span>Revenue</span>
+          </a>
+          <a href="#reports">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2" /><path d="M9 8h6M9 12h6M9 16h3" /></svg>
+            <span>Reports</span>
+          </a>
+
+          <p>System</p>
+          <a href="#alerts">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" /></svg>
+            <span>Alerts</span>
+            <em class="danger">8</em>
+          </a>
+          <a href="#settings">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2 3.5-.2-.1a1.7 1.7 0 0 0-2 .2 1.7 1.7 0 0 0-.8 1.7v.2H10v-.2a1.7 1.7 0 0 0-.8-1.7 1.7 1.7 0 0 0-2-.2l-.2.1-2-3.5.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.4-1.1H3.8V10h.2a1.7 1.7 0 0 0 1.4-1.1 1.7 1.7 0 0 0-.3-1.9L5 6.9l2-3.5.2.1a1.7 1.7 0 0 0 2-.2 1.7 1.7 0 0 0 .8-1.7V1.5h4v.2a1.7 1.7 0 0 0 .8 1.7 1.7 1.7 0 0 0 2 .2l.2-.1 2 3.5-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.4 1.1h.2v4h-.2A1.7 1.7 0 0 0 19.4 15Z" /></svg>
+            <span>Settings</span>
+          </a>
+        </nav>
+
+        <div class="today-summary">
+          <p>Today’s Summary</p>
+          <dl>
+            <div><dt>Total Companies</dt><dd>24</dd></div>
+            <div><dt>Vehicles Today</dt><dd>1,248</dd></div>
+            <div><dt>Active Locations</dt><dd>18</dd></div>
+          </dl>
+          <a href="#summary">View full summary →</a>
+        </div>
+
+        <button class="manager-card" id="dashboard-logout" type="button" aria-label="Return to login page">
+          <span class="avatar">JM</span>
+          <span>
+            <strong>Ali Ahmed</strong>
+            <small>Operations Manager</small>
+            <small class="online">Online</small>
+          </span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+        </button>
+      </aside>
+
+      <main class="dashboard-main" tabindex="-1">
+        <header class="dashboard-header">
+          <div class="dashboard-title">
+            <h1>Dashboard</h1>
+            <p>Real-time overview of your valet parking operations</p>
+          </div>
+
+          <div class="dashboard-toolbar" aria-label="Dashboard filters and account tools">
+            <button class="filter-button" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="4" y="5" width="16" height="16" rx="2" />
+                  <path d="M8 3v4m8-4v4M4 10h16" />
+                </svg>
+
+                <span id="current-date"></span>
+
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="m7 10 5 5 5-5" />
+                </svg>
+              </button>
+            <button class="filter-button" type="button">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-5.3 7-11a7 7 0 0 0-14 0c0 5.7 7 11 7 11Z" /><circle cx="12" cy="10" r="2.5" /></svg>
+              <span>All Locations</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5" /></svg>
+            </button>
+            <button class="icon-button" type="button" aria-label="Search">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="7" /><path d="m16 16 5 5" /></svg>
+            </button>
+            <button class="icon-button notification" type="button" aria-label="Notifications">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" /></svg>
+              <span>6</span>
+            </button>
+            <button class="profile-button" type="button">
+              <span>JM</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5" /></svg>
+            </button>
+          </div>
+        </header>
+
+<section class="metric-grid clean-metrics" aria-label="Operations key metrics">
+  <article class="metric-card metric-purple">
+    <div class="metric-top">
+      <div class="metric-icon">
+        <svg viewBox="0 0 24 24"><path d="M8 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm8-1a3.5 3.5 0 1 0 0-7m-13 18a7 7 0 0 1 14 0m1-7a6 6 0 0 1 5 6"/></svg>
+      </div>
+      <div class="metric-info">
+        <p>Total Valet Companies</p>
+        <strong>24</strong>
+      </div>
+      <svg class="metric-chart" viewBox="0 0 160 60">
+        <path class="area" d="M5 58C28 48 34 36 53 40s23 8 39-8 25-7 38-22 19 7 29-7v57H5Z"/>
+        <path d="M5 58C28 48 34 36 53 40s23 8 39-8 25-7 38-22 19 7 29-7"/>
+      </svg>
+    </div>
+    <small>↑ 3 new this month</small>
+    <div class="metric-footer three">
+      <span><b>18</b>Active</span>
+      <span><b>4</b>Inactive</span>
+      <span><b>2</b>Suspended</span>
+    </div>
+  </article>
+
+  <article class="metric-card metric-blue">
+    <div class="metric-top">
+      <div class="metric-icon">
+        <svg viewBox="0 0 24 24"><path d="M5 12h14l-2-5H7l-2 5Zm1 0v6m12-6v6M7 18h10M7 18a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm14 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z"/></svg>
+      </div>
+      <div class="metric-info">
+        <p>Vehicles Today</p>
+        <strong>1,248</strong>
+      </div>
+      <svg class="metric-chart" viewBox="0 0 160 60">
+        <path class="area" d="M5 57c10-8 16-22 28-13s14-8 27-2 16-17 29-5 16 9 27-13 18 8 39-18v54H5Z"/>
+        <path d="M5 57c10-8 16-22 28-13s14-8 27-2 16-17 29-5 16 9 27-13 18 8 39-18"/>
+      </svg>
+    </div>
+    <small>↑ 15.3% vs yesterday</small>
+    <div class="capacity-box">
+      <div><span>Capacity: 2,000</span><b>62%</b></div>
+      <i><em></em></i>
+    </div>
+  </article>
+
+  <article class="metric-card metric-purple">
+    <div class="metric-top">
+      <div class="metric-icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="7.5" r="4"/><path d="M4.5 21a7.5 7.5 0 0 1 15 0"/></svg>
+      </div>
+      <div class="metric-info">
+        <p>Active Drivers</p>
+        <strong>72</strong>
+      </div>
+      <div class="metric-donut">
+        <b>58</b>
+        <span>Online</span>
+      </div>
+    </div>
+    <small>↑ 6 vs yesterday</small>
+    <div class="metric-footer two">
+      <span><b>10</b>On Break</span>
+      <span><b>4</b>Offline</span>
+    </div>
+  </article>
+
+  <article class="metric-card metric-orange">
+    <div class="metric-top">
+      <div class="metric-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 21s7-5.3 7-11a7 7 0 0 0-14 0c0 5.7 7 11 7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+      </div>
+      <div class="metric-info">
+        <p>Active Locations</p>
+        <strong>18</strong>
+      </div>
+      <svg class="metric-chart" viewBox="0 0 160 60">
+        <path class="area" d="M5 55c18-8 20-22 34-14s18-8 34-2 18-9 35-20 21 4 47-13v54H5Z"/>
+        <path d="M5 55c18-8 20-22 34-14s18-8 34-2 18-9 35-20 21 4 47-13"/>
+      </svg>
+    </div>
+    <small>↑ 2 new this month</small>
+    <div class="metric-footer three status">
+      <span><i class="green-dot"></i><b>12</b>Healthy</span>
+      <span><i class="orange-dot"></i><b>4</b>Busy</span>
+      <span><i class="red-dot"></i><b>2</b>Critical</span>
+    </div>
+  </article>
+</section>
+
+        <section class="operations-grid">
+          <article class="dashboard-panel health-panel">
+            <div class="panel-heading">
+              <h2>Operations Health <span>(Top 5 Locations)</span></h2>
+              <a href="#locations">View all locations →</a>
+            </div>
+            <div class="health-table" role="table" aria-label="Operations health by location">
+              <div class="health-row health-head" role="row">
+                <span>Location</span>
+                <span>Occupancy</span>
+                <span>Revenue Today</span>
+                <span>Avg. Wait Time</span>
+                <span>Status</span>
+              </div>
+              <div class="health-row" role="row">
+                <span class="location-cell"><i class="location-thumb riyadh"></i><b>Riyadh Mall<small>Riyadh</small></b></span>
+                <span><i class="ring green" style="--value: 92%">92%</i></span>
+                <span><b>SAR 12,500</b><small class="up">↑ 16.2%</small></span>
+                <span><b>3.2 min</b></span>
+                <span class="status-pill healthy">Healthy</span>
+              </div>
+              <div class="health-row" role="row">
+                <span class="location-cell"><i class="location-thumb hotel"></i><b>Hilton Hotel<small>Riyadh</small></b></span>
+                <span><i class="ring orange" style="--value: 75%">75%</i></span>
+                <span><b>SAR 8,200</b><small class="up">↑ 10.1%</small></span>
+                <span><b>4.1 min</b></span>
+                <span class="status-pill healthy">Healthy</span>
+              </div>
+              <div class="health-row" role="row">
+                <span class="location-cell"><i class="location-thumb dammam"></i><b>Dammam Compound<small>Dammam</small></b></span>
+                <span><i class="ring red" style="--value: 98%">98%</i></span>
+                <span><b>SAR 9,600</b><small class="down">↓ 3.2%</small></span>
+                <span><b>8.7 min</b></span>
+                <span class="status-pill critical">Critical</span>
+              </div>
+              <div class="health-row" role="row">
+                <span class="location-cell"><i class="location-thumb jeddah"></i><b>Jeddah Mall<small>Jeddah</small></b></span>
+                <span><i class="ring orange" style="--value: 68%">68%</i></span>
+                <span><b>SAR 7,100</b><small class="up">↑ 7.3%</small></span>
+                <span><b>5.3 min</b></span>
+                <span class="status-pill busy">Busy</span>
+              </div>
+              <div class="health-row" role="row">
+                <span class="location-cell"><i class="location-thumb makkah"></i><b>Makkah Hotel<small>Makkah</small></b></span>
+                <span><i class="ring orange" style="--value: 58%">58%</i></span>
+                <span><b>SAR 6,300</b><small class="up">↑ 5.8%</small></span>
+                <span><b>6.2 min</b></span>
+                <span class="status-pill busy">Busy</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="dashboard-panel map-panel">
+            <div class="panel-heading">
+              <h2>Operations Map</h2>
+              <a href="#map">View full map →</a>
+            </div>
+            <div class="map-layout">
+              <div>
+                <div class="map-metrics">
+                  <span><strong>18</strong>Total<br />Locations</span>
+                  <span><strong>12</strong>Healthy</span>
+                  <span><strong>4</strong>Busy</span>
+                  <span><strong>2</strong>Critical</span>
+                  <span><strong>0</strong>Offline</span>
+                </div>
+                <div class="map-canvas" aria-label="Saudi Arabia operations map">
+                  <svg class="saudi-map" viewBox="0 0 520 360" role="img" aria-label="Operations locations across Saudi Arabia">
+                    <defs>
+                      <pattern id="map-grid" width="38" height="38" patternUnits="userSpaceOnUse">
+                        <path d="M38 0H0V38" />
+                        <path d="M0 0 38 38M38 0 0 38" />
+                      </pattern>
+                      <filter id="map-shadow" x="-20%" y="-20%" width="140%" height="140%">
+                        <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#0b2a3f" flood-opacity=".08" />
+                      </filter>
+                    </defs>
+                    <rect class="map-water" width="520" height="360" rx="18" />
+                    <path class="red-sea" d="M0 0H132c-22 47-45 85-70 118C36 154 19 203 0 257Z" />
+                    <path class="gulf" d="M478 55c24 26 38 58 42 98v98c-26-25-48-54-65-87-17-35-13-74 23-109Z" />
+                    <path class="map-network" d="M0 0h520v360H0Z" />
+                    <path
+                      class="saudi-outline"
+                      filter="url(#map-shadow)"
+                      d="M164 38 233 26 310 43 372 33 452 89 471 165 439 226 409 290 349 325 291 302 240 330 175 292 138 228 100 186 82 119Z"
+                    />
+                    <path class="saudi-inner-line" d="M151 196c51-25 88-41 133-38 46 3 86 19 141 2" />
+                    <path class="saudi-inner-line" d="M177 92c43 29 83 43 120 42 41-1 78-12 119-23" />
+                    <path class="saudi-inner-line" d="M223 287c26-47 50-82 73-105 25-26 58-42 99-50" />
+                    <text class="map-country" x="274" y="229">SAUDI ARABIA</text>
+
+                    <g class="svg-pin svg-pin-green major" transform="translate(301 167)">
+                      <circle class="pin-pulse" r="40" />
+                      <path d="M0 27s20-17 20-35A20 20 0 0 0-20-8C-20 10 0 27 0 27Z" />
+                      <circle r="7" />
+                      <text x="18" y="25">Riyadh</text>
+                    </g>
+                    <g class="svg-pin svg-pin-orange" transform="translate(158 240)">
+                      <path d="M0 21s15-13 15-27A15 15 0 0 0-15-6C-15 8 0 21 0 21Z" />
+                      <circle r="5" />
+                      <text x="16" y="20">Jeddah</text>
+                    </g>
+                    <g class="svg-pin svg-pin-green" transform="translate(157 88)">
+                      <path d="M0 21s15-13 15-27A15 15 0 0 0-15-6C-15 8 0 21 0 21Z" />
+                      <circle r="5" />
+                      <text x="16" y="19">Tabuk</text>
+                    </g>
+                    <g class="svg-pin svg-pin-green" transform="translate(167 162)">
+                      <path d="M0 21s15-13 15-27A15 15 0 0 0-15-6C-15 8 0 21 0 21Z" />
+                      <circle r="5" />
+                      <text x="16" y="18">Madinah</text>
+                    </g>
+                    <g class="svg-pin svg-pin-red" transform="translate(414 164)">
+                      <path d="M0 21s15-13 15-27A15 15 0 0 0-15-6C-15 8 0 21 0 21Z" />
+                      <circle r="5" />
+                      <text x="16" y="18">Dammam</text>
+                    </g>
+                    <g class="svg-pin svg-pin-orange" transform="translate(373 119)">
+                      <path d="M0 21s15-13 15-27A15 15 0 0 0-15-6C-15 8 0 21 0 21Z" />
+                      <circle r="5" />
+                      <text x="17" y="18">Khobar</text>
+                    </g>
+                    <g class="svg-pin svg-pin-green" transform="translate(216 309)">
+                      <path d="M0 21s15-13 15-27A15 15 0 0 0-15-6C-15 8 0 21 0 21Z" />
+                      <circle r="5" />
+                      <text x="17" y="18">Makkah</text>
+                    </g>
+                  </svg>
+                  <div class="map-zoom"><button type="button">+</button><button type="button">−</button></div>
+                </div>
+              </div>
+              <div class="map-location-list">
+                <article><i class="location-thumb riyadh"></i><b>Riyadh Mall<small>Riyadh</small></b><span class="ring green" style="--value: 92%">92%</span><strong>SAR 12,500<small>298 Vehicles</small></strong></article>
+                <article><i class="location-thumb hotel"></i><b>Hilton Hotel<small>Riyadh</small></b><span class="ring orange" style="--value: 75%">75%</span><strong>SAR 8,200<small>186 Vehicles</small></strong></article>
+                <article><i class="location-thumb dammam"></i><b>Dammam Compound<small>Dammam</small></b><span class="ring red" style="--value: 98%">98%</span><strong>SAR 9,600<small>216 Vehicles</small></strong></article>
+                <article><i class="location-thumb jeddah"></i><b>Jeddah Mall<small>Jeddah</small></b><span class="ring orange" style="--value: 68%">68%</span><strong>SAR 7,100<small>142 Vehicles</small></strong></article>
+                <article><i class="location-thumb makkah"></i><b>Makkah Hotel<small>Makkah</small></b><span class="ring orange" style="--value: 58%">58%</span><strong>SAR 6,300<small>112 Vehicles</small></strong></article>
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <section class="bottom-grid">
+          <article class="dashboard-panel alerts-panel">
+            <div class="panel-heading">
+              <h2>Critical Alerts</h2>
+              <a href="#alerts">View all alerts →</a>
+            </div>
+            <ul class="alert-list">
+              <li><span class="alert-icon red">!</span><b>Hilton Hotel<small>Customer waiting &gt; 10 mins</small></b><time>2 min ago</time></li>
+              <li><span class="alert-icon red">!</span><b>Riyadh Mall<small>Occupancy reached 95%</small></b><time>6 min ago</time></li>
+              <li><span class="alert-icon orange">!</span><b>Driver Shortage<small>Need 2 more drivers at Jeddah Mall</small></b><time>15 min ago</time></li>
+              <li><span class="alert-icon orange">!</span><b>Contract Expiring Soon<small>Hilton Hotel contract expires in 15 days</small></b><time>1 hr ago</time></li>
+            </ul>
+          </article>
+
+          <article class="dashboard-panel activity-panel">
+            <div class="panel-heading">
+              <h2>Recent Activity</h2>
+              <a href="#activity">View all activity →</a>
+            </div>
+            <ul class="activity-list">
+              <li><span class="activity-icon car"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16l-2-5H6l-2 5Zm1 0v6m14-6v6M7 18h10M7 18a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm14 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z" /></svg></span><b>Vehicle VR-2456 returned at Riyadh Mall</b><time>2 min ago</time></li>
+              <li><span class="activity-icon driver"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="7.5" r="4" /><path d="M4.5 21a7.5 7.5 0 0 1 15 0" /></svg></span><b>Driver James Wilson assigned at Hilton Hotel</b><time>5 min ago</time></li>
+              <li><span class="activity-icon paid"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="16" rx="2" /><path d="M8 3v4m8-4v4M4 10h16m-8 4v5m-2.5-2.5h5" /></svg></span><b>Payment received SAR 120 from Alex Johnson</b><time>8 min ago</time></li>
+              <li><span class="activity-icon rating"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.8 1-6.1-4.4-4.3 6.1-.9Z" /></svg></span><b>Customer rated 5 stars at Riyadh Mall</b><time>12 min ago</time></li>
+              <li><span class="activity-icon place"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-5.3 7-11a7 7 0 0 0-14 0c0 5.7 7 11 7 11Z" /><circle cx="12" cy="10" r="2.5" /></svg></span><b>New location Makkah Hotel added</b><time>25 min ago</time></li>
+            </ul>
+          </article>
+
+          <article class="dashboard-panel quick-panel">
+            <div class="panel-heading">
+              <h2>Quick Actions</h2>
+            </div>
+            <div class="quick-grid">
+              <button type="button"><svg viewBox="0 0 24 24"><path d="M12 21s7-5.3 7-11a7 7 0 0 0-14 0c0 5.7 7 11 7 11Z" /><path d="M16 19v4m-2-2h4" /><circle cx="12" cy="10" r="2.5" /></svg>Add Location</button>
+              <button type="button"><svg viewBox="0 0 24 24"><circle cx="11" cy="7.5" r="4" /><path d="M3.5 21a7.5 7.5 0 0 1 15 0M19 8v6m-3-3h6" /></svg>Add Driver</button>
+              <button type="button"><svg viewBox="0 0 24 24"><circle cx="11" cy="7.5" r="4" /><path d="M3.5 21a7.5 7.5 0 0 1 15 0M19 8v6m-3-3h6" /></svg>Add Customer</button>
+              <button type="button"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="16" rx="2" /><path d="M8 3v4m8-4v4M4 10h16m-8 4v5m-2.5-2.5h5" /></svg>Create Booking</button>
+              <button type="button"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M9 18V6h4.2a3.6 3.6 0 0 1 0 7.2H9M17 18v4m-2-2h4" /></svg>Create Parking Zone</button>
+              <button type="button"><svg viewBox="0 0 24 24"><path d="M4 20V10m5 10V6m5 14v-8m5 8V4M3 20h18" /><path d="m15 7 4-4 2 2" /></svg>Generate Report</button>
+            </div>
+          </article>
+
+          <article class="dashboard-panel drivers-panel">
+            <div class="panel-heading">
+              <h2>Driver Status Summary</h2>
+              <a href="#drivers">View all drivers →</a>
+            </div>
+            <div class="driver-summary">
+              <div class="driver-donut">
+                <strong>72</strong>
+                <span>Total Drivers</span>
+              </div>
+              <ul>
+                <li><i class="green-dot"></i><b>58</b>Online</li>
+                <li><i class="orange-dot"></i><b>10</b>On Break</li>
+                <li><i class="blue-dot"></i><b>4</b>Offline</li>
+              </ul>
+            </div>
+            <div class="efficiency-card">
+              <span>Driver Efficiency</span>
+              <strong>94%</strong>
+              <svg viewBox="0 0 120 32" aria-hidden="true"><path d="M2 27c9-2 12-7 21-5s11-9 20-7 10-4 18-9 10 5 20 0 17-4 37-2" /></svg>
+            </div>
+          </article>
+        </section>
+
+        <footer class="dashboard-footer">
+          <span>© 2026 Parkin. All rights reserved.</span>
+          <span>Version 1.0.0</span>
+        </footer>
+
+          <!-- Locations section here -->
+        <section class="locations-page hidden" id="locations-view">
+
+          <div class="locations-toolbar locations-toolbar-only">
+  <label class="locations-search">
+    <input id="location-search" type="search" placeholder="Search location..." />
+    <span>⌕</span>
+  </label>
+
+  <button class="add-location-btn" type="button">+ Add New Location</button>
+
+  <select id="location-status-filter">
+    <option value="all">All Status</option>
+    <option value="active">Active</option>
+    <option value="inactive">Inactive</option>
+  </select>
+
+  <select id="location-city-filter">
+    <option value="all">All Cities</option>
+    <option value="riyadh">Riyadh</option>
+    <option value="dammam">Dammam</option>
+    <option value="jeddah">Jeddah</option>
+    <option value="makkah">Makkah</option>
+    <option value="madinah">Madinah</option>
+    <option value="al khobar">Al Khobar</option>
+  </select>
+</div>
+
+  <section class="locations-kpi-grid">
+    <article class="location-kpi-card">
+<span class="kpi-icon green">
+  <svg viewBox="0 0 24 24">
+    <path d="M12 21s7-5.2 7-11a7 7 0 1 0-14 0c0 5.8 7 11 7 11Z" />
+    <circle cx="12" cy="10" r="2.8" />
+  </svg>
+</span>
+      <div>
+        <p>Total Locations</p>
+        <strong>18</strong>
+        <small class="up">↑ 2 new this month</small>
+      </div>
+    </article>
+
+    <article class="location-kpi-card">
+<span class="kpi-icon green">
+  <svg viewBox="0 0 24 24">
+    <path d="M4 20V7.8c0-.7.4-1.4 1.1-1.7l5.7-2.7c.8-.4 1.6-.4 2.4 0l5.7 2.7c.7.3 1.1 1 1.1 1.7V20h-4.2v-5.2h-7.6V20H4Z" />
+    <path d="M8 10h2.2v2.2H8V10Zm5.8 0H16v2.2h-2.2V10Z" />
+  </svg>
+</span>
+      <div>
+        <p>Active Locations</p>
+        <strong>16</strong>
+        <small class="up">88.9% of total</small>
+      </div>
+    </article>
+
+    <article class="location-kpi-card">
+<span class="kpi-icon orange">
+  <svg viewBox="0 0 24 24">
+    <path d="M12 3.5a8.5 8.5 0 1 0 0 17 8.5 8.5 0 0 0 0-17Z" />
+    <path d="M9 8.5h2.1v7H9v-7Zm3.9 0H15v7h-2.1v-7Z" class="icon-cut" />
+  </svg>
+</span>
+      <div>
+        <p>Inactive Locations</p>
+        <strong>2</strong>
+        <small>11.1% of total</small>
+      </div>
+    </article>
+
+    <article class="location-kpi-card">
+<span class="kpi-icon blue">
+  <svg viewBox="0 0 24 24">
+    <path d="M12 3a9 9 0 1 0 9 9h-9V3Z" />
+    <path d="M15 3.5A9 9 0 0 1 20.5 9H15V3.5Z" />
+  </svg>
+</span>
+      <div>
+        <p>Average Occupancy</p>
+        <strong>76%</strong>
+        <small class="up">↑ 6.4% vs last month</small>
+      </div>
+    </article>
+
+    <article class="location-kpi-card">
+<span class="kpi-icon purple">
+  <svg viewBox="0 0 24 24">
+    <path d="M4 7.5C4 6.1 5.1 5 6.5 5H18c1.1 0 2 .9 2 2v2.2h-4.3A3.8 3.8 0 0 0 12 13c0 2.1 1.7 3.8 3.7 3.8H20V19c0 1.1-.9 2-2 2H6.5A2.5 2.5 0 0 1 4 18.5v-11Z" />
+    <path d="M15.7 11H21v4h-5.3a2 2 0 0 1 0-4Z" />
+    <circle cx="16.2" cy="13" r=".8" class="icon-cut" />
+  </svg>
+</span>
+      <div>
+        <p>Revenue</p>
+        <strong>SAR 94,580</strong>
+        <small class="up">↑ 18.6% vs last month</small>
+      </div>
+    </article>
+  </section>
+
+  <section class="locations-table-card">
+    <div class="locations-table-title">
+      <h2>All Locations</h2>
+      <span id="locations-result-count">Showing 1 to 8 of 18 locations</span>
+    </div>
+
+    <div class="locations-table">
+      <div class="locations-row locations-head">
+        <span>Location</span>
+        <span>City</span>
+        <span>Type</span>
+        <span>Occupancy</span>
+        <span>Revenue Today</span>
+        <span>Vehicles Today</span>
+        <span>Avg. Wait Time</span>
+        <span>Status</span>
+        <span>Actions</span>
+      </div>
+
+      <div class="locations-row location-item" data-name="riyadh mall" data-city="riyadh" data-status="active">
+        <span class="location-info"><i class="location-thumb riyadh"></i><b>Riyadh Mall<small>King Fahd Road, Riyadh</small></b></span>
+        <span data-label="City">Riyadh</span>
+        <span data-label="Type">Shopping Mall</span>
+        <span data-label="Occupancy"><i class="ring green" style="--value:92%">92%</i></span>
+        <span data-label="Revenue"><b>SAR 12,500</b><small class="up">↑ 16.2%</small></span>
+        <span data-label="Vehicles">298</span>
+        <span data-label="Wait Time">3.2 min</span>
+        <span data-label="Status"><em class="loc-status active">Active</em></span>
+        <span class="loc-actions"><button type="button">▥</button><button class="loc-more" type="button">⋮</button></span>
+      </div>
+
+      <div class="locations-row location-item" data-name="hilton hotel riyadh" data-city="riyadh" data-status="active">
+        <span class="location-info"><i class="location-thumb hotel"></i><b>Hilton Hotel Riyadh<small>Olaya Street, Riyadh</small></b></span>
+        <span data-label="City">Riyadh</span>
+        <span data-label="Type">Hotel</span>
+        <span data-label="Occupancy"><i class="ring orange" style="--value:75%">75%</i></span>
+        <span data-label="Revenue"><b>SAR 8,200</b><small class="up">↑ 10.1%</small></span>
+        <span data-label="Vehicles">186</span>
+        <span data-label="Wait Time">4.1 min</span>
+        <span data-label="Status"><em class="loc-status active">Active</em></span>
+        <span class="loc-actions"><button type="button">▥</button><button class="loc-more" type="button">⋮</button></span>
+      </div>
+
+      <div class="locations-row location-item" data-name="dammam compound" data-city="dammam" data-status="active">
+        <span class="location-info"><i class="location-thumb dammam"></i><b>Dammam Compound<small>Al Khobar Road, Dammam</small></b></span>
+        <span data-label="City">Dammam</span>
+        <span data-label="Type">Commercial</span>
+        <span data-label="Occupancy"><i class="ring red" style="--value:98%">98%</i></span>
+        <span data-label="Revenue"><b>SAR 9,600</b><small class="down">↓ 3.2%</small></span>
+        <span data-label="Vehicles">216</span>
+        <span data-label="Wait Time">8.7 min</span>
+        <span data-label="Status"><em class="loc-status active">Active</em></span>
+        <span class="loc-actions"><button type="button">▥</button><button class="loc-more" type="button">⋮</button></span>
+      </div>
+
+      <div class="locations-row location-item" data-name="jeddah mall" data-city="jeddah" data-status="active">
+        <span class="location-info"><i class="location-thumb jeddah"></i><b>Jeddah Mall<small>Prince Sultan Road, Jeddah</small></b></span>
+        <span data-label="City">Jeddah</span>
+        <span data-label="Type">Shopping Mall</span>
+        <span data-label="Occupancy"><i class="ring orange" style="--value:68%">68%</i></span>
+        <span data-label="Revenue"><b>SAR 7,100</b><small class="up">↑ 7.3%</small></span>
+        <span data-label="Vehicles">142</span>
+        <span data-label="Wait Time">5.3 min</span>
+        <span data-label="Status"><em class="loc-status active">Active</em></span>
+        <span class="loc-actions"><button type="button">▥</button><button class="loc-more" type="button">⋮</button></span>
+      </div>
+
+      <div class="locations-row location-item" data-name="makkah hotel" data-city="makkah" data-status="active">
+        <span class="location-info"><i class="location-thumb makkah"></i><b>Makkah Hotel<small>Ajyad Street, Makkah</small></b></span>
+        <span data-label="City">Makkah</span>
+        <span data-label="Type">Hotel</span>
+        <span data-label="Occupancy"><i class="ring orange" style="--value:58%">58%</i></span>
+        <span data-label="Revenue"><b>SAR 6,300</b><small class="up">↑ 5.8%</small></span>
+        <span data-label="Vehicles">112</span>
+        <span data-label="Wait Time">6.2 min</span>
+        <span data-label="Status"><em class="loc-status active">Active</em></span>
+        <span class="loc-actions"><button type="button">▥</button><button class="loc-more" type="button">⋮</button></span>
+      </div>
+
+      <div class="locations-row location-item" data-name="madinah hotel" data-city="madinah" data-status="inactive">
+        <span class="location-info"><i class="location-thumb hotel"></i><b>Madinah Hotel<small>Central Area, Madinah</small></b></span>
+        <span data-label="City">Madinah</span>
+        <span data-label="Type">Hotel</span>
+        <span data-label="Occupancy"><i class="ring orange" style="--value:45%">45%</i></span>
+        <span data-label="Revenue"><b>SAR 4,800</b><small class="up">↑ 2.1%</small></span>
+        <span data-label="Vehicles">86</span>
+        <span data-label="Wait Time">6.8 min</span>
+        <span data-label="Status"><em class="loc-status inactive">Inactive</em></span>
+        <span class="loc-actions"><button type="button">▥</button><button class="loc-more" type="button">⋮</button></span>
+      </div>
+
+      <div class="locations-row location-item" data-name="khobar towers" data-city="al khobar" data-status="active">
+        <span class="location-info"><i class="location-thumb dammam"></i><b>Khobar Towers<small>Corniche Road, Al Khobar</small></b></span>
+        <span data-label="City">Al Khobar</span>
+        <span data-label="Type">Commercial</span>
+        <span data-label="Occupancy"><i class="ring green" style="--value:85%">85%</i></span>
+        <span data-label="Revenue"><b>SAR 6,900</b><small class="up">↑ 12.4%</small></span>
+        <span data-label="Vehicles">128</span>
+        <span data-label="Wait Time">3.6 min</span>
+        <span data-label="Status"><em class="loc-status active">Active</em></span>
+        <span class="loc-actions"><button type="button">▥</button><button class="loc-more" type="button">⋮</button></span>
+      </div>
+
+      <div class="locations-row location-item" data-name="jeddah hotel" data-city="jeddah" data-status="inactive">
+        <span class="location-info"><i class="location-thumb jeddah"></i><b>Jeddah Hotel<small>Al Hamra, Jeddah</small></b></span>
+        <span data-label="City">Jeddah</span>
+        <span data-label="Type">Hotel</span>
+        <span data-label="Occupancy"><i class="ring red" style="--value:40%">40%</i></span>
+        <span data-label="Revenue"><b>SAR 3,180</b><small class="down">↓ 1.6%</small></span>
+        <span data-label="Vehicles">64</span>
+        <span data-label="Wait Time">7.9 min</span>
+        <span data-label="Status"><em class="loc-status inactive">Inactive</em></span>
+        <span class="loc-actions"><button type="button">▥</button><button class="loc-more" type="button">⋮</button></span>
+      </div>
+    </div>
+
+    <div class="locations-pagination">
+      <button type="button">‹</button>
+      <button class="active" type="button">1</button>
+      <button type="button">2</button>
+      <button type="button">3</button>
+      <button type="button">›</button>
+    </div>
+  </section>
+</section>
+        <section class="add-location-page hidden" id="add-location-view">
+  <div class="add-location-top">
+    <button class="back-to-locations" type="button">←</button>
+    <div>
+      <h1>Add New Location</h1>
+      <p>Add a new valet parking location and configure its details.</p>
+    </div>
+  </div>
+
+  <form class="add-location-layout">
+    <section class="add-location-card location-info-card">
+      <div class="form-card-title">
+        <span class="form-icon">⌖</span>
+        <h2>Location Information</h2>
+      </div>
+
+      <div class="form-grid two">
+        <label>
+          Location Name <b>*</b>
+          <input type="text" placeholder="Enter location name" />
+        </label>
+
+        <label>
+          Location Type <b>*</b>
+          <select>
+            <option>Select location type</option>
+            <option>Shopping Mall</option>
+            <option>Hotel</option>
+            <option>Commercial</option>
+            <option>Event Venue</option>
+          </select>
+        </label>
+
+        <label>
+          City <b>*</b>
+          <select>
+            <option>Select city</option>
+            <option>Riyadh</option>
+            <option>Jeddah</option>
+            <option>Dammam</option>
+            <option>Makkah</option>
+            <option>Madinah</option>
+            <option>Al Khobar</option>
+          </select>
+        </label>
+
+        <label>
+          Area / District <b>*</b>
+          <input type="text" placeholder="Enter area or district" />
+        </label>
+      </div>
+
+      <div class="form-grid one">
+        <label>
+          Address <b>*</b>
+          <input type="text" placeholder="Enter complete address" />
+        </label>
+      </div>
+
+      <div class="form-grid two">
+        <label>
+          Latitude <b>*</b>
+          <input type="text" placeholder="Enter latitude" />
+        </label>
+
+        <label>
+          Longitude <b>*</b>
+          <input type="text" placeholder="Enter longitude" />
+        </label>
+
+        <label>
+          Postal Code
+          <input type="text" placeholder="Enter postal code" />
+        </label>
+
+        <label>
+          Contact Phone <b>*</b>
+          <input type="tel" placeholder="+966 5X XXX XXXX" />
+        </label>
+
+        <label>
+          Email
+          <input type="email" placeholder="Enter email address" />
+        </label>
+
+        <label>
+          Website
+          <input type="url" placeholder="Enter website (optional)" />
+        </label>
+      </div>
+
+      <div class="form-grid one">
+        <label>
+          Location Timezone
+          <select>
+            <option>(GMT+03:00) Asia/Riyadh</option>
+          </select>
+        </label>
+      </div>
+    </section>
+
+    <aside class="add-location-side">
+      <section class="add-location-card">
+        <div class="form-card-title">
+          <span class="form-icon">▧</span>
+          <h2>Location Image</h2>
+        </div>
+
+        <div class="upload-grid">
+          <label class="upload-box">
+            <input type="file" hidden />
+            <strong>☁</strong>
+            <span>Upload location image</span>
+            <small>PNG, JPG or WEBP (Max. 5MB)</small>
+            <em>Choose File</em>
+          </label>
+
+          <div class="preview-card">
+            <button type="button">×</button>
+            <img src="/public/assets/parkin-valet-hero.jpg" alt="Location preview" />
+            <b>Riyadh Mall.jpg</b>
+            <small>2.4 MB</small>
+          </div>
+        </div>
+      </section>
+
+      <section class="add-location-card">
+        <div class="form-card-title">
+          <span class="form-icon">⚙</span>
+          <h2>Operational Settings</h2>
+        </div>
+
+        <div class="form-grid two compact">
+          <label>
+            Operating Hours <b>*</b>
+            <input type="text" value="08:00 AM" />
+          </label>
+
+          <label>
+            Max Capacity (Vehicles) <b>*</b>
+            <input type="number" placeholder="Enter capacity" />
+          </label>
+        </div>
+
+        <div class="status-select">
+          <label class="selected">
+            <input type="radio" name="status" checked />
+            <span>
+              <b>Active</b>
+              <small>Location is active and available</small>
+            </span>
+          </label>
+
+          <label>
+            <input type="radio" name="status" />
+            <span>
+              <b>Inactive</b>
+              <small>Location is inactive and hidden</small>
+            </span>
+          </label>
+        </div>
+      </section>
+
+      <section class="add-location-card">
+        <div class="form-card-title">
+          <span class="form-icon">▤</span>
+          <h2>Notes</h2>
+        </div>
+
+        <textarea maxlength="500" placeholder="Enter any additional notes (optional)"></textarea>
+        <small class="textarea-count">0 / 500</small>
+      </section>
+    </aside>
+
+    <div class="add-location-footer">
+      <button class="cancel-location" type="button">Cancel</button>
+      <button class="save-location" type="submit">Save Location</button>
+    </div>
+  </form>
+</section>
+
+      </main>
+    </section>
+
+
+    <script src="http://192.168.3.108:3001/socket.io/socket.io.js"></script>
     <script src="/script.js" defer></script>
+    <!-- Login Loading Overlay -->
+    <div id="login-loader" class="login-loader hidden">
+      <div class="loader"></div>
+      <p>Signing in...</p>
+    </div>
   </body>
 </html>

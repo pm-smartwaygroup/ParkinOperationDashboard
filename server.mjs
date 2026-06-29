@@ -1,6 +1,7 @@
 import { createReadStream, existsSync, statSync } from "node:fs";
 import { extname, join, normalize } from "node:path";
 import { createServer } from "node:http";
+import { networkInterfaces } from "node:os";
 
 const port = Number(process.env.PORT || 4173);
 const root = process.cwd();
@@ -16,8 +17,18 @@ const contentTypes = {
   ".webp": "image/webp",
 };
 
+function getLocalAddresses() {
+  return Object.values(networkInterfaces())
+    .flat()
+    .filter((item) => item && item.family === "IPv4" && !item.internal)
+    .map((item) => item.address);
+}
+
 const server = createServer((request, response) => {
-  const requestPath = decodeURIComponent(new URL(request.url, `http://${request.headers.host}`).pathname);
+  const requestPath = decodeURIComponent(
+    new URL(request.url, `http://${request.headers.host}`).pathname
+  );
+
   const relativePath = requestPath === "/" ? "index.html" : requestPath.replace(/^\/+/, "");
   const filePath = normalize(join(root, relativePath));
 
@@ -31,10 +42,14 @@ const server = createServer((request, response) => {
     "Cache-Control": "no-cache",
     "Content-Type": contentTypes[extname(filePath).toLowerCase()] || "application/octet-stream",
   });
+
   createReadStream(filePath).pipe(response);
 });
 
-server.listen(port, "192.168.3.108", () => {
+server.listen(port, "0.0.0.0", () => {
   console.log(`Mac browser: http://localhost:${port}`);
-  console.log(`Mobile/tablet: http://192.168.3.108:${port}`);
+
+  getLocalAddresses().forEach((address) => {
+    console.log(`Mobile/tablet: http://${address}:${port}`);
+  });
 });
