@@ -95,7 +95,7 @@ function startSessionMonitor() {
 
   sessionMonitor = setInterval(() => {
     checkSession();
-  }, 30000); // every 30 seconds
+  }, 5000); // every 30 seconds
 }
 
 function stopSessionMonitor() {
@@ -220,26 +220,33 @@ function connectAuthSocket() {
     transports: ["websocket"],
   });
 
-  authSocket.on("connect", () => {
-    authSocket.emit("register_session", { sessionId });
+authSocket.on("connect", () => {
+  console.log("✅ Socket connected:", authSocket.id);
+  console.log("Registering session:", sessionId);
+  authSocket.emit("register_session", { sessionId }, (ack) => {
+    console.log("✅ Register session ACK:", ack);
   });
+});
 
-  authSocket.on("force_logout", (data) => {
-    if (isManualLogout) return;
+authSocket.on("connect_error", (error) => {
+  console.error("❌ Socket connect error:", error.message);
+});
 
-    stopSessionMonitor();
-    disconnectAuthSocket();
+authSocket.on("force_logout", (data) => {
+  console.log("🚨 Force logout received:", data);
 
-    localStorage.removeItem("parkin_access_token");
-    localStorage.removeItem("parkin_user");
+  if (isManualLogout) return;
 
-    showLogin();
+  stopSessionMonitor();
+  disconnectAuthSocket();
 
-    alert(
-      data?.message ||
-        "Your session has ended because your account was signed in on another device.",
-    );
-  });
+  localStorage.removeItem("parkin_access_token");
+  localStorage.removeItem("parkin_user");
+
+  showLogin();
+
+  alert(data?.message || "Your session has ended because your account was signed in on another device.");
+});
 }
 
 function disconnectAuthSocket() {
@@ -262,8 +269,8 @@ function showDashboard() {
   hideLoader();
 
   // checkSession();
-  startSessionMonitor();
-  connectAuthSocket();
+ startSessionMonitor();
+  // connectAuthSocket();
 }
 
 function showLogin() {
@@ -390,14 +397,18 @@ form.addEventListener("submit", async (event) => {
       minimumLoaderTime,
     ]);
 
-    const data = await response.json();
+    const result = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.message || "Invalid email or password");
+      throw new Error(result.message || "Invalid email or password");
     }
 
-    localStorage.setItem("parkin_access_token", data.accessToken);
-    localStorage.setItem("parkin_user", JSON.stringify(data.user));
+    const loginData = result.data || result;
+
+    localStorage.setItem("parkin_access_token", loginData.accessToken);
+    localStorage.setItem("parkin_user", JSON.stringify(loginData.user));
+
+    console.log("Current login session:", getSessionIdFromToken(loginData.accessToken));
 
     showDashboard();
   } catch (error) {
@@ -475,16 +486,17 @@ async function restoreSession() {
     }
 
     showDashboard();
-  } catch {
-    localStorage.removeItem("parkin_access_token");
-    localStorage.removeItem("parkin_user");
-    showLogin();
-  }
+    } catch {
+      console.warn("Session restore failed. Keeping login screen only.");
+      showLogin();
+    }
 }
 
 const locationsView = document.querySelector("#locations-view");
 const navLinks = document.querySelectorAll(".dashboard-nav a");
-const dashboardSections = document.querySelectorAll(".dashboard-main > section:not(#locations-view)");
+const dashboardSections = document.querySelectorAll(
+  ".dashboard-main > section:not(#locations-view):not(#add-location-view)"
+);
 
 const locationSearch = document.querySelector("#location-search");
 const locationStatusFilter = document.querySelector("#location-status-filter");
@@ -501,6 +513,7 @@ function setActiveNav(hash) {
 function showMainDashboardView() {
   dashboardSections.forEach((section) => section.classList.remove("hidden"));
   locationsView?.classList.add("hidden");
+  addLocationView?.classList.add("hidden");
 
   document.querySelector(".dashboard-title h1").textContent = "Dashboard";
   document.querySelector(".dashboard-title p").textContent =
@@ -511,8 +524,10 @@ function showMainDashboardView() {
 
 function showLocationsView() {
   dashboardSections.forEach((section) => section.classList.add("hidden"));
+  
   locationsView?.classList.remove("hidden");
-
+  addLocationView?.classList.add("hidden");
+  
   document.querySelector(".dashboard-title h1").textContent = "Locations";
   document.querySelector(".dashboard-title p").textContent =
     "Manage all valet parking locations and operational performance";
@@ -673,14 +688,14 @@ document.addEventListener("click", (event) => {
 window.addEventListener("resize", closeLocationActionsMenu);
 window.addEventListener("scroll", closeLocationActionsMenu, true);
 
-handleDashboardRoute();
-filterLocations();
-
 const addLocationView = document.querySelector("#add-location-view");
 const addLocationBtn = document.querySelector(".add-location-btn");
 const backToLocationsBtn = document.querySelector(".back-to-locations");
 const cancelLocationBtn = document.querySelector(".cancel-location");
 const addLocationForm = document.querySelector(".add-location-layout");
+
+handleDashboardRoute();
+filterLocations();
 
 function showAddLocationView() {
   dashboardSections.forEach((section) => section.classList.add("hidden"));
@@ -705,10 +720,46 @@ addLocationBtn?.addEventListener("click", showAddLocationView);
 backToLocationsBtn?.addEventListener("click", backToLocationsView);
 cancelLocationBtn?.addEventListener("click", backToLocationsView);
 
-addLocationForm?.addEventListener("submit", (event) => {
+// Save button functionality
+addLocationForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
-  alert("Location saved successfully.");
-  backToLocationsView();
+
+  const saveButton = addLocationForm.querySelector(".save-location");
+  const formData = new FormData(addLocationForm);
+
+  const payload = Object.fromEntries(formData.entries());
+
+  if (payload.capacity) {
+    payload.capacity = Number(payload.capacity);
+  }
+
+  try {
+    saveButton.disabled = true;
+    saveButton.textContent = "Saving...";
+
+    const response = await fetch(`${API_BASE_URL}/locations`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.message || "Failed to save location");
+    }
+
+    alert("Location saved successfully.");
+    addLocationForm.reset();
+    backToLocationsView();
+  } catch (error) {
+    alert(error.message || "Something went wrong.");
+  } finally {
+    saveButton.disabled = false;
+    saveButton.textContent = "Save Location";
+  }
 });
 
 restoreSession();

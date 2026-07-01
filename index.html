@@ -916,84 +916,90 @@
       <div class="form-grid two">
         <label>
           Location Name <b>*</b>
-          <input type="text" placeholder="Enter location name" />
+          <input name="name" type="text" placeholder="Enter location name" required />
         </label>
 
         <label>
           Location Type <b>*</b>
-          <select>
-            <option>Select location type</option>
-            <option>Shopping Mall</option>
-            <option>Hotel</option>
-            <option>Commercial</option>
-            <option>Event Venue</option>
+          <select name="type" required>
+            <option value="">Select location type</option>
+            <option value="SHOPPING_MALL">Shopping Mall</option>
+            <option value="HOTEL">Hotel</option>
+            <option value="COMMERCIAL">Commercial</option>
+            <option value="EVENT_VENUE">Event Venue</option>
           </select>
         </label>
 
         <label>
           City <b>*</b>
-          <select>
-            <option>Select city</option>
-            <option>Riyadh</option>
-            <option>Jeddah</option>
-            <option>Dammam</option>
-            <option>Makkah</option>
-            <option>Madinah</option>
-            <option>Al Khobar</option>
-          </select>
+            <select name="city" required>
+              <option value="">Select city</option>
+              <option value="Riyadh">Riyadh</option>
+              <option value="Jeddah">Jeddah</option>
+              <option value="Dammam">Dammam</option>
+              <option value="Makkah">Makkah</option>
+              <option value="Madinah">Madinah</option>
+              <option value="Al Khobar">Al Khobar</option>
+            </select>
         </label>
 
         <label>
           Area / District <b>*</b>
-          <input type="text" placeholder="Enter area or district" />
+            <input name="district" type="text" placeholder="Enter area or district" required />
         </label>
       </div>
 
       <div class="form-grid one">
         <label>
           Address <b>*</b>
-          <input type="text" placeholder="Enter complete address" />
+            <input name="address" type="text" placeholder="Enter complete address" required />
         </label>
       </div>
 
       <div class="form-grid two">
         <label>
           Latitude <b>*</b>
-          <input type="text" placeholder="Enter latitude" />
+          <input name="latitude" type="text" placeholder="Enter latitude" />
         </label>
 
         <label>
           Longitude <b>*</b>
-          <input type="text" placeholder="Enter longitude" />
+          <input name="longitude" type="text" placeholder="Enter longitude" />
         </label>
 
         <label>
           Postal Code
-          <input type="text" placeholder="Enter postal code" />
+          <input name="postalCode" type="text" placeholder="Enter postal code" />
         </label>
 
         <label>
           Contact Phone <b>*</b>
-          <input type="tel" placeholder="+966 5X XXX XXXX" />
+          <input name="contactPhone" type="tel" placeholder="+966 5X XXX XXXX" required />
         </label>
 
         <label>
           Email
-          <input type="email" placeholder="Enter email address" />
+          <input name="email" type="email" placeholder="Enter email address" />
         </label>
 
         <label>
           Website
-          <input type="url" placeholder="Enter website (optional)" />
+          <input
+            name="website"
+            type="url"
+            placeholder="https://www.parkin.com.sa"
+          />
         </label>
       </div>
 
       <div class="form-grid one">
         <label>
           Location Timezone
-          <select>
-            <option>(GMT+03:00) Asia/Riyadh</option>
-          </select>
+            <select name="timezone">
+              <option value="Asia/Riyadh" selected>
+                (GMT+03:00) Asia/Riyadh
+              </option>
+            </select>
         </label>
       </div>
     </section>
@@ -1032,18 +1038,42 @@
         <div class="form-grid two compact">
           <label>
             Operating Hours <b>*</b>
-            <input type="text" value="08:00 AM" />
+            <input
+              name="openingTime"
+              type="time"
+              value="08:00"
+              required
+            />
           </label>
-
+          <label>
+            Closing Time <b>*</b>
+            <input
+              name="closingTime"
+              type="time"
+              value="23:00"
+              required
+            />
+          </label>
           <label>
             Max Capacity (Vehicles) <b>*</b>
-            <input type="number" placeholder="Enter capacity" />
+              <input
+                name="capacity"
+                type="number"
+                min="1"
+                placeholder="Enter capacity"
+                required
+              />
           </label>
         </div>
 
         <div class="status-select">
           <label class="selected">
-            <input type="radio" name="status" checked />
+            <input
+                type="radio"
+                name="status"
+                value="ACTIVE"
+                checked
+            />
             <span>
               <b>Active</b>
               <small>Location is active and available</small>
@@ -1051,7 +1081,11 @@
           </label>
 
           <label>
-            <input type="radio" name="status" />
+              <input
+                  type="radio"
+                  name="status"
+                  value="INACTIVE"
+              />
             <span>
               <b>Inactive</b>
               <small>Location is inactive and hidden</small>
@@ -1066,7 +1100,11 @@
           <h2>Notes</h2>
         </div>
 
-        <textarea maxlength="500" placeholder="Enter any additional notes (optional)"></textarea>
+          <textarea
+              name="notes"
+              maxlength="500"
+              placeholder="Additional operational notes..."
+          ></textarea>
         <small class="textarea-count">0 / 500</small>
       </section>
     </aside>
