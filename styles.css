@@ -4415,3 +4415,6 @@ body.dashboard-open {
     backdrop-filter: blur(10px);
   }
 }
+#add-location-view .add-location-top {
+  display: none !important;
+}
