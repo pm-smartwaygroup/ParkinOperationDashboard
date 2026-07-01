@@ -79,7 +79,7 @@ const loginLoader = document.querySelector("#login-loader");
 const API_BASE_URL =
   window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
     ? "http://localhost:3001"
-    : `http://${window.location.hostname}:3001`;
+    : "https://parkinbackend.onrender.com";
 
 let authSocket = null;
 
@@ -216,7 +216,7 @@ function connectAuthSocket() {
 
   disconnectAuthSocket();
 
-  authSocket = io(API_BASE_URL, {
+  authSocket = io("https://parkinbackend.onrender.com", {
     transports: ["websocket"],
   });
 
@@ -702,7 +702,7 @@ function showAddLocationView() {
   locationsView?.classList.add("hidden");
   addLocationView?.classList.remove("hidden");
 
-  document.querySelector(".dashboard-title h1").textContent = "Add New Location";
+  document.querySelector(".dashboard-title h1").textContent = "Locations";
   document.querySelector(".dashboard-title p").textContent =
     "Create a new valet parking location";
 
