@@ -1,0 +1,288 @@
+/* ==========================================
+   UPLOAD DOCUMENTS
+========================================== */
+
+.upload-documents-card {
+  background: #fff;
+  border: 1px solid #e7edf5;
+  border-radius: 18px;
+  padding: 28px;
+}
+
+.upload-documents-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 30px;
+  margin-bottom: 24px;
+}
+
+.upload-documents-header h2 {
+  margin: 0;
+  font-size: 24px;
+  color: #142033;
+}
+
+.upload-documents-header p {
+  margin-top: 8px;
+  color: #6b7280;
+  font-size: 14px;
+  max-width: 700px;
+}
+
+/* =========================
+   CATEGORY TABS
+========================= */
+
+.upload-tabs {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 26px;
+}
+
+.upload-tabs button {
+  height: 40px;
+  padding: 0 18px;
+  border: 1px solid #dbe5ef;
+  background: #fff;
+  border-radius: 10px;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+}
+
+.upload-tabs button.active {
+  border-color: #0f8b4c;
+  background: #edf9f2;
+  color: #0f8b4c;
+}
+
+.upload-tabs span {
+  margin-left: 8px;
+  padding: 2px 7px;
+  border-radius: 20px;
+  background: #eef2f7;
+  font-size: 11px;
+}
+
+/* =========================
+   PROGRESS
+========================= */
+
+.document-progress {
+  width: 340px;
+  border: 1px solid #e7edf5;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.document-progress div {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.document-progress b {
+  color: #142033;
+}
+
+.document-progress span {
+  color: #64748b;
+}
+
+.document-progress em {
+  display: block;
+  height: 8px;
+  background: #edf2f7;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.document-progress em i {
+  display: block;
+  width: 0%;
+  height: 100%;
+  background: #0f8b4c;
+  border-radius: 20px;
+  transition: 0.4s;
+}
+
+.document-progress small {
+  display: block;
+  text-align: right;
+  color: #64748b;
+}
+
+/* =========================
+   GRID
+========================= */
+
+.documents-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 22px;
+}
+
+/* =========================
+   CARD
+========================= */
+
+.document-card {
+  border: 1px solid #e7edf5;
+  border-radius: 16px;
+  padding: 20px;
+  background: #fff;
+  transition: 0.25s;
+}
+
+.document-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.08);
+}
+
+.document-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.document-top i {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: #edf9f2;
+  color: #0f8b4c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.document-top h3 {
+  margin: 0;
+  font-size: 15px;
+  color: #142033;
+}
+
+.document-card p {
+  margin: 12px 0 18px;
+  color: #64748b;
+  font-size: 13px;
+  min-height: 34px;
+}
+
+/* =========================
+   BADGES
+========================= */
+
+.required,
+.company,
+.optional {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 3px 10px;
+  border-radius: 30px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.required {
+  background: #feecec;
+  color: #ef4444;
+}
+
+.company {
+  background: #edf9f2;
+  color: #0f8b4c;
+}
+
+.optional {
+  background: #eef4ff;
+  color: #2563eb;
+}
+
+/* =========================
+   UPLOAD BOX
+========================= */
+
+.document-upload {
+  border: 2px dashed #dbe5ef;
+  border-radius: 14px;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.document-upload:hover {
+  border-color: #0f8b4c;
+  background: #f7fcf8;
+}
+
+.document-upload i {
+  font-size: 22px;
+  color: #0f8b4c;
+  margin-bottom: 12px;
+}
+
+.document-upload b {
+  color: #142033;
+  font-size: 14px;
+}
+
+.document-upload small {
+  margin-top: 4px;
+  color: #64748b;
+}
+
+/* =========================
+   INFO BAR
+========================= */
+
+.upload-info {
+  margin-top: 26px;
+  border-radius: 12px;
+  background: #eef6ff;
+  color: #2563eb;
+  padding: 14px 18px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-size: 14px;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 1500px) {
+  .documents-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 1200px) {
+  .documents-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .document-progress {
+    width: 100%;
+  }
+
+  .upload-documents-header {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 768px) {
+  .documents-grid {
+    grid-template-columns: 1fr;
+  }
+}

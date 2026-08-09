@@ -12,6 +12,8 @@ const contentTypes = {
   ".js": "text/javascript; charset=utf-8",
   ".mjs": "text/javascript; charset=utf-8",
   ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
   ".svg": "image/svg+xml",
   ".ttf": "font/ttf",
   ".webp": "image/webp",
@@ -26,13 +28,18 @@ function getLocalAddresses() {
 
 const server = createServer((request, response) => {
   const requestPath = decodeURIComponent(
-    new URL(request.url, `http://${request.headers.host}`).pathname
+    new URL(request.url, `http://${request.headers.host}`).pathname,
   );
 
-  const relativePath = requestPath === "/" ? "index.html" : requestPath.replace(/^\/+/, "");
+  const relativePath =
+    requestPath === "/" ? "index.html" : requestPath.replace(/^\/+/, "");
   const filePath = normalize(join(root, relativePath));
 
-  if (!filePath.startsWith(root) || !existsSync(filePath) || !statSync(filePath).isFile()) {
+  if (
+    !filePath.startsWith(root) ||
+    !existsSync(filePath) ||
+    !statSync(filePath).isFile()
+  ) {
     response.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
     response.end("Not found");
     return;
@@ -40,7 +47,9 @@ const server = createServer((request, response) => {
 
   response.writeHead(200, {
     "Cache-Control": "no-cache",
-    "Content-Type": contentTypes[extname(filePath).toLowerCase()] || "application/octet-stream",
+    "Content-Type":
+      contentTypes[extname(filePath).toLowerCase()] ||
+      "application/octet-stream",
   });
 
   createReadStream(filePath).pipe(response);

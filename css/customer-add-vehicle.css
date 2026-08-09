@@ -1,0 +1,1445 @@
+/* ==========================================================
+   CUSTOMER ADD VEHICLE
+========================================================== */
+
+.customer-add-vehicle-page,
+.customer-add-vehicle-page * {
+  box-sizing: border-box;
+}
+
+.customer-add-vehicle-page {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  color: #0f172a;
+}
+
+/* ==========================================================
+   BACK BUTTON
+========================================================== */
+
+.customer-add-vehicle-page .page-back-btn {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #263754;
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.customer-add-vehicle-page .page-back-btn:hover {
+  color: #0f8b4c;
+}
+
+/* ==========================================================
+   PAGE LAYOUT
+========================================================== */
+
+.customer-add-vehicle-layout {
+  width: 100%;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 350px;
+  gap: 18px;
+  align-items: start;
+}
+
+.customer-add-vehicle-card,
+.vehicle-preview-card {
+  min-width: 0;
+  border: 1px solid #dfe7ef;
+  border-radius: 13px;
+  background: #fff;
+}
+
+.customer-add-vehicle-card {
+  padding: 22px;
+}
+
+.vehicle-preview-card {
+  position: sticky;
+  top: 20px;
+  padding: 20px;
+}
+
+/* ==========================================================
+   SECTION HEADER
+========================================================== */
+
+.vehicle-section-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.vehicle-section-title {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.vehicle-section-icon {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 38px;
+  border-radius: 8px;
+  background: #e6f8ee;
+  color: #0f8b4c;
+  font-size: 1rem;
+}
+
+.vehicle-section-title h2 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+.vehicle-section-title p {
+  margin: 6px 0 0;
+  color: #39517d;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.vehicle-section-header > small {
+  color: #53627d;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.vehicle-section-header .required {
+  color: #ef4444;
+}
+
+/* ==========================================================
+   FORM GRID
+========================================================== */
+
+.vehicle-form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.customer-add-vehicle-page .three-columns {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.customer-add-vehicle-page .two-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.customer-add-vehicle-page label {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #263b68;
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.customer-add-vehicle-page input,
+.customer-add-vehicle-page select,
+.customer-add-vehicle-page textarea {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  border: 1px solid #d8e2ed;
+  border-radius: 8px;
+  background: #fff;
+  color: #0f172a;
+  font: inherit;
+  font-size: 0.82rem;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.customer-add-vehicle-page input,
+.customer-add-vehicle-page select {
+  height: 44px;
+  padding: 0 13px;
+}
+
+.customer-add-vehicle-page textarea {
+  min-height: 80px;
+  padding: 13px;
+  resize: vertical;
+}
+
+.customer-add-vehicle-page input:focus,
+.customer-add-vehicle-page select:focus,
+.customer-add-vehicle-page textarea:focus {
+  border-color: #0f8b4c;
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(15, 139, 76, 0.08);
+}
+
+.customer-add-vehicle-page input::placeholder,
+.customer-add-vehicle-page textarea::placeholder {
+  color: #94a3b8;
+}
+
+/* ==========================================================
+   PLATE COUNTRY AND PLATE SECTION
+========================================================== */
+
+.plate-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.plate-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.plate-header h4 {
+  margin: 0;
+  color: #263b68;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.plate-header small {
+  color: #39517d;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.plate-input-layout {
+  display: grid;
+  grid-template-columns: minmax(290px, 1fr) minmax(230px, 0.85fr);
+  gap: 26px;
+  align-items: end;
+}
+
+.plate-number-group,
+.plate-letter-group {
+  min-width: 0;
+}
+
+.plate-number-group > label,
+.plate-letter-group > label {
+  display: block;
+  margin-bottom: 8px;
+  color: #263b68;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.plate-number-boxes {
+  display: grid;
+  grid-template-columns: repeat(4, 58px);
+  gap: 9px;
+}
+
+.plate-letter-boxes {
+  display: grid;
+  grid-template-columns: repeat(3, 68px);
+  gap: 9px;
+}
+
+.plate-number-boxes input,
+.plate-letter-boxes select {
+  width: 100%;
+  height: 46px;
+  padding: 0;
+  border: 1px solid #b9d9c6;
+  border-radius: 7px;
+  text-align: center;
+  font-size: 0.88rem;
+  font-weight: 900;
+}
+
+.plate-number-boxes input {
+  color: #263b68;
+}
+
+.plate-number-boxes input:valid {
+  border-color: #70c68f;
+  background: #fbfffc;
+}
+
+.plate-letter-boxes select {
+  padding-left: 12px;
+  text-align-last: center;
+}
+
+.plate-success {
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  border: 1px solid #c9edda;
+  border-radius: 7px;
+  background: #eaf9f0;
+  color: #0f8b4c;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.plate-success i {
+  font-size: 0.9rem;
+}
+
+/* ==========================================================
+   MILEAGE AND NOTES
+========================================================== */
+
+.customer-add-vehicle-page textarea[maxlength="200"] {
+  min-height: 82px;
+}
+
+.customer-add-vehicle-page label:has(input[placeholder="Enter mileage"]) {
+  position: relative;
+}
+
+.customer-add-vehicle-page
+  label:has(input[placeholder="Enter mileage"])::after {
+  content: "KM";
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  color: #263b68;
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+/* ==========================================================
+   PRIMARY VEHICLE
+========================================================== */
+
+.primary-vehicle-option {
+  display: grid !important;
+  grid-template-columns: 22px minmax(0, 1fr);
+  gap: 12px !important;
+  align-items: start;
+  margin-top: 2px;
+  padding-top: 20px;
+  border-top: 1px solid #edf2f7;
+}
+
+.primary-vehicle-option input[type="checkbox"] {
+  width: 18px !important;
+  height: 18px !important;
+  min-width: 18px;
+  margin: 2px 0 0;
+  padding: 0;
+  accent-color: #0f8b4c;
+}
+
+.primary-vehicle-option > span {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.primary-vehicle-option > span > b {
+  color: #0f172a;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.primary-vehicle-option > span > small {
+  color: #39517d;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+/* ==========================================================
+   FORM ACTIONS
+========================================================== */
+
+.vehicle-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 22px;
+  padding-top: 20px;
+  border-top: 1px solid #edf2f7;
+}
+
+.vehicle-form-actions .secondary-btn,
+.vehicle-form-actions .primary-btn {
+  min-height: 44px;
+  padding: 0 22px;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.vehicle-form-actions .secondary-btn {
+  min-width: 105px;
+  border: 1px solid #d8e2ed;
+  background: #fff;
+  color: #0f172a;
+}
+
+.vehicle-form-actions .primary-btn {
+  min-width: 135px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 0;
+  background: #0f8b4c;
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(15, 139, 76, 0.18);
+}
+
+/* ==========================================================
+   PREVIEW HEADER
+========================================================== */
+
+.vehicle-preview-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid #e6edf4;
+}
+
+.vehicle-preview-heading-icon {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 36px;
+  border-radius: 8px;
+  background: #e8f8ee;
+  color: #0f8b4c;
+}
+
+.vehicle-preview-heading h3 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 0.92rem;
+  font-weight: 900;
+}
+
+.vehicle-preview-heading p {
+  margin: 5px 0 0;
+  color: #64748b;
+  font-size: 0.68rem;
+  line-height: 1.4;
+}
+
+/* ==========================================================
+   SAUDI PLATE
+========================================================== */
+
+.saudi-plate-preview {
+  width: min(100%, 255px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 36px;
+  margin: 22px auto;
+  border: 2px solid #111827;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.saudi-plate-main {
+  display: grid;
+  grid-template-rows: repeat(2, 1fr);
+}
+
+.saudi-plate-row {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  min-height: 46px;
+}
+
+.saudi-plate-row:first-child {
+  border-bottom: 1px solid #111827;
+}
+
+.saudi-plate-number,
+.saudi-plate-letters {
+  display: grid;
+  place-items: center;
+  color: #111827;
+  font-size: 1.35rem;
+  font-weight: 900;
+  letter-spacing: 0.15em;
+}
+
+.saudi-plate-number {
+  border-right: 1px solid #111827;
+}
+
+.saudi-plate-side {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  padding: 5px 2px;
+  border-left: 1px solid #111827;
+}
+
+.saudi-plate-side strong {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-size: 0.58rem;
+  letter-spacing: 0.12em;
+}
+
+.saudi-plate-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #111827;
+}
+
+/* ==========================================================
+   PREVIEW SUMMARY
+========================================================== */
+
+.vehicle-preview-summary {
+  display: grid;
+  border: 1px solid #e1e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.vehicle-preview-row {
+  min-height: 52px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(88px, auto);
+  gap: 12px;
+  align-items: center;
+  padding: 10px 12px;
+  border-bottom: 1px solid #e8eef5;
+}
+
+.vehicle-preview-row:last-child {
+  border-bottom: 0;
+}
+
+.vehicle-preview-row > span {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  color: #29416f;
+  font-size: 0.69rem;
+  font-weight: 800;
+}
+
+.vehicle-preview-row > span i {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 30px;
+  border-radius: 50%;
+  font-size: 0.78rem;
+}
+
+.vehicle-preview-row > b {
+  color: #0f172a;
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-align: right;
+}
+
+.vehicle-preview-row > b small {
+  display: block;
+  margin-top: 5px;
+  color: #314b7b;
+  font-size: 0.64rem;
+}
+
+.vehicle-primary-status {
+  justify-self: end;
+  padding: 4px 8px;
+  border-radius: 5px;
+  font-size: 0.64rem;
+  font-weight: 900;
+}
+
+.vehicle-primary-status.active {
+  background: #dcfce7;
+  color: #0f8b4c;
+}
+
+.vehicle-primary-status.inactive {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media (max-width: 1280px) {
+  .customer-add-vehicle-layout {
+    grid-template-columns: minmax(0, 1fr) 310px;
+  }
+
+  .plate-input-layout {
+    grid-template-columns: minmax(250px, 1fr) minmax(210px, 0.8fr);
+  }
+
+  .plate-number-boxes {
+    grid-template-columns: repeat(4, minmax(48px, 1fr));
+  }
+
+  .plate-letter-boxes {
+    grid-template-columns: repeat(3, minmax(58px, 1fr));
+  }
+}
+
+@media (max-width: 1050px) {
+  .customer-add-vehicle-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .vehicle-preview-card {
+    position: static;
+  }
+}
+
+@media (max-width: 820px) {
+  .customer-add-vehicle-page .three-columns,
+  .customer-add-vehicle-page .two-columns,
+  .plate-input-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .plate-number-boxes {
+    grid-template-columns: repeat(4, minmax(48px, 1fr));
+  }
+
+  .plate-letter-boxes {
+    grid-template-columns: repeat(3, minmax(58px, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .customer-add-vehicle-card,
+  .vehicle-preview-card {
+    padding: 16px;
+    border-radius: 11px;
+  }
+
+  .vehicle-section-header {
+    flex-direction: column;
+  }
+
+  .plate-number-boxes,
+  .plate-letter-boxes {
+    width: 100%;
+  }
+
+  .vehicle-form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .vehicle-form-actions button {
+    width: 100%;
+  }
+
+  .vehicle-preview-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .vehicle-preview-row > b,
+  .vehicle-primary-status {
+    justify-self: start;
+    text-align: left;
+  }
+}
+
+/* ==========================================================
+   PLATE NUMBER. FINAL LAYOUT FIX
+========================================================== */
+
+.customer-add-vehicle-page .plate-section {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.customer-add-vehicle-page .plate-header {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.customer-add-vehicle-page .plate-header h4 {
+  margin: 0;
+  color: #263b68;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.customer-add-vehicle-page .plate-header small {
+  color: #526483;
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.customer-add-vehicle-page .plate-input-layout {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 28px;
+}
+
+.customer-add-vehicle-page .plate-number-group,
+.customer-add-vehicle-page .plate-letter-group {
+  min-width: 0;
+}
+
+.customer-add-vehicle-page .plate-number-group {
+  flex: 0 0 auto;
+}
+
+.customer-add-vehicle-page .plate-letter-group {
+  flex: 0 0 auto;
+}
+
+.customer-add-vehicle-page .plate-group-label {
+  display: block;
+  margin-bottom: 8px;
+  color: #263b68;
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.customer-add-vehicle-page .plate-number-boxes {
+  display: grid !important;
+  grid-template-columns: repeat(4, 58px) !important;
+  gap: 9px !important;
+  width: max-content !important;
+}
+
+.customer-add-vehicle-page .plate-letter-boxes {
+  display: grid !important;
+  grid-template-columns: repeat(3, 68px) !important;
+  gap: 9px !important;
+  width: max-content !important;
+}
+
+.customer-add-vehicle-page .plate-number-boxes .vehicle-plate-digit {
+  width: 58px !important;
+  min-width: 58px !important;
+  max-width: 58px !important;
+  height: 46px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 1px solid #71c58f !important;
+  border-radius: 7px !important;
+  background: #fbfffc !important;
+  color: #263b68;
+  font-size: 0.9rem;
+  font-weight: 900;
+  text-align: center;
+}
+
+.customer-add-vehicle-page .plate-letter-boxes .vehicle-plate-letter {
+  width: 68px !important;
+  min-width: 68px !important;
+  max-width: 68px !important;
+  height: 46px !important;
+  margin: 0 !important;
+  padding: 0 10px !important;
+  border: 1px solid #b8d5c3 !important;
+  border-radius: 7px !important;
+  background: #fff;
+  color: #0f172a;
+  font-size: 0.86rem;
+  font-weight: 900;
+  text-align: center;
+  text-align-last: center;
+}
+
+.customer-add-vehicle-page .plate-success {
+  width: 100%;
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  border: 1px solid #c9edda;
+  border-radius: 7px;
+  background: #eaf9f0;
+  color: #0f8b4c;
+  font-size: 0.71rem;
+  font-weight: 800;
+}
+
+/* iPad and tablet */
+
+@media (max-width: 900px) {
+  .customer-add-vehicle-page .plate-input-layout {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 18px;
+  }
+}
+
+/* Small mobile */
+
+@media (max-width: 480px) {
+  .customer-add-vehicle-page .plate-number-boxes {
+    width: 100% !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+
+  .customer-add-vehicle-page .plate-letter-boxes {
+    width: 100% !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .customer-add-vehicle-page .plate-number-group,
+  .customer-add-vehicle-page .plate-letter-group {
+    width: 100%;
+  }
+
+  .customer-add-vehicle-page .plate-number-boxes .vehicle-plate-digit,
+  .customer-add-vehicle-page .plate-letter-boxes .vehicle-plate-letter {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+}
+
+/* ==========================================================
+   PLATE COUNTRY AND NUMBER. REFERENCE LAYOUT
+========================================================== */
+
+.customer-add-vehicle-page .vehicle-plate-row {
+  width: 100%;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  gap: 34px;
+  align-items: start;
+}
+
+.customer-add-vehicle-page .vehicle-plate-country-field {
+  min-width: 0;
+}
+
+.customer-add-vehicle-page .vehicle-plate-country-field > span {
+  display: block;
+  margin-bottom: 10px;
+  color: #263b68;
+  font-size: 0.77rem;
+  font-weight: 900;
+}
+
+.customer-add-vehicle-page .vehicle-plate-country-field b {
+  color: #ef4444;
+}
+
+.customer-add-vehicle-page .vehicle-country-control {
+  position: relative;
+  width: 100%;
+}
+
+.customer-add-vehicle-page .vehicle-country-flag {
+  position: absolute;
+  top: 50%;
+  left: 14px;
+  z-index: 2;
+  transform: translateY(-50%);
+  font-size: 1rem;
+  pointer-events: none;
+}
+
+.customer-add-vehicle-page .vehicle-country-control select {
+  width: 100%;
+  height: 48px;
+  padding-left: 48px;
+  border: 1px solid #d8e2ed;
+  border-radius: 8px;
+  background: #fff;
+  color: #0f172a;
+  font-weight: 800;
+}
+
+.customer-add-vehicle-page .plate-section {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.customer-add-vehicle-page .plate-header h4 {
+  margin: 0;
+  color: #263b68;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.customer-add-vehicle-page .plate-header small {
+  display: block;
+  margin-top: 8px;
+  color: #28457d;
+  font-size: 0.69rem;
+  font-weight: 700;
+}
+
+.customer-add-vehicle-page .plate-input-layout {
+  display: flex;
+  align-items: flex-end;
+  gap: 34px;
+}
+
+.customer-add-vehicle-page .plate-group-label {
+  display: block;
+  margin-bottom: 9px;
+  color: #263b68;
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.customer-add-vehicle-page .plate-number-boxes {
+  display: grid !important;
+  gap: 10px !important;
+  width: max-content !important;
+}
+
+.customer-add-vehicle-page .plate-field {
+  position: relative;
+  width: 76px;
+}
+
+.customer-add-vehicle-page .plate-field input {
+  width: 76px !important;
+  min-width: 76px !important;
+  max-width: 76px !important;
+  height: 56px !important;
+  padding: 0 30px 0 12px !important;
+  border: 1.5px solid #5fc482 !important;
+  border-radius: 8px !important;
+  background: #fff !important;
+  color: #64748b;
+  font-size: 1rem;
+  font-weight: 900;
+  text-align: center;
+}
+
+.customer-add-vehicle-page .plate-letter-boxes {
+  display: flex !important;
+  align-items: center;
+  gap: 10px !important;
+  width: max-content !important;
+}
+
+.customer-add-vehicle-page .plate-letter-boxes select {
+  width: 86px !important;
+  min-width: 86px !important;
+  max-width: 86px !important;
+  height: 56px !important;
+  padding: 0 14px !important;
+  border: 1px solid #b9c9d5 !important;
+  border-radius: 8px !important;
+  color: #0f172a;
+  font-size: 0.9rem;
+  font-weight: 900;
+  text-align: center;
+  text-align-last: center;
+}
+
+.customer-add-vehicle-page .plate-letters-valid {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #e7f8ed;
+  color: #0f9f5c;
+  font-size: 0.7rem;
+}
+
+.customer-add-vehicle-page .plate-success {
+  width: 100%;
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 0 15px;
+  border: 1px solid #c9edda;
+  border-radius: 7px;
+  background: #eaf9f0;
+  color: #0f8b4c;
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.customer-add-vehicle-page .plate-success i {
+  font-size: 1rem;
+}
+
+@media (max-width: 1250px) {
+  .customer-add-vehicle-page .vehicle-plate-row {
+    grid-template-columns: 250px minmax(0, 1fr);
+    gap: 22px;
+  }
+
+  .customer-add-vehicle-page .plate-number-boxes {
+    grid-template-columns: repeat(4, 62px) !important;
+  }
+
+  .customer-add-vehicle-page .plate-field,
+  .customer-add-vehicle-page .plate-field input {
+    width: 62px !important;
+    min-width: 62px !important;
+    max-width: 62px !important;
+  }
+
+  .customer-add-vehicle-page .plate-letter-boxes select {
+    width: 72px !important;
+    min-width: 72px !important;
+    max-width: 72px !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .customer-add-vehicle-page .vehicle-plate-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .customer-add-vehicle-page .plate-input-layout {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 18px;
+  }
+}
+
+@media (max-width: 560px) {
+  .customer-add-vehicle-page .plate-number-boxes {
+    width: 100% !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+
+  .customer-add-vehicle-page .plate-field,
+  .customer-add-vehicle-page .plate-field input {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .customer-add-vehicle-page .plate-letter-boxes {
+    width: 100% !important;
+  }
+
+  .customer-add-vehicle-page .plate-letter-boxes select {
+    flex: 1;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+  }
+}
+
+/* Default = Empty */
+
+.plate-status-icon {
+  position: absolute;
+  top: 50%;
+  right: 9px;
+  transform: translateY(-50%);
+
+  width: 20px;
+  height: 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #fee2e2;
+  color: #dc2626;
+
+  font-size: 10px;
+  transition: 0.25s;
+}
+
+.plate-field:not(.valid) input {
+  border-color: #ef4444;
+}
+/* Plate digit validation */
+
+.customer-add-vehicle-page .plate-status-icon.valid {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.customer-add-vehicle-page .plate-status-icon.invalid {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.customer-add-vehicle-page .plate-field.valid input {
+  border-color: #22c55e !important;
+  background: #fbfffc !important;
+}
+
+.customer-add-vehicle-page .plate-field.invalid input {
+  border-color: #ef4444 !important;
+  background: #fffafa !important;
+}
+
+/* English plate letters validation */
+
+.customer-add-vehicle-page .plate-letters-valid {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 24px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  background: #dcfce7;
+  color: #16a34a;
+  font-size: 0.7rem;
+}
+
+.customer-add-vehicle-page .plate-letter-boxes {
+  display: flex !important;
+  align-items: center;
+  gap: 10px !important;
+}
+/* ==========================================================
+   PLATE DIGIT VALIDATION. FINAL NON-OVERLAPPING VERSION
+========================================================== */
+
+/* ==========================================================
+   PLATE COUNTRY AND PLATE NUMBER. FINAL RESPONSIVE LAYOUT
+========================================================== */
+
+.customer-add-vehicle-page .vehicle-plate-row {
+  width: 100%;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 170px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.customer-add-vehicle-page .vehicle-plate-country-field,
+.customer-add-vehicle-page .plate-section,
+.customer-add-vehicle-page .plate-input-layout,
+.customer-add-vehicle-page .plate-number-group,
+.customer-add-vehicle-page .plate-letter-group {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* Smaller Plate Country field */
+
+.customer-add-vehicle-page .vehicle-country-control {
+  width: 100%;
+}
+
+.customer-add-vehicle-page .vehicle-country-control select {
+  width: 100%;
+  min-width: 0;
+  height: 48px;
+  padding-left: 44px;
+  padding-right: 30px;
+}
+
+/* Numbers and letters remain inside available space */
+
+.customer-add-vehicle-page .plate-input-layout {
+  display: grid !important;
+  grid-template-columns:
+    minmax(0, 1.15fr)
+    minmax(0, 0.85fr) !important;
+  gap: 14px !important;
+  align-items: end;
+}
+
+.customer-add-vehicle-page .plate-number-boxes {
+  width: 100% !important;
+  max-width: none !important;
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(50px, 1fr)) !important;
+  gap: 8px !important;
+}
+
+.customer-add-vehicle-page .plate-field {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 56px;
+}
+
+.customer-add-vehicle-page .plate-field .vehicle-plate-digit {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 56px !important;
+  padding: 0 27px 0 8px !important;
+}
+
+.customer-add-vehicle-page .plate-status-icon {
+  right: 6px;
+}
+
+/* Three letters and validation icon */
+
+.customer-add-vehicle-page .plate-letter-boxes {
+  width: 100% !important;
+  max-width: none !important;
+  display: grid !important;
+  grid-template-columns:
+    repeat(3, minmax(52px, 1fr))
+    22px !important;
+  gap: 8px !important;
+  align-items: center;
+}
+
+.customer-add-vehicle-page .plate-letter-boxes .vehicle-plate-letter {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 56px !important;
+  padding: 0 8px !important;
+}
+
+.customer-add-vehicle-page .plate-letters-valid {
+  width: 22px;
+  height: 22px;
+  min-width: 22px;
+  justify-self: center;
+}
+
+/* Conversion message stays within Plate Number column */
+
+.customer-add-vehicle-page .plate-success {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* MacBook and medium desktop */
+
+@media (max-width: 1500px) {
+  .customer-add-vehicle-page .vehicle-plate-row {
+    grid-template-columns: 160px minmax(0, 1fr);
+    gap: 14px;
+  }
+
+  .customer-add-vehicle-page .plate-input-layout {
+    grid-template-columns:
+      minmax(0, 1.1fr)
+      minmax(0, 0.9fr) !important;
+    gap: 12px !important;
+  }
+
+  .customer-add-vehicle-page .plate-number-boxes {
+    grid-template-columns: repeat(4, minmax(46px, 1fr)) !important;
+  }
+
+  .customer-add-vehicle-page .plate-letter-boxes {
+    grid-template-columns:
+      repeat(3, minmax(48px, 1fr))
+      20px !important;
+  }
+}
+
+/* Narrow desktop and iPad landscape */
+
+@media (max-width: 1250px) {
+  .customer-add-vehicle-page .vehicle-plate-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+  }
+
+  .customer-add-vehicle-page .vehicle-plate-country-field {
+    max-width: 260px;
+  }
+
+  .customer-add-vehicle-page .plate-input-layout {
+    grid-template-columns:
+      minmax(240px, 1fr)
+      minmax(190px, 0.85fr) !important;
+  }
+}
+
+/* Tablet portrait */
+
+@media (max-width: 900px) {
+  .customer-add-vehicle-page .plate-input-layout {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 18px !important;
+  }
+
+  .customer-add-vehicle-page .plate-number-boxes,
+  .customer-add-vehicle-page .plate-letter-boxes {
+    max-width: 420px !important;
+  }
+}
+
+/* Mobile */
+
+@media (max-width: 560px) {
+  .customer-add-vehicle-page .vehicle-plate-country-field {
+    max-width: 100%;
+  }
+
+  .customer-add-vehicle-page .plate-number-boxes {
+    max-width: 100% !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+
+  .customer-add-vehicle-page .plate-letter-boxes {
+    max-width: 100% !important;
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr))
+      20px !important;
+  }
+}
+
+/* Final overflow protection */
+
+.customer-add-vehicle-page .vehicle-plate-row,
+.customer-add-vehicle-page .plate-section,
+.customer-add-vehicle-page .plate-input-layout,
+.customer-add-vehicle-page .plate-number-group,
+.customer-add-vehicle-page .plate-letter-group,
+.customer-add-vehicle-page .plate-number-boxes,
+.customer-add-vehicle-page .plate-letter-boxes {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.customer-add-vehicle-page .plate-section {
+  overflow: hidden;
+}
+
+.customer-add-vehicle-page .plate-number-boxes,
+.customer-add-vehicle-page .plate-letter-boxes {
+  overflow: visible;
+}
+.customer-vehicle-result-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 13000;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.customer-vehicle-result-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.58);
+  backdrop-filter: blur(6px);
+}
+
+.customer-vehicle-result-card {
+  position: relative;
+  z-index: 1;
+  width: min(430px, 100%);
+  padding: 34px;
+  border: 1px solid #dfe9e3;
+  border-radius: 22px;
+  background: #ffffff;
+  box-shadow: 0 30px 90px rgba(15, 23, 42, 0.3);
+  text-align: center;
+}
+
+.customer-vehicle-result-icon {
+  width: 68px;
+  height: 68px;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 18px;
+  border-radius: 20px;
+  font-size: 26px;
+}
+
+.customer-vehicle-result-icon.success {
+  background: #e8f7ee;
+  color: #168447;
+}
+
+.customer-vehicle-result-icon.error {
+  background: #fff0f0;
+  color: #dc2626;
+}
+
+.customer-vehicle-result-card h2 {
+  margin: 0;
+  color: #101d2f;
+  font-size: 22px;
+}
+
+.customer-vehicle-result-card p {
+  margin: 10px 0 0;
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.customer-vehicle-result-details {
+  margin-top: 20px;
+  padding: 16px;
+  border: 1px solid #e3ebe6;
+  border-radius: 12px;
+  background: #f7fbf8;
+}
+
+.customer-vehicle-result-details strong,
+.customer-vehicle-result-details span {
+  display: block;
+}
+
+.customer-vehicle-result-details strong {
+  color: #152033;
+  font-size: 17px;
+}
+
+.customer-vehicle-result-details span {
+  margin-top: 5px;
+  color: #64748b;
+  font-size: 12px;
+}
+
+.customer-vehicle-result-card > button {
+  width: 100%;
+  min-height: 44px;
+  margin-top: 22px;
+  border: 0;
+  border-radius: 10px;
+  background: #168447;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 850;
+  cursor: pointer;
+}

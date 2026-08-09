@@ -1,0 +1,462 @@
+<section class="booking-receipt-page">
+  <div class="booking-receipt-toolbar">
+    <button
+      type="button"
+      id="back-from-booking-receipt"
+      class="booking-receipt-back-btn"
+    >
+      <i class="fa-solid fa-arrow-left"></i>
+      Back to Booking
+    </button>
+
+    <div class="booking-receipt-toolbar-actions">
+      <button
+        type="button"
+        id="download-booking-receipt"
+        class="booking-receipt-secondary-btn"
+      >
+        <i class="fa-solid fa-download"></i>
+        Download PDF
+      </button>
+
+      <button
+        type="button"
+        id="print-booking-receipt"
+        class="booking-receipt-primary-btn"
+      >
+        <i class="fa-solid fa-print"></i>
+        Print Receipt
+      </button>
+    </div>
+  </div>
+
+  <article class="booking-receipt-document" id="booking-receipt-document">
+    <header class="receipt-header">
+      <div class="receipt-brand">
+        <img
+          src="/public/assets/parkin-logo.png"
+          alt="ParkIn"
+          class="receipt-logo"
+        />
+
+        <p>Smart Parking. Seamless Experience.</p>
+      </div>
+
+      <div class="receipt-header-details">
+        <div class="receipt-title-row">
+          <h1>Booking Receipt</h1>
+
+          <span class="receipt-status"> In Progress </span>
+        </div>
+
+        <p>
+          Date Printed:
+          <strong id="receipt-print-date"> July 21, 2026, 8:35 AM </strong>
+        </p>
+
+        <div class="receipt-barcode">
+          <div class="receipt-barcode-placeholder">
+            |||||| ||| ||||||| || |||||| |||||
+          </div>
+
+          <span id="receipt-barcode-id"> SWG-260524-0018 </span>
+        </div>
+      </div>
+    </header>
+
+    <div class="receipt-green-divider"></div>
+
+    <section class="receipt-booking-summary">
+      <div class="receipt-booking-id-block">
+        <span class="receipt-summary-icon">
+          <i class="fa-regular fa-calendar-days"></i>
+        </span>
+
+        <div>
+          <small>Booking ID</small>
+
+          <h2 id="receipt-booking-id">SWG-260524-0018</h2>
+
+          <span class="receipt-inline-status"> In Progress </span>
+        </div>
+      </div>
+
+      <div class="receipt-summary-column">
+        <div class="receipt-detail-row">
+          <i class="fa-regular fa-clock"></i>
+
+          <div>
+            <small>Booking Time</small>
+            <strong>May 24, 2024, 10:15 AM</strong>
+          </div>
+        </div>
+
+        <div class="receipt-detail-row">
+          <i class="fa-solid fa-location-dot"></i>
+
+          <div>
+            <small>Location</small>
+            <strong>Riyadh Front</strong>
+            <span>P1 - Premium</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="receipt-summary-column">
+        <div class="receipt-detail-row">
+          <i class="fa-regular fa-user"></i>
+
+          <div>
+            <small>Customer</small>
+            <strong>Muhammad Ahmed</strong>
+            <span>CUST-0001</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="receipt-payment-summary">
+      <div class="receipt-payment-column">
+        <i class="fa-solid fa-car-side"></i>
+
+        <div>
+          <small>Vehicle</small>
+
+          <div class="receipt-plate">
+            <span>٩٥١٥</span>
+            <span>ف ر س</span>
+            <strong>9515</strong>
+            <strong>J B A</strong>
+          </div>
+
+          <strong>White Toyota Camry</strong>
+          <span>Sedan</span>
+        </div>
+      </div>
+
+      <div class="receipt-payment-column">
+        <i class="fa-regular fa-wallet"></i>
+
+        <div>
+          <small>Amount</small>
+          <h3>SAR 35.00</h3>
+
+          <small>Payment Method</small>
+
+          <p>
+            <strong>VISA</strong>
+            &nbsp;•••• •••• •••• 4343
+          </p>
+        </div>
+      </div>
+
+      <div class="receipt-payment-column">
+        <i class="fa-regular fa-calendar-check"></i>
+
+        <div>
+          <small>Payment Status</small>
+
+          <span class="receipt-paid-status"> Paid </span>
+
+          <small>Transaction ID</small>
+
+          <strong>TXN-240524-0018</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="receipt-section-heading">
+      <span></span>
+
+      <h2>
+        <i class="fa-regular fa-id-card"></i>
+        Booking Overview
+      </h2>
+
+      <span></span>
+    </section>
+
+    <section class="receipt-information-grid">
+      <article class="receipt-information-card">
+        <h3>Booking Timeline</h3>
+
+        <div class="receipt-timeline">
+          <div>
+            <span class="receipt-timeline-icon">
+              <i class="fa-regular fa-calendar"></i>
+            </span>
+
+            <div>
+              <strong>Booked</strong>
+              <p>May 24, 2024, 10:15 AM</p>
+              <small> Booking created by customer via mobile app </small>
+            </div>
+          </div>
+
+          <div>
+            <span class="receipt-timeline-icon">
+              <i class="fa-solid fa-car-side"></i>
+            </span>
+
+            <div>
+              <strong>Vehicle Checked In</strong>
+              <p>May 24, 2024, 10:20 AM</p>
+              <small> Vehicle received by valet driver </small>
+            </div>
+          </div>
+
+          <div>
+            <span class="receipt-timeline-icon">
+              <i class="fa-regular fa-clock"></i>
+            </span>
+
+            <div>
+              <strong>In Progress</strong>
+              <p>May 24, 2024, 10:20 AM</p>
+              <small> Vehicle is currently parked </small>
+            </div>
+          </div>
+
+          <div>
+            <span class="receipt-timeline-icon muted">
+              <i class="fa-regular fa-flag"></i>
+            </span>
+
+            <div>
+              <strong>Expected Checkout</strong>
+              <p>May 24, 2024, 12:20 PM</p>
+              <small> Estimated completion time </small>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="receipt-information-card">
+        <h3>Booking Information</h3>
+
+        <dl class="receipt-definition-list">
+          <div>
+            <dt>Booking ID</dt>
+            <dd>SWG-260524-0018</dd>
+          </div>
+
+          <div>
+            <dt>Booking Type</dt>
+            <dd>Valet Parking</dd>
+          </div>
+
+          <div>
+            <dt>Booking Time</dt>
+            <dd>May 24, 2024, 10:15 AM</dd>
+          </div>
+
+          <div>
+            <dt>Expected Checkout</dt>
+            <dd>May 24, 2024, 12:20 PM</dd>
+          </div>
+
+          <div>
+            <dt>Duration</dt>
+            <dd>2h 00m</dd>
+          </div>
+
+          <div>
+            <dt>Status</dt>
+            <dd>
+              <span class="receipt-inline-status"> In Progress </span>
+            </dd>
+          </div>
+
+          <div>
+            <dt>Source</dt>
+            <dd>Mobile App (iOS)</dd>
+          </div>
+
+          <div>
+            <dt>Special Instructions</dt>
+            <dd>—</dd>
+          </div>
+        </dl>
+      </article>
+
+      <article class="receipt-information-card">
+        <h3>Customer Information</h3>
+
+        <dl class="receipt-definition-list single-column">
+          <div>
+            <dt>Customer ID</dt>
+            <dd>CUST-0001</dd>
+          </div>
+
+          <div>
+            <dt>Customer Name</dt>
+            <dd>Muhammad Ahmed</dd>
+          </div>
+
+          <div>
+            <dt>Phone</dt>
+            <dd>+966 50 123 4567</dd>
+          </div>
+
+          <div>
+            <dt>Email</dt>
+            <dd>m.ahmed@example.com</dd>
+          </div>
+
+          <div>
+            <dt>Nationality</dt>
+            <dd>Saudi Arabia</dd>
+          </div>
+
+          <div>
+            <dt>Preferred Communication</dt>
+            <dd>Email, SMS</dd>
+          </div>
+
+          <div>
+            <dt>Member Since</dt>
+            <dd>May 10, 2024</dd>
+          </div>
+        </dl>
+      </article>
+
+      <article class="receipt-information-card">
+        <h3>Location Details</h3>
+
+        <h4>Riyadh Front</h4>
+        <a href="#">P1 - Premium</a>
+
+        <p>
+          King Fahd Road, Al Olaya<br />
+          Riyadh 12211, Saudi Arabia
+        </p>
+
+        <div class="receipt-map-row">
+          <a href="#">View on Map</a>
+
+          <div class="receipt-qr-placeholder">QR</div>
+        </div>
+      </article>
+
+      <article class="receipt-information-card">
+        <h3>Vehicle Information</h3>
+
+        <dl class="receipt-definition-list single-column">
+          <div>
+            <dt>License Plate</dt>
+            <dd>
+              <div class="receipt-plate">
+                <span>٩٥١٥</span>
+                <span>ف ر س</span>
+                <strong>9515</strong>
+                <strong>J B A</strong>
+              </div>
+            </dd>
+          </div>
+
+          <div>
+            <dt>Vehicle</dt>
+            <dd>White Toyota Camry</dd>
+          </div>
+
+          <div>
+            <dt>Vehicle Type</dt>
+            <dd>Sedan</dd>
+          </div>
+
+          <div>
+            <dt>Color</dt>
+            <dd>White</dd>
+          </div>
+        </dl>
+      </article>
+
+      <article class="receipt-information-card">
+        <h3>Payment Details</h3>
+
+        <dl class="receipt-definition-list single-column">
+          <div>
+            <dt>Amount</dt>
+            <dd>SAR 35.00</dd>
+          </div>
+
+          <div>
+            <dt>Payment Method</dt>
+            <dd>VISA •••• •••• •••• 4343</dd>
+          </div>
+
+          <div>
+            <dt>Payment Status</dt>
+            <dd>
+              <span class="receipt-paid-status"> Paid </span>
+            </dd>
+          </div>
+
+          <div>
+            <dt>Paid At</dt>
+            <dd>May 24, 2024, 10:15 AM</dd>
+          </div>
+
+          <div>
+            <dt>Transaction ID</dt>
+            <dd>TXN-240524-0018</dd>
+          </div>
+        </dl>
+      </article>
+    </section>
+
+    <section class="receipt-important-information">
+      <div class="receipt-important-copy">
+        <span class="receipt-shield">
+          <i class="fa-solid fa-shield-halved"></i>
+        </span>
+
+        <div>
+          <h3>Important Information</h3>
+
+          <ul>
+            <li>Please keep this receipt for your records.</li>
+            <li>Present this barcode to valet staff for any inquiries.</li>
+            <li>
+              For support, contact support@parkin.com.sa or +966 11 123 4567.
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="receipt-verification">
+        <span>Scan to Verify</span>
+
+        <div class="receipt-large-qr">QR</div>
+
+        <small>SWG-260524-0018</small>
+      </div>
+    </section>
+
+    <footer class="receipt-footer">
+      <div>
+        <p>Thank you for choosing ParkIn.</p>
+        <strong>Smart Parking. Seamless Experience.</strong>
+      </div>
+
+      <div class="receipt-footer-contact">
+        <span>
+          <i class="fa-solid fa-phone"></i>
+          +966 11 123 4567
+        </span>
+
+        <span>
+          <i class="fa-regular fa-envelope"></i>
+          support@parkin.com.sa
+        </span>
+
+        <span>
+          <i class="fa-solid fa-globe"></i>
+          www.parkin.com.sa
+        </span>
+      </div>
+
+      <span>Page 1 of 1</span>
+    </footer>
+  </article>
+</section>

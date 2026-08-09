@@ -1,0 +1,350 @@
+<section class="add-customer-page">
+  <button type="button" class="add-customer-back" id="back-to-customers">
+    <i class="fa-solid fa-arrow-left"></i>
+    Back to Customers
+  </button>
+
+  <div class="add-customer-layout">
+    <!-- LEFT FORM -->
+    <form class="add-customer-form" id="add-customer-form">
+      <section class="add-customer-card">
+        <div class="add-customer-section-title">
+          <span>
+            <i class="fa-solid fa-users"></i>
+          </span>
+
+          <h2>Customer Information</h2>
+        </div>
+
+        <div class="add-customer-grid two-columns">
+          <label>
+            <span>Full Name <b>*</b></span>
+
+            <input
+              type="text"
+              id="customer-full-name"
+              placeholder="Enter full name"
+              required
+            />
+          </label>
+
+          <label>
+            <span>Customer Type <b>*</b></span>
+
+            <select id="customer-type" required>
+              <option value="Individual">Individual</option>
+              <option value="Corporate">Corporate</option>
+              <option value="VIP">VIP Customer</option>
+              <option value="Walk-in">Walk-in</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Phone Number <b>*</b></span>
+
+            <div class="add-customer-phone">
+              <button
+                type="button"
+                class="add-customer-country"
+                aria-label="Select country code"
+              >
+                <span>🇸🇦</span>
+                <b>+966</b>
+                <i class="fa-solid fa-chevron-down"></i>
+              </button>
+
+              <input
+                type="tel"
+                id="customer-phone"
+                placeholder="50 123 4567"
+                required
+              />
+            </div>
+          </label>
+
+          <label>
+            <span>Email Address <b>*</b></span>
+
+            <input
+              type="email"
+              id="customer-email"
+              placeholder="Enter email address"
+              required
+            />
+          </label>
+        </div>
+
+        <div class="add-customer-grid three-columns">
+          <label>
+            <span>Nationality <b>*</b></span>
+
+            <select id="customer-nationality" required>
+              <option value="Saudi Arabia">Saudi Arabia</option>
+              <option value="Pakistan">Pakistan</option>
+              <option value="India">India</option>
+              <option value="Egypt">Egypt</option>
+              <option value="Jordan">Jordan</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Preferred Language</span>
+
+            <select id="customer-language">
+              <option value="English">English</option>
+              <option value="Arabic">Arabic</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Preferred Communication</span>
+
+            <select id="customer-communication">
+              <option value="Email, SMS">Email, SMS</option>
+              <option value="Email">Email</option>
+              <option value="SMS">SMS</option>
+              <option value="Phone Call">Phone Call</option>
+              <option value="WhatsApp">WhatsApp</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="add-customer-grid one-column">
+          <label>
+            <span>Address <b>*</b></span>
+
+            <input
+              type="text"
+              id="customer-address"
+              placeholder="Enter complete address"
+              required
+            />
+          </label>
+        </div>
+
+        <div class="add-customer-grid two-columns">
+          <label>
+            <span>Emergency Contact Name</span>
+
+            <input
+              type="text"
+              id="emergency-contact-name"
+              placeholder="Enter emergency contact name"
+            />
+          </label>
+
+          <label>
+            <span>Emergency Contact Phone</span>
+
+            <div class="add-customer-phone">
+              <button
+                type="button"
+                class="add-customer-country"
+                aria-label="Select emergency contact country code"
+              >
+              <span>🇸🇦</span>
+                <b>+966</b>
+                <i class="fa-solid fa-chevron-down"></i>
+              </button>
+
+              <input
+                type="tel"
+                id="emergency-contact-phone"
+                placeholder="50 987 6543"
+              />
+            </div>
+            <small>This will be used only in emergencies</small>
+          </label>
+        </div>
+
+        <div class="add-customer-divider"></div>
+
+        <div class="add-customer-section-title">
+          <span>
+            <i class="fa-solid fa-lock"></i>
+          </span>
+
+          <h2>Account Information</h2>
+        </div>
+
+        <div class="add-customer-account-grid">
+          <label>
+            <span>Status <b>*</b></span>
+
+            <select id="customer-status" required>
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+              <option value="Blocked">Blocked</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Member Since <b>*</b></span>
+
+            <input type="date" id="customer-member-since" required />
+          </label>
+
+          <label class="customer-notes-field">
+            <span>Notes</span>
+
+            <textarea
+              id="customer-notes"
+              maxlength="200"
+              placeholder="Add any notes about this customer (optional)"
+            ></textarea>
+
+            <small class="customer-note-counter">
+              <span id="customer-note-count">0</span> / 200
+            </small>
+          </label>
+        </div>
+
+        <div class="add-customer-divider"></div>
+
+        <label class="welcome-message-option">
+          <input type="checkbox" id="send-welcome-message" checked />
+
+          <span>
+            <b>Send welcome message to customer</b>
+            <small>
+              Customer will receive a welcome message with their account
+              details.
+            </small>
+          </span>
+        </label>
+
+        <div class="add-customer-actions">
+          <button
+            type="button"
+            class="add-customer-cancel"
+            id="cancel-add-customer"
+          >
+            Cancel
+          </button>
+
+          <button type="submit" class="add-customer-submit">
+            <i class="fa-solid fa-user-plus"></i>
+            Create Customer
+          </button>
+        </div>
+      </section>
+    </form>
+
+    <!-- RIGHT SUMMARY -->
+    <aside class="customer-summary-card">
+      <div class="customer-summary-heading">
+        <span>
+          <i class="fa-solid fa-users"></i>
+        </span>
+
+        <h2>Customer Summary</h2>
+      </div>
+
+      <div class="customer-summary-preview">
+        <div class="customer-summary-avatar">
+          <i class="fa-regular fa-user"></i>
+        </div>
+
+        <h3 id="summary-customer-name">Customer Preview</h3>
+        <p id="summary-customer-email">Enter customer details</p>
+      </div>
+
+      <div class="customer-summary-divider"></div>
+
+      <div class="customer-summary-list">
+        <div class="customer-summary-item">
+          <i class="fa-solid fa-users"></i>
+
+          <div>
+            <span>Customer Type</span>
+            <b id="summary-customer-type">Individual</b>
+          </div>
+        </div>
+
+        <div class="customer-summary-item">
+          <i class="fa-regular fa-circle-check"></i>
+
+          <div>
+            <span>Status</span>
+            <strong
+              class="customer-summary-status active"
+              id="summary-customer-status"
+            >
+              Active
+            </strong>
+          </div>
+        </div>
+
+        <div class="customer-summary-item">
+          <i class="fa-regular fa-calendar"></i>
+
+          <div>
+            <span>Member Since</span>
+            <b id="summary-member-since">Not selected</b>
+          </div>
+        </div>
+
+        <div class="customer-summary-item">
+          <i class="fa-solid fa-language"></i>
+
+          <div>
+            <span>Preferred Language</span>
+            <b id="summary-language">English</b>
+          </div>
+        </div>
+
+        <div class="customer-summary-item">
+          <i class="fa-regular fa-envelope"></i>
+
+          <div>
+            <span>Preferred Communication</span>
+            <b id="summary-communication">Email, SMS</b>
+          </div>
+        </div>
+      </div>
+
+      <div class="customer-summary-divider"></div>
+
+      <div class="customer-summary-list customer-summary-metrics">
+        <div class="customer-summary-item">
+          <i class="fa-solid fa-car-side orange"></i>
+
+          <div>
+            <span>Vehicles</span>
+            <b>0</b>
+          </div>
+        </div>
+
+        <div class="customer-summary-item">
+          <i class="fa-regular fa-calendar-check blue"></i>
+
+          <div>
+            <span>Total Bookings</span>
+            <b>0</b>
+          </div>
+        </div>
+
+        <div class="customer-summary-item">
+          <i class="fa-solid fa-money-bill-wave green"></i>
+
+          <div>
+            <span>Total Spent</span>
+            <b>SAR 0.00</b>
+          </div>
+        </div>
+      </div>
+
+      <div class="customer-summary-note">
+        <i class="fa-solid fa-circle-info"></i>
+
+        <div>
+          <b>After Creation</b>
+          <p>
+            You can add vehicles, payment methods, and manage bookings after
+            creating the customer.
+          </p>
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>

@@ -1,0 +1,237 @@
+<section class="drivers-page-shell">
+  <div class="drivers-kpi-grid drivers-kpi-grid-seven">
+    <article class="drivers-kpi-card">
+      <span class="drivers-kpi-icon green">
+        <i class="fa-solid fa-users"></i>
+      </span>
+      <div>
+        <p>Total Drivers</p>
+        <strong>72</strong>
+        <small class="up">↑ 6 vs yesterday</small>
+      </div>
+    </article>
+
+    <article class="drivers-kpi-card">
+      <span class="drivers-kpi-icon light-green">
+        <i class="fa-solid fa-user"></i>
+      </span>
+      <div>
+        <p>Independent Drivers</p>
+        <strong>18</strong>
+        <small class="up">↑ 3 vs yesterday</small>
+      </div>
+    </article>
+
+    <article class="drivers-kpi-card">
+      <span class="drivers-kpi-icon amber">
+        <i class="fa-solid fa-building"></i>
+      </span>
+      <div>
+        <p>Valet Company Drivers</p>
+        <strong>54</strong>
+        <small class="up">↑ 6 vs yesterday</small>
+      </div>
+    </article>
+
+    <article class="drivers-kpi-card compact">
+      <span class="drivers-kpi-dot on-duty"></span>
+      <div>
+        <p>On Duty</p>
+        <strong>58</strong>
+        <small>80.6%</small>
+      </div>
+    </article>
+
+    <article class="drivers-kpi-card compact">
+      <span class="drivers-kpi-dot off-duty"></span>
+      <div>
+        <p>Off Duty</p>
+        <strong>10</strong>
+        <small>13.9%</small>
+      </div>
+    </article>
+
+    <article class="drivers-kpi-card compact">
+      <span class="drivers-kpi-dot on-break"></span>
+      <div>
+        <p>On Break</p>
+        <strong>4</strong>
+        <small>5.6%</small>
+      </div>
+    </article>
+
+    <article class="drivers-kpi-card compact">
+      <span class="drivers-kpi-dot suspended"></span>
+      <div>
+        <p>Suspended</p>
+        <strong>2</strong>
+        <small>2.8%</small>
+      </div>
+    </article>
+  </div>
+</section>
+<section class="drivers-toolbar">
+  <div class="drivers-tabs">
+    <button class="active">All Drivers</button>
+    <button>By Company</button>
+    <button>Independent Drivers</button>
+    <button>Driver Assignments</button>
+    <button>License Expiry</button>
+    <button>Documents</button>
+    <button>Performance</button>
+  </div>
+</section>
+
+<section class="drivers-filter-bar">
+  <div class="drivers-search">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="text" placeholder="Search by name, phone, ID or license..." />
+  </div>
+
+  <select>
+    <option>All Companies</option>
+    <option>Smart Valet Co.</option>
+    <option>Premium Parking</option>
+    <option>Independent</option>
+  </select>
+
+  <select>
+    <option>All Locations</option>
+    <option>Riyadh Mall</option>
+    <option>Hilton Hotel</option>
+    <option>Jeddah Mall</option>
+    <option>Dammam Compound</option>
+  </select>
+
+  <select>
+    <option>All Zones</option>
+    <option>Main Entrance</option>
+    <option>Valet Zone</option>
+    <option>VIP Parking</option>
+  </select>
+
+  <select>
+    <option>All Status</option>
+    <option>On Duty</option>
+    <option>Off Duty</option>
+    <option>On Break</option>
+    <option>Suspended</option>
+  </select>
+
+  <button class="drivers-filter-btn">
+    <i class="fa-solid fa-filter"></i>
+    Filters
+  </button>
+
+  <button class="drivers-add-btn">
+    <i class="fa-solid fa-plus"></i>
+    Add Driver
+  </button>
+
+  <button class="drivers-export-btn">
+    <i class="fa-solid fa-download"></i>
+    Export
+  </button>
+</section>
+
+<section class="drivers-content-grid">
+  <article class="drivers-panel drivers-table-panel">
+    <div class="drivers-panel-heading">
+      <h2 id="drivers-list-title">Drivers List (0)</h2>
+    </div>
+
+    <div class="drivers-table" id="drivers-table">
+      <div class="drivers-row drivers-head">
+        <span>Driver</span>
+        <span>Type / Company</span>
+        <span>Contact</span>
+        <span>License No.</span>
+        <span>Location / Zone</span>
+        <span>Vehicles</span>
+        <span>Status</span>
+        <span>Rating</span>
+        <span>Actions</span>
+      </div>
+
+      <div class="drivers-list-loading" id="drivers-list-loading">
+        <i class="fa-solid fa-spinner fa-spin"></i>
+        <span>Loading driver records...</span>
+      </div>
+
+      <div class="drivers-list-body" id="drivers-list-body"></div>
+    </div>
+  </article>
+</section>
+
+<section class="drivers-bottom-grid">
+  <article class="drivers-panel">
+    <div class="drivers-panel-heading compact">
+      <h2>Drivers by Company</h2>
+      <a href="#">View all →</a>
+    </div>
+    <div class="drivers-chart-card">
+      <canvas id="drivers-company-chart"></canvas>
+      <ul>
+        <li><i class="blue"></i>Smart Valet Co. <b>24</b></li>
+        <li><i class="green"></i>Premium Parking <b>18</b></li>
+        <li><i class="purple"></i>Elite Parking <b>12</b></li>
+        <li><i class="gray"></i>Other Companies <b>18</b></li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="drivers-panel">
+    <div class="drivers-panel-heading compact">
+      <h2>Drivers by Location</h2>
+      <a href="#">View all →</a>
+    </div>
+    <div class="drivers-chart-card">
+      <canvas id="drivers-location-chart"></canvas>
+      <ul>
+        <li><i class="blue"></i>Riyadh Mall <b>24</b></li>
+        <li><i class="green"></i>Jeddah Mall <b>16</b></li>
+        <li><i class="gray"></i>Hilton Hotel <b>14</b></li>
+        <li><i class="orange"></i>Dammam Compound <b>10</b></li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="drivers-panel">
+    <div class="drivers-panel-heading compact">
+      <h2>License Expiry Alerts</h2>
+      <a href="#">View all →</a>
+    </div>
+    <ul class="license-alert-list">
+      <li>
+        <span class="danger">!</span><b>Critical Expired</b><strong>3</strong>
+      </li>
+      <li>
+        <span class="warning">!</span><b>Expiring in 30 Days</b
+        ><strong>7</strong>
+      </li>
+      <li>
+        <span class="medium">!</span><b>Expiring in 60 Days</b
+        ><strong>11</strong>
+      </li>
+      <li>
+        <span class="valid">✓</span><b>Valid 60+ Days</b><strong>51</strong>
+      </li>
+    </ul>
+  </article>
+
+  <article class="drivers-panel">
+    <div class="drivers-panel-heading compact">
+      <h2>Driver Status</h2>
+      <a href="#">View all →</a>
+    </div>
+    <div class="drivers-chart-card">
+      <canvas id="drivers-status-chart"></canvas>
+      <ul>
+        <li><i class="green"></i>On Duty <b>58</b></li>
+        <li><i class="gray"></i>Off Duty <b>10</b></li>
+        <li><i class="orange"></i>On Break <b>4</b></li>
+        <li><i class="red"></i>Suspended <b>2</b></li>
+      </ul>
+    </div>
+  </article>
+</section>

@@ -1,0 +1,379 @@
+<section class="edit-customer-page">
+  <button type="button" id="back-from-edit-customer" class="page-back-btn">
+    <i class="fa-solid fa-arrow-left"></i>
+    Back to Customers
+  </button>
+
+  <div class="edit-customer-layout">
+    <!-- LEFT: EDIT FORM -->
+    <form class="edit-customer-card" id="edit-customer-form">
+      <!-- CUSTOMER INFORMATION -->
+      <section class="edit-section">
+        <div class="section-title">
+          <div class="title-left">
+            <span class="section-icon">
+              <i class="fa-solid fa-user-pen"></i>
+            </span>
+
+            <div>
+              <h2>Customer Information</h2>
+              <p>Update basic details and contact information</p>
+            </div>
+          </div>
+
+          <small>
+            <span class="required">*</span>
+            Required fields
+          </small>
+        </div>
+
+        <div class="three-columns">
+          <label>
+            <span> Full Name <b>*</b> </span>
+
+            <input
+              type="text"
+              id="edit-full-name"
+              value="Muhammad Ahmed"
+              required
+            />
+          </label>
+
+          <label>
+            <span> Customer Type <b>*</b> </span>
+
+            <select id="edit-customer-type" required>
+              <option value="Individual" selected>Individual</option>
+              <option value="Corporate">Corporate</option>
+              <option value="VIP">VIP Customer</option>
+              <option value="Walk-in">Walk-in</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Customer ID</span>
+
+            <input
+              type="text"
+              id="edit-customer-id"
+              value="CUST-0001"
+              disabled
+            />
+          </label>
+        </div>
+
+        <div class="two-columns">
+          <label>
+            <span> Phone Number <b>*</b> </span>
+
+            <div class="edit-phone-field">
+              <button
+                type="button"
+                class="edit-country-picker"
+                aria-label="Select phone country code"
+              >
+                <span class="edit-country-flag">🇸🇦</span>
+                <span>+966</span>
+                <i class="fa-solid fa-chevron-down"></i>
+              </button>
+
+              <input type="tel" id="edit-phone" value="50 123 4567" required />
+            </div>
+          </label>
+
+          <label>
+            <span> Email Address <b>*</b> </span>
+
+            <input
+              type="email"
+              id="edit-email"
+              value="m.ahmed@example.com"
+              required
+            />
+          </label>
+        </div>
+
+        <div class="three-columns">
+          <label>
+            <span> Nationality <b>*</b> </span>
+
+            <select id="edit-nationality" required>
+              <option value="Saudi Arabia" selected>Saudi Arabia</option>
+              <option value="Pakistan">Pakistan</option>
+              <option value="India">India</option>
+              <option value="Egypt">Egypt</option>
+              <option value="Jordan">Jordan</option>
+            </select>
+          </label>
+
+          <label>
+            <span> Preferred Language <b>*</b> </span>
+
+            <select id="edit-language" required>
+              <option value="English" selected>English</option>
+              <option value="Arabic">Arabic</option>
+            </select>
+          </label>
+
+          <label>
+            <span> Preferred Communication <b>*</b> </span>
+
+            <select id="edit-communication" required>
+              <option value="Email, SMS" selected>Email, SMS</option>
+              <option value="Email">Email</option>
+              <option value="SMS">SMS</option>
+              <option value="Phone Call">Phone Call</option>
+              <option value="WhatsApp">WhatsApp</option>
+            </select>
+          </label>
+        </div>
+
+        <label>
+          <span> Address <b>*</b> </span>
+
+          <input
+            type="text"
+            id="edit-address"
+            value="Olaya Street, Riyadh, Riyadh, Saudi Arabia"
+            required
+          />
+        </label>
+
+        <div class="two-columns">
+          <label>
+            <span>Emergency Contact Name</span>
+
+            <input
+              type="text"
+              id="edit-emergency-contact"
+              value="Ahmed Ali (Brother)"
+            />
+          </label>
+
+          <label>
+            <span>Emergency Contact Phone</span>
+
+            <div class="edit-phone-field">
+              <button
+                type="button"
+                class="edit-country-picker"
+                aria-label="Select emergency phone country code"
+              >
+                <span class="edit-country-flag">🇸🇦</span>
+                <span>+966</span>
+                <i class="fa-solid fa-chevron-down"></i>
+              </button>
+
+              <input type="tel" id="edit-emergency-phone" value="55 987 6543" />
+            </div>
+
+            <small class="edit-field-help">
+              This will be used only in emergencies
+            </small>
+          </label>
+        </div>
+      </section>
+
+      <!-- ACCOUNT INFORMATION -->
+      <section class="edit-section">
+        <div class="section-title">
+          <div class="title-left">
+            <span class="section-icon">
+              <i class="fa-solid fa-lock"></i>
+            </span>
+
+            <div>
+              <h2>Account Information</h2>
+            </div>
+          </div>
+        </div>
+
+        <div class="account-grid">
+          <label>
+            <span> Status <b>*</b> </span>
+
+            <select id="edit-status" required>
+              <option value="Active" selected>Active</option>
+              <option value="Inactive">Inactive</option>
+              <option value="Blocked">Blocked</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Member Since</span>
+
+            <input type="date" id="edit-member-since" value="2024-05-10" />
+          </label>
+
+          <label>
+            <span>Notes</span>
+
+            <textarea id="edit-notes" maxlength="200">
+VIP customer. Prefers premium parking areas.</textarea>
+
+            <small class="edit-notes-counter">
+              <span id="edit-notes-count">44</span> / 200
+            </small>
+          </label>
+        </div>
+      </section>
+
+      <!-- WELCOME MESSAGE -->
+      <label class="welcome-option">
+        <input type="checkbox" id="edit-send-welcome" checked />
+
+        <span>
+          <b>Send welcome message to customer</b>
+
+          <small>
+            Customer will receive a welcome message with their updated account
+            details.
+          </small>
+        </span>
+      </label>
+
+      <!-- ACTIONS -->
+      <div class="edit-actions">
+        <button type="button" class="danger-btn" id="deactivate-edit-customer">
+          <i class="fa-regular fa-trash-can"></i>
+          Deactivate Customer
+        </button>
+
+        <div>
+          <button type="button" id="cancel-edit-customer" class="secondary-btn">
+            Cancel
+          </button>
+
+          <button type="submit" id="save-customer-btn" class="primary-btn">
+            <i class="fa-solid fa-floppy-disk"></i>
+            Save Changes
+          </button>
+        </div>
+      </div>
+    </form>
+
+    <!-- RIGHT: SIDEBAR -->
+    <aside class="edit-sidebar">
+      <!-- CUSTOMER OVERVIEW -->
+      <section class="edit-summary-card">
+        <div class="edit-summary-heading">
+          <span class="edit-summary-heading-icon">
+            <i class="fa-solid fa-users"></i>
+          </span>
+
+          <h3>Customer Overview</h3>
+        </div>
+
+        <div class="edit-overview-list">
+          <div class="edit-overview-item">
+            <span class="edit-overview-icon green">
+              <i class="fa-regular fa-user"></i>
+            </span>
+
+            <div>
+              <small>Customer Since</small>
+              <b>May 10, 2024</b>
+            </div>
+          </div>
+
+          <div class="edit-overview-item">
+            <span class="edit-overview-icon blue">
+              <i class="fa-regular fa-calendar-check"></i>
+            </span>
+
+            <div>
+              <small>Total Bookings</small>
+              <b>24</b>
+            </div>
+          </div>
+
+          <div class="edit-overview-item">
+            <span class="edit-overview-icon green">
+              <i class="fa-solid fa-wallet"></i>
+            </span>
+
+            <div>
+              <small>Total Spent</small>
+              <b>SAR 1,250.00</b>
+            </div>
+          </div>
+
+          <div class="edit-overview-item">
+            <span class="edit-overview-icon amber">
+              <i class="fa-regular fa-clock"></i>
+            </span>
+
+            <div>
+              <small>Active Bookings</small>
+              <b>1</b>
+            </div>
+          </div>
+
+          <div class="edit-overview-item">
+            <span class="edit-overview-icon orange">
+              <i class="fa-solid fa-car-side"></i>
+            </span>
+
+            <div>
+              <small>Vehicles</small>
+              <b>0</b>
+            </div>
+          </div>
+
+          <div class="edit-overview-item">
+            <span class="edit-overview-icon blue">
+              <i class="fa-regular fa-credit-card"></i>
+            </span>
+
+            <div>
+              <small>Payment Methods</small>
+              <b>0</b>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- REGISTERED VEHICLES -->
+      <section class="edit-summary-card">
+        <div class="edit-summary-heading">
+          <span class="edit-summary-heading-icon">
+            <i class="fa-regular fa-file-lines"></i>
+          </span>
+
+          <h3>Registered Vehicles</h3>
+        </div>
+
+        <div class="edit-empty-state">
+          <span class="edit-empty-icon">
+            <i class="fa-solid fa-car-side"></i>
+          </span>
+
+          <b>No registered vehicles</b>
+
+          <p>This customer has not added any vehicles yet.</p>
+        </div>
+      </section>
+
+      <!-- PAYMENT METHODS -->
+      <section class="edit-summary-card">
+        <div class="edit-summary-heading">
+          <span class="edit-summary-heading-icon">
+            <i class="fa-regular fa-credit-card"></i>
+          </span>
+
+          <h3>Payment Methods</h3>
+        </div>
+
+        <div class="edit-empty-state">
+          <span class="edit-empty-icon">
+            <i class="fa-regular fa-credit-card"></i>
+          </span>
+
+          <b>No payment methods</b>
+
+          <p>This customer has not added any payment methods yet.</p>
+        </div>
+      </section>
+    </aside>
+  </div>
+</section>

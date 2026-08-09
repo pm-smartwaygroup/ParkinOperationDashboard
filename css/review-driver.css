@@ -1,0 +1,296 @@
+/* =========================================
+   REVIEW DRIVER
+========================================= */
+
+.review-card {
+  background: #fff;
+  border: 1px solid #e7edf5;
+  border-radius: 18px;
+  padding: 28px;
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.review-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #172234;
+}
+
+.review-header p {
+  margin: 8px 0 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.review-download-btn {
+  height: 44px;
+  padding: 0 20px;
+  border: 1px solid #dce5ef;
+  background: #fff;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.review-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.review-panel {
+  background: #fff;
+  border: 1px solid #edf2f7;
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.review-panel-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.review-panel-title h3 {
+  margin: 0;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #172234;
+}
+
+.review-panel-title button {
+  border: none;
+  background: none;
+  color: #0f8b4c;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.review-profile {
+  display: flex;
+  gap: 22px;
+  align-items: flex-start;
+}
+
+.review-profile img {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #eef3f9;
+}
+
+.review-info-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.review-info-grid.two {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.review-info-grid.three {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.review-info-grid.four {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.review-info-grid p {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.review-info-grid span {
+  font-size: 12px;
+  color: #74839b;
+}
+
+.review-info-grid b {
+  font-size: 15px;
+  color: #172234;
+  font-weight: 600;
+}
+
+.uploaded-review {
+  margin-top: 18px;
+}
+
+.uploaded-review h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.uploaded-review > p {
+  margin: 6px 0 20px;
+  color: #64748b;
+}
+
+.uploaded-doc-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.uploaded-doc-grid > div {
+  border: 1px solid #e8edf5;
+  border-radius: 12px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.uploaded-doc-grid i {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #f5f7fb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0f8b4c;
+  font-size: 20px;
+}
+
+.uploaded-doc-grid b {
+  font-size: 15px;
+  color: #172234;
+}
+
+.uploaded-doc-grid span {
+  color: #74839b;
+  font-size: 13px;
+}
+
+.uploaded-doc-grid small {
+  color: #2563eb;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.review-info-banner {
+  margin-top: 24px;
+  background: #eef5ff;
+  border: 1px solid #dbeafe;
+  border-radius: 12px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #3157c5;
+  font-size: 14px;
+}
+
+.review-info-banner i {
+  color: #2563eb;
+  font-size: 18px;
+}
+
+.driver-success-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  background: rgba(15, 23, 42, 0.35);
+  backdrop-filter: blur(5px);
+}
+
+.driver-success-modal.hidden {
+  display: none;
+}
+
+.driver-success-card {
+  width: min(420px, 92vw);
+  position: relative;
+  padding: 34px;
+  border-radius: 16px;
+  background: #fff;
+  text-align: center;
+  box-shadow: 0 28px 80px rgba(15, 23, 42, 0.25);
+}
+
+.driver-success-close {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  border: 0;
+  background: transparent;
+  font-size: 28px;
+  cursor: pointer;
+}
+
+.driver-success-icon {
+  width: 86px;
+  height: 86px;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 18px;
+  border-radius: 50%;
+  background: #0f8b4c;
+  color: #fff;
+  font-size: 42px;
+}
+
+.driver-success-card h2 {
+  margin: 0 0 8px;
+  color: #071322;
+  font-size: 28px;
+}
+
+.driver-success-card p {
+  margin: 0 0 18px;
+  color: #64748b;
+  font-weight: 800;
+}
+
+.driver-success-note {
+  margin: 0 0 18px;
+  padding: 14px;
+  border-radius: 8px;
+  background: #e9f8ef;
+  color: #08783a;
+  font-weight: 800;
+}
+
+.driver-success-primary,
+.driver-success-secondary {
+  width: 230px;
+  height: 46px;
+  border-radius: 8px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.driver-success-primary {
+  border: 0;
+  background: #0f8b4c;
+  color: #fff;
+}
+
+.driver-success-secondary {
+  margin-top: 12px;
+  border: 1px solid #dce5ef;
+  background: #fff;
+  color: #071322;
+}

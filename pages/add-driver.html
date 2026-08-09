@@ -1,0 +1,1341 @@
+<section class="add-driver-shell">
+  <div class="driver-stepper">
+    <div class="step active" data-step="details">
+      <strong
+        ><span class="step-number">1</span
+        ><i class="fa-solid fa-check step-check"></i
+      ></strong>
+      <div><b>Driver Details</b><span>Basic information</span></div>
+    </div>
+
+    <div class="step" data-step="assignment">
+      <strong
+        ><span class="step-number">2</span
+        ><i class="fa-solid fa-check step-check"></i
+      ></strong>
+      <div><b>Assignment</b><span>Company, location and zone</span></div>
+    </div>
+
+    <div class="step" data-step="documents">
+      <strong
+        ><span class="step-number">3</span
+        ><i class="fa-solid fa-check step-check"></i
+      ></strong>
+      <div><b>Upload Documents</b><span>Required documents</span></div>
+    </div>
+
+    <div class="step" data-step="review">
+      <strong
+        ><span class="step-number">4</span
+        ><i class="fa-solid fa-check step-check"></i
+      ></strong>
+      <div><b>Review</b><span>Review and save</span></div>
+    </div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="add-driver-step-content" id="driver-step-details">
+    <form class="add-driver-form" id="driver-details-form" novalidate>
+      <!-- Personal Information -->
+      <section class="driver-form-card">
+        <h2>Personal Information</h2>
+
+        <div class="driver-form-grid personal-grid">
+          <label class="photo-upload-box">
+            <input
+              id="driverPhoto"
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              hidden
+            />
+
+            <i class="fa-solid fa-camera"></i>
+
+            <b>Upload Photo</b>
+
+            <span>JPG, PNG Max 2MB</span>
+
+            <small class="driver-photo-file-name"> No file selected </small>
+          </label>
+
+          <label>
+            <span>
+              Full Name
+              <b class="driver-required-mark">*</b>
+            </span>
+
+            <input
+              id="fullName"
+              type="text"
+              placeholder="Enter full name"
+              autocomplete="name"
+              maxlength="100"
+            />
+            <small class="driver-field-error" id="fullNameError"></small>
+          </label>
+
+          <label class="phone-field">
+            <span>
+              Phone Number
+              <b class="driver-required-mark">*</b>
+            </span>
+
+            <div class="phone-input">
+              <button
+                type="button"
+                class="country-picker"
+                id="phoneCountryCode"
+                data-value="+966"
+              >
+                <span style="font-size: 18px"> 🇸🇦 </span>
+
+                <span>+966</span>
+
+                <i class="fa-solid fa-chevron-down"></i>
+              </button>
+
+              <input
+                id="phoneNumber"
+                type="tel"
+                inputmode="numeric"
+                maxlength="9"
+                pattern="5[0-9]{8}"
+                placeholder="5xxxxxxxx"
+                autocomplete="tel"
+              />
+              <small class="driver-field-error" id="phoneNumberError"></small>
+            </div>
+          </label>
+
+          <label>
+            <span>Email</span>
+            <input
+              id="driverEmail"
+              name="driverEmail"
+              type="email"
+              inputmode="email"
+              autocomplete="email"
+            />
+            <small class="driver-field-error" id="emailError"></small>
+          </label>
+
+          <label>
+            <span>
+              Date of Birth
+              <b class="driver-required-mark">*</b>
+            </span>
+
+            <input id="dateOfBirth" type="date" />
+            <small class="driver-field-error" id="dateOfBirthError"></small>
+          </label>
+
+          <label>
+            <span>
+              Nationality
+              <b class="driver-required-mark">*</b>
+            </span>
+
+            <select id="nationality">
+              <option value="">Select nationality</option>
+
+              <option value="SAUDI">Saudi</option>
+
+              <option value="PAKISTANI">Pakistani</option>
+
+              <option value="INDIAN">Indian</option>
+
+              <option value="EGYPTIAN">Egyptian</option>
+            </select>
+          </label>
+
+          <label>
+            <span>
+              ID Type
+              <b class="driver-required-mark">*</b>
+            </span>
+
+            <select id="idType">
+              <option value="">Select ID type</option>
+
+              <option value="NATIONAL_ID">National ID</option>
+
+              <option value="IQAMA">Iqama</option>
+
+              <option value="PASSPORT">Passport</option>
+            </select>
+          </label>
+
+          <label>
+            <span>
+              ID / Iqama Number
+              <b class="driver-required-mark">*</b>
+            </span>
+
+            <input
+              id="idNumber"
+              type="text"
+              inputmode="numeric"
+              maxlength="10"
+              pattern="[0-9]{10}"
+              placeholder="Enter 10-digit ID / Iqama number"
+              autocomplete="off"
+            />
+
+            <small class="driver-field-error" id="idNumberError"></small>
+          </label>
+
+          <label>
+            <span>
+              Iqama Expiry Date
+              <b class="driver-required-mark">*</b>
+            </span>
+
+            <input id="idExpiryDate" type="date" />
+          </label>
+        </div>
+      </section>
+
+      <!-- Driver Information -->
+      <section class="driver-form-card">
+        <h2>Driver Information</h2>
+
+        <div class="driver-form-grid five-cols">
+          <label>
+            <span>
+              Driver Type
+              <b class="driver-required-mark">*</b>
+            </span>
+
+            <select id="driverType">
+              <option value="">Select driver type</option>
+
+              <option value="INDEPENDENT_DRIVER">Independent Driver</option>
+
+              <option value="VALET_COMPANY_DRIVER">Valet Company Driver</option>
+            </select>
+          </label>
+
+          <label>
+            <span>
+              License Number
+              <b class="driver-required-mark">*</b>
+            </span>
+
+            <input
+              id="licenseNumber"
+              type="text"
+              placeholder="Enter license number"
+            />
+          </label>
+
+          <label>
+            <span>
+              License Expiry Date
+              <b class="driver-required-mark">*</b>
+            </span>
+
+            <input id="licenseExpiryDate" type="date" />
+          </label>
+
+          <label>
+            <span>
+              License Type
+              <b class="driver-required-mark">*</b>
+            </span>
+
+            <select id="licenseType">
+              <option value="">Select license type</option>
+
+              <option value="PRIVATE">Private</option>
+
+              <option value="PUBLIC">Public</option>
+
+              <option value="HEAVY">Heavy</option>
+            </select>
+          </label>
+
+          <label>
+            <span>
+              Date of Joining
+              <b class="driver-required-mark">*</b>
+            </span>
+
+            <input id="joiningDate" type="date" />
+          </label>
+        </div>
+      </section>
+
+      <!-- Employment / Company Information -->
+      <section class="driver-form-card">
+        <h2>Employment / Company Information</h2>
+
+        <div class="driver-form-grid four-cols">
+          <label>
+            <span>
+              Company / Valet
+              <b class="driver-required-mark">*</b>
+            </span>
+
+            <select id="companyId">
+              <option value="">Select company</option>
+
+              <option value="smart-valet">Smart Valet Co.</option>
+
+              <option value="premium-parking">Premium Parking</option>
+
+              <option value="independent">Independent</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Branch / Department</span>
+
+            <select id="branchId">
+              <option value="">Select branch</option>
+
+              <option value="riyadh">Riyadh Branch</option>
+
+              <option value="jeddah">Jeddah Branch</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Employee ID</span>
+
+            <input
+              id="employeeId"
+              type="text"
+              placeholder="Enter employee ID"
+            />
+          </label>
+
+          <label>
+            <span>Supervisor / Manager</span>
+
+            <select id="supervisorId">
+              <option value="">Select supervisor</option>
+            </select>
+          </label>
+        </div>
+      </section>
+
+      <!-- Contact Address -->
+      <section class="driver-form-card">
+        <h2>Contact Address</h2>
+
+        <div class="driver-form-grid four-cols">
+          <label>
+            <span>
+              Address
+              <b class="driver-required-mark">*</b>
+            </span>
+
+            <input id="address" type="text" placeholder="Enter full address" />
+          </label>
+
+          <label>
+            <span>
+              City
+              <b class="driver-required-mark">*</b>
+            </span>
+
+            <input id="city" type="text" placeholder="Enter city" />
+          </label>
+
+          <label>
+            <span>
+              Region
+              <b class="driver-required-mark">*</b>
+            </span>
+
+            <select id="region">
+              <option value="">Select region</option>
+
+              <option value="RIYADH">Riyadh</option>
+
+              <option value="MAKKAH">Makkah</option>
+
+              <option value="EASTERN_PROVINCE">Eastern Province</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Postal Code</span>
+
+            <input
+              id="postalCode"
+              type="text"
+              inputmode="numeric"
+              placeholder="Enter postal code"
+            />
+          </label>
+        </div>
+      </section>
+
+      <!-- Actions -->
+      <div class="driver-form-actions">
+        <button type="button" id="cancel-driver" class="driver-cancel-btn">
+          Cancel
+        </button>
+
+        <div>
+          <button type="button" id="save-driver-draft" class="driver-draft-btn">
+            Save as Draft
+          </button>
+
+          <button
+            type="button"
+            id="nextAssignmentButton"
+            class="driver-next-btn"
+          >
+            Next: Assignment →
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <!-- STEP 2 -->
+  <div class="add-driver-step-content hidden" id="driver-step-assignment">
+    <section class="driver-form-card assignment-card">
+      <div class="assignment-heading">
+        <h2>Assignment</h2>
+        <p>
+          Assign the driver to company, location, parking zone, shift and
+          vehicle access.
+        </p>
+      </div>
+
+      <div class="assignment-grid">
+        <label>
+          <span>Valet Company / Employer <b>*</b></span>
+          <select id="driver-assignment-employer">
+            <option value="">Select Employer</option>
+            <option value="smart-valet">Smart Valet Co.</option>
+            <option value="premium-parking">Premium Parking</option>
+            <option value="independent">Independent</option>
+          </select>
+        </label>
+
+        <label>
+          <span>Branch / Department <b>*</b></span>
+          <select id="driver-assignment-branch">
+            <option value="">Select Branch</option>
+            <option value="riyadh">Riyadh Branch</option>
+            <option value="jeddah">Jeddah Branch</option>
+            <option value="dammam">Dammam Branch</option>
+          </select>
+        </label>
+
+        <label>
+          <span>Location <b>*</b></span>
+          <select id="driver-assignment-location">
+            <option value="">Select Location</option>
+
+            <option value="d88ad073-e61b-450a-859e-2c2d28dd47e1">
+              Riyadh Boulevard Valet
+            </option>
+
+            <option value="3a913cb4-d64a-4a3c-9e8b-5f21e19c9254">
+              Hilton Riyadh Olaya
+            </option>
+
+            <option value="7ab10d2f-69b3-448a-b3aa-e2f82dc1329a">
+              Dammam Compound
+            </option>
+          </select>
+        </label>
+
+        <div class="driver-multi-field">
+          <span class="driver-multi-field-label">
+            Parking Zone(s)
+            <b>*</b>
+          </span>
+
+          <div class="driver-multi-select" id="driver-assignment-zones-control">
+            <button
+              type="button"
+              class="driver-multi-select-trigger"
+              aria-expanded="false"
+            >
+              <span class="driver-multi-select-value">
+                Select parking zones
+              </span>
+
+              <i class="fa-solid fa-chevron-down"></i>
+            </button>
+
+            <div class="driver-multi-select-menu hidden">
+              <label>
+                <input type="checkbox" value="B2" />
+                <span>B2</span>
+              </label>
+
+              <label>
+                <input type="checkbox" value="Main Entrance" />
+                <span>Main Entrance</span>
+              </label>
+
+              <label>
+                <input type="checkbox" value="Valet Zone" />
+                <span>Valet Zone</span>
+              </label>
+            </div>
+          </div>
+
+          <select id="driver-assignment-zones" multiple hidden>
+            <option value="B2">B2</option>
+            <option value="Main Entrance">Main Entrance</option>
+            <option value="Valet Zone">Valet Zone</option>
+          </select>
+
+          <small>Select one or more zones</small>
+        </div>
+
+        <label>
+          <span>Work Shift <b>*</b></span>
+          <select id="driver-assignment-shift">
+            <option value="">Select Shift</option>
+            <option value="morning">Morning Shift (06:00 AM - 02:00 PM)</option>
+            <option value="evening">Evening Shift (02:00 PM - 10:00 PM)</option>
+            <option value="night">Night Shift (10:00 PM - 06:00 AM)</option>
+          </select>
+        </label>
+
+        <div class="driver-multi-field">
+          <span class="driver-multi-field-label">
+            Shift Days
+            <b>*</b>
+          </span>
+
+          <div class="driver-multi-select" id="driver-assignment-days-control">
+            <button
+              type="button"
+              class="driver-multi-select-trigger"
+              aria-expanded="false"
+            >
+              <span class="driver-multi-select-value"> Select shift days </span>
+
+              <i class="fa-solid fa-chevron-down"></i>
+            </button>
+
+            <div class="driver-multi-select-menu hidden">
+              <label>
+                <input type="checkbox" value="Monday" />
+                <span>Monday</span>
+              </label>
+
+              <label>
+                <input type="checkbox" value="Tuesday" />
+                <span>Tuesday</span>
+              </label>
+
+              <label>
+                <input type="checkbox" value="Wednesday" />
+                <span>Wednesday</span>
+              </label>
+
+              <label>
+                <input type="checkbox" value="Thursday" />
+                <span>Thursday</span>
+              </label>
+
+              <label>
+                <input type="checkbox" value="Friday" />
+                <span>Friday</span>
+              </label>
+
+              <label>
+                <input type="checkbox" value="Saturday" />
+                <span>Saturday</span>
+              </label>
+
+              <label>
+                <input type="checkbox" value="Sunday" />
+                <span>Sunday</span>
+              </label>
+            </div>
+          </div>
+
+          <select id="driver-assignment-days" multiple hidden>
+            <option value="Monday">Monday</option>
+            <option value="Tuesday">Tuesday</option>
+            <option value="Wednesday">Wednesday</option>
+            <option value="Thursday">Thursday</option>
+            <option value="Friday">Friday</option>
+            <option value="Saturday">Saturday</option>
+            <option value="Sunday">Sunday</option>
+          </select>
+        </div>
+
+        <label>
+          <span>Vehicle Access Level <b>*</b></span>
+          <select id="driver-assignment-access">
+            <option value="">Select Access Level</option>
+            <option value="standard">Standard Access</option>
+            <option value="vip">VIP Access</option>
+            <option value="restricted">Restricted Access</option>
+          </select>
+          <small>Define the level of vehicle access for this driver</small>
+        </label>
+      </div>
+    </section>
+
+    <section class="driver-form-card assigned-vehicles-card">
+      <div class="assigned-vehicles-heading">
+        <div>
+          <h2>Assigned Vehicles <span>(Optional)</span></h2>
+          <p>Assign specific vehicles to the driver if applicable.</p>
+        </div>
+        <button type="button" id="open-driver-vehicle-modal">
+          <i class="fa-solid fa-plus"></i>
+          Assign Vehicle
+        </button>
+      </div>
+
+      <div class="assigned-vehicle-table">
+        <div class="assigned-vehicle-head">
+          <span>Vehicle Number</span>
+          <span>Vehicle Type</span>
+          <span>Access Type</span>
+          <span>Action</span>
+        </div>
+        <div class="assigned-empty">
+          <i class="fa-solid fa-car"></i>
+          <b>No vehicles assigned yet</b>
+          <p>You can assign vehicles that this driver is allowed to operate.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="driver-form-card assignment-notes-card">
+      <label>
+        <span>Assignment Notes <small>(Optional)</small></span>
+        <textarea
+          id="driver-assignment-notes"
+          maxlength="250"
+          placeholder="Add any special instructions or notes for this driver..."
+        ></textarea>
+        <em>0 / 250</em>
+      </label>
+    </section>
+
+    <div class="driver-form-actions">
+      <button type="button" class="driver-cancel-btn" id="back-driver-details">
+        ← Back
+      </button>
+      <div>
+        <button
+          type="button"
+          class="driver-draft-btn"
+          id="save-driver-assignment-draft"
+        >
+          Save as Draft
+        </button>
+        <button type="button" class="driver-next-btn" id="go-documents">
+          Next: Upload Documents →
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="add-driver-step-content hidden" id="driver-step-documents">
+    <section class="upload-documents-card">
+      <div class="upload-documents-header">
+        <div>
+          <h2>Upload Documents</h2>
+          <p>
+            Upload all required documents for this driver. Supported formats:
+            JPG, PNG, PDF. Max size: 5MB per file.
+          </p>
+        </div>
+
+        <div class="document-progress">
+          <div><b>Document Progress</b><span>0 / 10 Uploaded</span></div>
+          <em><i style="width: 0%"></i></em>
+          <small>0%</small>
+        </div>
+      </div>
+
+      <div class="upload-tabs">
+        <button type="button" class="active">
+          All Documents <span>10</span>
+        </button>
+        <button type="button">Required <span>5</span></button>
+        <button type="button">Company Specific <span>2</span></button>
+        <button type="button">Optional <span>3</span></button>
+      </div>
+
+      <div class="documents-grid">
+        <article class="document-card">
+          <div class="document-top">
+            <i class="fa-regular fa-id-card"></i>
+            <div>
+              <h3>Driver Photo</h3>
+              <span class="required">Required</span>
+            </div>
+          </div>
+          <p>Clear passport size photo</p>
+          <label class="document-upload">
+            <input
+              type="file"
+              accept=".jpg,.jpeg,.png"
+              data-document-type="PROFILE_PHOTO"
+              data-document-slot="PROFILE_PHOTO"
+              data-document-label="Driver Photo"
+              data-document-category="required"
+              hidden
+            />
+            <div class="document-upload-empty">
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+
+              <b>Click to upload</b>
+
+              <small> or drag and drop </small>
+            </div>
+          </label>
+        </article>
+
+        <article class="document-card">
+          <div class="document-top">
+            <i class="fa-regular fa-id-card"></i>
+            <div>
+              <h3>National ID / Iqama</h3>
+              <span class="required">Required</span>
+            </div>
+          </div>
+          <p>Front side of ID / Iqama</p>
+          <label class="document-upload">
+            <input
+              type="file"
+              accept=".jpg,.jpeg,.png,.pdf"
+              data-document-type="NATIONAL_ID_FRONT"
+              data-document-slot="NATIONAL_ID_FRONT"
+              data-document-label="National ID / Iqama"
+              data-document-category="required"
+              hidden
+            />
+
+            <div class="document-upload-empty">
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+
+              <b>Click to upload</b>
+
+              <small> or drag and drop </small>
+            </div>
+          </label>
+        </article>
+
+        <article class="document-card">
+          <div class="document-top">
+            <i class="fa-regular fa-id-card"></i>
+            <div>
+              <h3>Driving License (Front)</h3>
+              <span class="required">Required</span>
+            </div>
+          </div>
+          <p>Front side of driving license</p>
+          <label class="document-upload">
+            <input
+              type="file"
+              accept=".jpg,.jpeg,.png,.pdf"
+              data-document-type="DRIVING_LICENSE_FRONT"
+              data-document-slot="DRIVING_LICENSE_FRONT"
+              data-document-label="Driving License (Front)"
+              data-document-category="required"
+              hidden
+            />
+
+            <div class="document-upload-empty">
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+
+              <b>Click to upload</b>
+
+              <small> or drag and drop </small>
+            </div>
+          </label>
+        </article>
+
+        <article class="document-card">
+          <div class="document-top">
+            <i class="fa-regular fa-id-card"></i>
+            <div>
+              <h3>Driving License (Back)</h3>
+              <span class="required">Required</span>
+            </div>
+          </div>
+          <p>Back side of driving license</p>
+          <label class="document-upload">
+            <input
+              type="file"
+              accept=".jpg,.jpeg,.png,.pdf"
+              data-document-type="DRIVING_LICENSE_BACK"
+              data-document-slot="DRIVING_LICENSE_BACK"
+              data-document-label="Driving License (Back)"
+              data-document-category="required"
+              hidden
+            />
+
+            <div class="document-upload-empty">
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+
+              <b>Click to upload</b>
+
+              <small> or drag and drop </small>
+            </div>
+          </label>
+        </article>
+
+        <article class="document-card">
+          <div class="document-top">
+            <i class="fa-solid fa-heart-pulse"></i>
+            <div>
+              <h3>Medical Certificate</h3>
+              <span class="required">Required</span>
+            </div>
+          </div>
+          <p>Valid medical certificate</p>
+          <label class="document-upload">
+            <input
+              type="file"
+              accept=".jpg,.jpeg,.png,.pdf"
+              data-document-type="MEDICAL_CERTIFICATE"
+              data-document-slot="MEDICAL_CERTIFICATE"
+              data-document-label="Medical Certificate"
+              data-document-category="required"
+              hidden
+            />
+
+            <div class="document-upload-empty">
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+
+              <b>Click to upload</b>
+
+              <small> or drag and drop </small>
+            </div>
+          </label>
+        </article>
+
+        <article class="document-card">
+          <div class="document-top">
+            <i class="fa-regular fa-file-lines"></i>
+            <div>
+              <h3>Employment Contract</h3>
+              <span class="company">Company</span>
+            </div>
+          </div>
+          <p>Employment contract copy</p>
+          <label class="document-upload">
+            <input
+              type="file"
+              accept=".jpg,.jpeg,.png,.pdf"
+              data-document-type="EMPLOYMENT_CONTRACT"
+              data-document-slot="EMPLOYMENT_CONTRACT"
+              data-document-label="Employment Contract"
+              data-document-category="company"
+              hidden
+            />
+
+            <div class="document-upload-empty">
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+
+              <b>Click to upload</b>
+
+              <small> or drag and drop </small>
+            </div>
+          </label>
+        </article>
+
+        <article class="document-card">
+          <div class="document-top">
+            <i class="fa-solid fa-shield-halved"></i>
+            <div>
+              <h3>Company Authorization Letter</h3>
+              <span class="company">Company</span>
+            </div>
+          </div>
+          <p>Authorization letter from company</p>
+          <label class="document-upload">
+            <input
+              type="file"
+              accept=".jpg,.jpeg,.png,.pdf"
+              data-document-type="OTHER"
+              data-document-slot="COMPANY_AUTHORIZATION_LETTER"
+              data-document-label="Company Authorization Letter"
+              data-document-category="company"
+              hidden
+            />
+
+            <div class="document-upload-empty">
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+
+              <b>Click to upload</b>
+
+              <small> or drag and drop </small>
+            </div>
+          </label>
+        </article>
+
+        <article class="document-card">
+          <div class="document-top">
+            <i class="fa-solid fa-shield-halved"></i>
+            <div>
+              <h3>Insurance Certificate</h3>
+              <span class="optional">Optional</span>
+            </div>
+          </div>
+          <p>Vehicle insurance certificate</p>
+          <label class="document-upload">
+            <input
+              type="file"
+              accept=".jpg,.jpeg,.png,.pdf"
+              data-document-type="OTHER"
+              data-document-slot="INSURANCE_CERTIFICATE"
+              data-document-label="Insurance Certificate"
+              data-document-category="optional"
+              hidden
+            />
+
+            <div class="document-upload-empty">
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+
+              <b>Click to upload</b>
+
+              <small> or drag and drop </small>
+            </div>
+          </label>
+        </article>
+
+        <article class="document-card">
+          <div class="document-top">
+            <i class="fa-regular fa-file-lines"></i>
+            <div>
+              <h3>Police Clearance</h3>
+              <span class="optional">Optional</span>
+            </div>
+          </div>
+          <p>Police clearance certificate</p>
+          <label class="document-upload">
+            <input
+              type="file"
+              accept=".jpg,.jpeg,.png,.pdf"
+              data-document-type="BACKGROUND_CHECK"
+              data-document-slot="BACKGROUND_CHECK"
+              data-document-label="Police Clearance"
+              data-document-category="optional"
+              hidden
+            />
+
+            <div class="document-upload-empty">
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+
+              <b>Click to upload</b>
+
+              <small> or drag and drop </small>
+            </div>
+          </label>
+        </article>
+
+        <article class="document-card">
+          <div class="document-top">
+            <i class="fa-solid fa-passport"></i>
+            <div>
+              <h3>Passport Copy</h3>
+              <span class="optional">Optional</span>
+            </div>
+          </div>
+          <p>Passport copy if applicable</p>
+          <label class="document-upload">
+            <input
+              type="file"
+              accept=".jpg,.jpeg,.png,.pdf"
+              data-document-type="PASSPORT"
+              data-document-slot="PASSPORT"
+              data-document-label="Passport Copy"
+              data-document-category="optional"
+              hidden
+            />
+
+            <div class="document-upload-empty">
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+
+              <b>Click to upload</b>
+
+              <small> or drag and drop </small>
+            </div>
+          </label>
+        </article>
+      </div>
+
+      <div class="upload-info">
+        <i class="fa-solid fa-circle-info"></i>
+        Make sure all documents are clear, valid and up to date. Expired
+        documents may delay driver activation.
+      </div>
+      <div
+        class="document-required-warning"
+        id="document-required-warning"
+        role="alert"
+      >
+        <i class="fa-solid fa-triangle-exclamation"></i>
+
+        <span id="document-required-warning-text">
+          Please upload all required documents before continuing.
+        </span>
+      </div>
+    </section>
+
+    <div class="driver-form-actions">
+      <button
+        type="button"
+        class="driver-cancel-btn"
+        id="back-driver-assignment"
+      >
+        ← Back
+      </button>
+      <div>
+        <button
+          type="button"
+          class="driver-draft-btn"
+          id="save-driver-documents-draft"
+        >
+          Save as Draft
+        </button>
+        <button type="button" class="driver-next-btn" id="go-review">
+          Next: Review →
+        </button>
+      </div>
+    </div>
+  </div>
+  <!-- STEP 4 -->
+  <!-- STEP 4 -->
+  <div class="add-driver-step-content hidden" id="driver-step-review">
+    <section class="review-card" id="driver-review-card">
+      <div class="review-header">
+        <div>
+          <h2>Review Driver Information</h2>
+
+          <p>
+            Please review all information before submitting. You can go back to
+            edit if needed.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          class="review-download-btn"
+          id="download-driver-summary"
+        >
+          <i class="fa-solid fa-download"></i>
+          Download Summary (PDF)
+        </button>
+      </div>
+
+      <div class="driver-review-loading" id="driver-review-loading">
+        <i class="fa-solid fa-spinner fa-spin"></i>
+        Loading saved driver information...
+      </div>
+
+      <div class="review-grid hidden" id="driver-review-grid">
+        <article class="review-panel">
+          <div class="review-panel-title">
+            <h3>
+              <i class="fa-regular fa-user"></i>
+              Personal Information
+            </h3>
+
+            <button type="button" data-review-edit-step="details">Edit</button>
+          </div>
+
+          <div class="review-profile">
+            <img
+              id="review-profile-photo"
+              src="/public/assets/vehicle-brands/profile_pic_01.png"
+              alt="Driver"
+            />
+
+            <div class="review-info-grid">
+              <p>
+                <span>Full Name</span>
+                <b id="review-full-name">—</b>
+              </p>
+
+              <p>
+                <span>Date of Birth</span>
+                <b id="review-date-of-birth">—</b>
+              </p>
+
+              <p>
+                <span>ID / Iqama Number</span>
+                <b id="review-id-number">—</b>
+              </p>
+
+              <p>
+                <span>Phone Number</span>
+                <b id="review-phone-number">—</b>
+              </p>
+
+              <p>
+                <span>Nationality</span>
+                <b id="review-nationality">—</b>
+              </p>
+
+              <p>
+                <span>ID Expiry Date</span>
+                <b id="review-id-expiry-date">—</b>
+              </p>
+
+              <p>
+                <span>Email</span>
+                <b id="review-email">—</b>
+              </p>
+
+              <p>
+                <span>ID Type</span>
+                <b id="review-id-type">—</b>
+              </p>
+            </div>
+          </div>
+        </article>
+
+        <article class="review-panel">
+          <div class="review-panel-title">
+            <h3>
+              <i class="fa-solid fa-id-card"></i>
+              Driver Information
+            </h3>
+
+            <button type="button" data-review-edit-step="details">Edit</button>
+          </div>
+
+          <div class="review-info-grid two">
+            <p>
+              <span>Driver Type</span>
+              <b id="review-driver-type">—</b>
+            </p>
+
+            <p>
+              <span>License Type</span>
+              <b id="review-license-type">—</b>
+            </p>
+
+            <p>
+              <span>License Number</span>
+              <b id="review-license-number">—</b>
+            </p>
+
+            <p>
+              <span>Date of Joining</span>
+              <b id="review-joining-date">—</b>
+            </p>
+
+            <p>
+              <span>License Expiry Date</span>
+              <b id="review-license-expiry-date">—</b>
+            </p>
+          </div>
+        </article>
+
+        <article class="review-panel">
+          <div class="review-panel-title">
+            <h3>
+              <i class="fa-solid fa-user-check"></i>
+              Assignment Information
+            </h3>
+
+            <button type="button" data-review-edit-step="assignment">
+              Edit
+            </button>
+          </div>
+
+          <div class="review-info-grid four">
+            <p>
+              <span>Valet Company / Employer</span>
+              <b id="review-employer">—</b>
+            </p>
+
+            <p>
+              <span>Branch / Department</span>
+              <b id="review-assignment-branch">—</b>
+            </p>
+
+            <p>
+              <span>Location</span>
+              <b id="review-location">—</b>
+            </p>
+
+            <p>
+              <span>Parking Zone(s)</span>
+              <b id="review-parking-zones">—</b>
+            </p>
+
+            <p>
+              <span>Work Shift</span>
+              <b id="review-work-shift">—</b>
+            </p>
+
+            <p>
+              <span>Shift Days</span>
+              <b id="review-shift-days">—</b>
+            </p>
+
+            <p>
+              <span>Vehicle Access Level</span>
+              <b id="review-access-level">—</b>
+            </p>
+
+            <p>
+              <span>Assignment Notes</span>
+              <b id="review-assignment-notes">—</b>
+            </p>
+          </div>
+        </article>
+      </div>
+
+      <article
+        class="review-panel uploaded-review hidden"
+        id="review-documents-panel"
+      >
+        <div class="review-panel-title">
+          <div>
+            <h3>
+              <i class="fa-regular fa-file-lines"></i>
+              Uploaded Documents
+            </h3>
+
+            <p id="review-document-count">0 documents uploaded</p>
+          </div>
+
+          <button type="button" data-review-edit-step="documents">Edit</button>
+        </div>
+
+        <div class="uploaded-doc-grid" id="review-uploaded-documents"></div>
+      </article>
+
+      <div class="review-info-banner">
+        <i class="fa-solid fa-circle-info"></i>
+
+        Please confirm that all information is correct. After submission, the
+        driver will be added and can be managed from the Drivers list.
+      </div>
+    </section>
+
+    <div class="driver-form-actions">
+      <button
+        type="button"
+        class="driver-cancel-btn"
+        id="back-driver-documents"
+      >
+        ← Back
+      </button>
+
+      <div>
+        <button
+          type="button"
+          class="driver-draft-btn"
+          id="save-driver-review-draft"
+        >
+          Save as Draft
+        </button>
+
+        <button type="button" class="driver-next-btn" id="submit-driver-btn">
+          <i class="fa-regular fa-circle-check"></i>
+          Submit Driver
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="driver-success-modal hidden" id="driver-success-modal">
+    <div class="driver-success-card">
+      <button
+        type="button"
+        class="driver-success-close"
+        id="close-driver-success"
+      >
+        ×
+      </button>
+
+      <div class="driver-success-icon">
+        <i class="fa-solid fa-check"></i>
+      </div>
+
+      <h2>Success!</h2>
+
+      <p>Driver successfully created.</p>
+
+      <div class="driver-success-code">
+        <span>Driver ID</span>
+
+        <strong id="created-driver-code"> — </strong>
+      </div>
+
+      <div class="driver-success-note">
+        The new driver has been added to the Drivers list.
+      </div>
+
+      <button
+        type="button"
+        class="driver-success-primary"
+        id="view-drivers-list"
+      >
+        View Drivers List
+      </button>
+
+      <button
+        type="button"
+        class="driver-success-secondary"
+        id="add-another-driver"
+      >
+        Add Another Driver
+      </button>
+    </div>
+  </div>
+
+  <div
+    id="driver-cancel-modal"
+    class="driver-confirm-modal hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="driver-cancel-modal-title"
+  >
+    <div class="driver-confirm-backdrop" data-close-driver-confirm></div>
+
+    <div class="driver-confirm-dialog">
+      <button
+        type="button"
+        class="driver-confirm-close"
+        id="close-driver-cancel-modal"
+        aria-label="Close"
+      >
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="driver-confirm-icon">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+      </div>
+
+      <div class="driver-confirm-content">
+        <span class="driver-confirm-label"> Unsaved changes </span>
+
+        <h2 id="driver-cancel-modal-title">Discard this driver?</h2>
+
+        <p>
+          All entered information and uploaded documents will be removed. This
+          action cannot be undone.
+        </p>
+      </div>
+
+      <div class="driver-confirm-actions">
+        <button type="button" id="keep-editing-driver" class="btn-secondary">
+          Keep Editing
+        </button>
+
+        <button type="button" id="confirm-cancel-driver" class="btn-danger">
+          <i class="fa-solid fa-trash-can"></i>
+          Delete Draft
+        </button>
+      </div>
+    </div>
+  </div>
+</section>

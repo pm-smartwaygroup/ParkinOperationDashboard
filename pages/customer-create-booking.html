@@ -1,0 +1,447 @@
+<section class="customer-create-booking-page">
+  <button id="back-to-customer-bookings" class="page-back-btn">
+    <i class="fa-solid fa-arrow-left"></i>
+    Back to Bookings
+  </button>
+
+  <div class="customer-booking-layout">
+    <!-- LEFT -->
+
+    <div class="customer-booking-main">
+      <!-- Booking Information -->
+
+      <section
+        class="customer-booking-card booking-information-card"
+        id="booking-information-card"
+      >
+        <div class="booking-card-header">
+          <div class="booking-card-title">
+            <span class="booking-card-title-icon">
+              <i class="fa-regular fa-calendar-plus"></i>
+            </span>
+
+            <div>
+              <h2>Booking Information</h2>
+              <p>Create a parking reservation for this customer</p>
+            </div>
+          </div>
+
+          <small>
+            <span>*</span>
+            Required fields
+          </small>
+        </div>
+
+        <div class="booking-form-grid">
+          <!-- Location -->
+
+          <label>
+            Location *
+
+            <select id="booking-location">
+              <option value="">Select location</option>
+
+              <option>Hilton Riyadh</option>
+
+              <option>King Abdullah Financial District</option>
+
+              <option>Riyadh Front</option>
+            </select>
+          </label>
+
+          <!-- Parking Zone -->
+
+          <label>
+            Parking Zone *
+
+            <select id="booking-zone">
+              <option value="">Select parking zone</option>
+
+              <option>VIP Zone</option>
+
+              <option>Basement A</option>
+
+              <option>Outdoor</option>
+            </select>
+          </label>
+        </div>
+
+        <!-- Booking Type -->
+
+        <div class="booking-section-title">Booking Type *</div>
+
+        <div class="booking-type-grid">
+          <button
+            type="button"
+            class="booking-type-card active"
+            data-booking-type="single"
+          >
+            <i class="fa-solid fa-circle-check"></i>
+
+            <div>
+              <strong>Single Entry</strong>
+
+              <small> Customer enters and exits once </small>
+            </div>
+          </button>
+
+          <button
+            type="button"
+            class="booking-type-card"
+            data-booking-type="multiple"
+          >
+            <i class="fa-solid fa-right-left"></i>
+
+            <div>
+              <strong>Multiple Entry</strong>
+
+              <small> Customer can enter and exit multiple times </small>
+            </div>
+          </button>
+        </div>
+
+        <div class="booking-form-grid booking-date-grid">
+          <label>
+            Entry Date *
+
+            <input type="date" id="booking-entry-date" />
+          </label>
+
+          <label>
+            Entry Time *
+
+            <input type="time" id="booking-entry-time" />
+          </label>
+
+          <label>
+            Exit Date *
+
+            <input type="date" id="booking-exit-date" />
+          </label>
+
+          <label>
+            Exit Time *
+
+            <input type="time" id="booking-exit-time" />
+          </label>
+        </div>
+
+        <div class="booking-vehicle-row">
+          <label>
+            Select Vehicle *
+
+            <select id="booking-vehicle">
+              <option>Toyota Camry - ABC1234</option>
+            </select>
+
+            <small> Select a vehicle from customer's saved vehicles </small>
+          </label>
+
+          <button
+            type="button"
+            class="secondary-outline-btn"
+            id="booking-add-vehicle"
+          >
+            <i class="fa-solid fa-plus"></i>
+
+            Add Vehicle
+          </button>
+        </div>
+
+        <label class="booking-notes-field">
+          <span>Notes <small>(Optional)</small></span>
+
+          <textarea
+            rows="5"
+            maxlength="200"
+            id="booking-notes"
+            placeholder="Add any special notes or instructions..."
+          ></textarea>
+
+          <em> <span id="booking-notes-count">0</span> / 200 </em>
+        </label>
+      </section>
+
+      <!-- Pricing -->
+      <section
+        class="customer-booking-card booking-pricing-card"
+        id="booking-pricing-card"
+      >
+        <div class="booking-card-header">
+          <div class="booking-card-title">
+            <span class="booking-card-title-icon">
+              <i class="fa-regular fa-credit-card"></i>
+            </span>
+
+            <div>
+              <h2>Pricing &amp; Payment</h2>
+              <p>Configure parking rate and payment details</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="booking-pricing-grid">
+          <label class="booking-field">
+            <span> Parking Rate <b>*</b> </span>
+
+            <select id="bookingRate">
+              <option value="">Select parking rate</option>
+              <option value="Hourly">Hourly</option>
+              <option value="Daily">Daily</option>
+              <option value="Weekly">Weekly</option>
+              <option value="Monthly">Monthly</option>
+            </select>
+          </label>
+
+          <label class="booking-field">
+            <span>Amount (SAR)</span>
+
+            <input id="bookingAmount" type="text" value="0.00" readonly />
+          </label>
+
+          <label class="booking-field">
+            <span> Payment Method <b>*</b> </span>
+
+            <select id="paymentMethod">
+              <option value="">Select payment method</option>
+              <option value="Cash">Cash</option>
+              <option value="Credit Card">Credit Card</option>
+              <option value="Apple Pay">Apple Pay</option>
+              <option value="MADA">MADA</option>
+            </select>
+          </label>
+
+          <label class="booking-paid-arrival-card">
+            <input id="paidArrival" type="checkbox" />
+
+            <span class="booking-paid-arrival-check">
+              <i class="fa-solid fa-check"></i>
+            </span>
+
+            <span class="booking-paid-arrival-copy">
+              <strong>Paid on Arrival</strong>
+              <small> Payment will be collected when customer arrives </small>
+            </span>
+          </label>
+        </div>
+
+        <div class="booking-footer-actions">
+          <button
+            type="button"
+            class="btn-secondary"
+            id="cancel-customer-booking"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="button"
+            class="btn-primary"
+            id="create-customer-booking-submit"
+          >
+            <i class="fa-regular fa-calendar-check"></i>
+            Create Booking
+          </button>
+        </div>
+      </section>
+    </div>
+
+    <!-- RIGHT -->
+
+    <aside class="customer-booking-sidebar">
+      <section
+        class="customer-booking-card booking-customer-summary-card"
+        id="booking-customer-summary"
+      >
+        <div class="booking-sidebar-heading">
+          <h2>Customer Summary</h2>
+        </div>
+
+        <div class="booking-customer-profile">
+          <div class="booking-customer-avatar">MA</div>
+
+          <div>
+            <span class="booking-customer-badge">APP USER</span>
+            <h3>Muhammad Ahmed</h3>
+            <p>CUST-0001</p>
+          </div>
+        </div>
+
+        <div class="booking-customer-contact-list">
+          <div>
+            <i class="fa-solid fa-phone"></i>
+            <span>+966 50 123 4567</span>
+          </div>
+
+          <div>
+            <i class="fa-regular fa-envelope"></i>
+            <span>m.ahmed@example.com</span>
+          </div>
+
+          <div>
+            <i class="fa-solid fa-globe"></i>
+            <span>Saudi Arabia</span>
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="customer-booking-card booking-summary-card"
+        id="booking-summary"
+      >
+        <div class="booking-sidebar-heading">
+          <h2>Booking Summary</h2>
+        </div>
+
+        <div class="booking-summary-list">
+          <div>
+            <span>Location</span>
+            <b id="booking-summary-location">-</b>
+          </div>
+
+          <div>
+            <span>Parking Zone</span>
+            <b id="booking-summary-zone">-</b>
+          </div>
+
+          <div>
+            <span>Booking Type</span>
+            <b id="booking-summary-type">Single Entry</b>
+          </div>
+
+          <div>
+            <span>Entry Date &amp; Time</span>
+            <b id="booking-summary-entry">-</b>
+          </div>
+
+          <div>
+            <span>Expected Exit Date &amp; Time</span>
+            <b id="booking-summary-exit">-</b>
+          </div>
+
+          <div>
+            <span>Vehicle</span>
+            <b id="booking-summary-vehicle"> Toyota Camry - ABC1234 </b>
+          </div>
+        </div>
+
+        <div class="booking-summary-total">
+          <span>Amount (SAR)</span>
+          <strong id="booking-summary-amount">SAR 0.00</strong>
+        </div>
+      </section>
+
+      <section
+        class="customer-booking-card booking-good-to-know-card"
+        id="booking-good-to-know"
+      >
+        <div class="booking-good-to-know-heading">
+          <i class="fa-solid fa-circle-info"></i>
+          <h2>Good to Know</h2>
+        </div>
+
+        <ul>
+          <li>Customer will receive booking confirmation</li>
+          <li>You can modify or cancel the booking anytime</li>
+          <li>Customer will be notified before the exit time</li>
+        </ul>
+      </section>
+    </aside>
+  </div>
+</section>
+
+<!-- =====================================================
+     BOOKING CREATED SUCCESS MODAL
+====================================================== -->
+
+<div
+  class="booking-success-modal hidden"
+  id="booking-success-modal"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="booking-success-title"
+>
+  <div class="booking-success-backdrop"></div>
+
+  <section class="booking-success-dialog">
+    <button
+      type="button"
+      class="booking-success-close"
+      id="close-booking-success"
+      aria-label="Close success message"
+    >
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+
+    <div class="booking-success-icon">
+      <i class="fa-solid fa-check"></i>
+    </div>
+
+    <span class="booking-success-label"> Booking Created </span>
+
+    <h2 id="booking-success-title">Booking Created Successfully</h2>
+
+    <p>
+      The parking reservation has been created and the customer will receive a
+      confirmation message.
+    </p>
+
+    <div class="booking-success-id-box">
+      <span>Booking ID</span>
+
+      <div>
+        <strong id="created-booking-id">BK-000000</strong>
+
+        <button
+          type="button"
+          id="copy-created-booking-id"
+          aria-label="Copy booking ID"
+        >
+          <i class="fa-regular fa-copy"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="booking-success-details">
+      <div>
+        <span>Customer</span>
+        <strong>Muhammad Ahmed</strong>
+      </div>
+
+      <div>
+        <span>Vehicle</span>
+        <strong id="success-booking-vehicle"> Toyota Camry - ABC1234 </strong>
+      </div>
+
+      <div>
+        <span>Location</span>
+        <strong id="success-booking-location">-</strong>
+      </div>
+
+      <div>
+        <span>Amount</span>
+        <strong id="success-booking-amount">SAR 0.00</strong>
+      </div>
+    </div>
+
+    <div class="booking-success-actions">
+      <button
+        type="button"
+        class="booking-success-secondary"
+        id="create-another-booking"
+      >
+        <i class="fa-solid fa-plus"></i>
+        Create Another
+      </button>
+
+      <button
+        type="button"
+        class="booking-success-primary"
+        id="view-created-booking"
+      >
+        <i class="fa-regular fa-eye"></i>
+        View Booking
+      </button>
+    </div>
+  </section>
+</div>

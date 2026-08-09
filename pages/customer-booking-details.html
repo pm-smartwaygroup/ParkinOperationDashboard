@@ -1,0 +1,417 @@
+<section class="customer-booking-details-page">
+  <div class="booking-details-page-header">
+    <div>
+      <button
+        type="button"
+        class="page-back-btn"
+        id="back-from-booking-details"
+      >
+        <i class="fa-solid fa-arrow-left"></i>
+        Back to Bookings
+      </button>
+
+      <h1>Booking Details</h1>
+      <p>View complete booking information and history</p>
+    </div>
+
+    <div class="booking-details-header-actions">
+      <button type="button" class="booking-edit-btn" id="edit-booking-details">
+        <i class="fa-regular fa-pen-to-square"></i>
+        Edit Booking
+      </button>
+
+      <button
+        type="button"
+        class="booking-print-btn"
+        id="print-booking-details"
+      >
+        <i class="fa-solid fa-print"></i>
+        Print Receipt
+      </button>
+
+      <div class="booking-details-actions-wrapper">
+        <button
+          type="button"
+          class="booking-details-more-btn"
+          id="booking-details-more-btn"
+          aria-label="More booking actions"
+          aria-expanded="false"
+        >
+          <i class="fa-solid fa-ellipsis"></i>
+        </button>
+
+        <div
+          class="booking-details-actions-menu hidden"
+          id="booking-details-actions-menu"
+        >
+          <button type="button" id="cancel-booking-details" class="danger">
+            <i class="fa-regular fa-circle-xmark"></i>
+            Cancel Booking
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top summary -->
+
+  <section class="booking-details-summary-card">
+    <div class="booking-summary-primary">
+      <span class="booking-summary-main-icon">
+        <i class="fa-regular fa-calendar"></i>
+      </span>
+
+      <div>
+        <span>Booking ID</span>
+
+        <div class="booking-summary-id-row">
+          <strong id="booking-details-id"> BK-240524-0018 </strong>
+
+          <em class="booking-detail-status in-progress"> In Progress </em>
+        </div>
+
+        <small>Booking Time</small>
+        <b id="booking-details-created"> May 24, 2024, 10:15 AM </b>
+      </div>
+    </div>
+
+    <div class="booking-summary-column">
+      <span>
+        <i class="fa-solid fa-location-dot"></i>
+        Location
+      </span>
+
+      <strong id="booking-details-location"> Riyadh Front </strong>
+
+      <small id="booking-details-zone"> P1 - Premium </small>
+    </div>
+
+    <div class="booking-summary-column">
+      <span>
+        <i class="fa-regular fa-user"></i>
+        Customer
+      </span>
+
+      <strong>Muhammad Ahmed</strong>
+      <small>CUST-0001</small>
+    </div>
+
+    <div class="booking-summary-column booking-summary-vehicle">
+      <span>
+        <i class="fa-solid fa-car-side"></i>
+        Vehicle
+      </span>
+
+      <!-- <div class="booking-details-plate">
+        <span>٢٩١٢ فر س ب ن</span>
+        <strong>9515 J B A</strong>
+      </div> -->
+
+      <div
+        class="booking-details-ksa-plate"
+        aria-label="Saudi vehicle plate 9515 J B A"
+      >
+        <img
+          src="/public/assets/ksa-vehicle-plate.png"
+          alt=""
+          aria-hidden="true"
+        />
+
+        <span class="ksa-plate-arabic-number">٩٥١٥</span>
+        <span class="ksa-plate-arabic-letters">ا ب ج</span>
+        <span class="ksa-plate-english-number">9515</span>
+        <span class="ksa-plate-english-letters">J B A</span>
+      </div>
+
+      <b>White Toyota Camry</b>
+      <small>Sedan</small>
+    </div>
+
+    <div class="booking-summary-payment">
+      <span>Amount</span>
+      <strong>SAR 35.00</strong>
+
+      <small>Payment Method</small>
+
+      <div>
+        <img src="/public/assets/creditcards/visa.png" alt="Visa" />
+        <b>**** **** **** 4343</b>
+      </div>
+    </div>
+  </section>
+
+  <div class="booking-overview-title">
+    <i class="fa-regular fa-credit-card"></i>
+    <span>Booking Overview</span>
+  </div>
+
+  <!-- Main grid -->
+
+  <div class="booking-details-grid">
+    <!-- Timeline -->
+
+    <section class="booking-details-card booking-timeline-card">
+      <h2>Booking Timeline</h2>
+
+      <div class="booking-timeline">
+        <div class="booking-timeline-item completed">
+          <span>
+            <i class="fa-regular fa-calendar"></i>
+          </span>
+
+          <div>
+            <strong>Booked</strong>
+            <small>May 24, 2024, 10:15 AM</small>
+            <p>Booking created by customer via mobile app</p>
+          </div>
+        </div>
+
+        <div class="booking-timeline-item completed">
+          <span>
+            <i class="fa-solid fa-car-side"></i>
+          </span>
+
+          <div>
+            <strong>Vehicle Checked In</strong>
+            <small>May 24, 2024, 10:20 AM</small>
+            <p>Vehicle received by valet driver</p>
+          </div>
+        </div>
+
+        <div class="booking-timeline-item completed">
+          <span>
+            <i class="fa-regular fa-clock"></i>
+          </span>
+
+          <div>
+            <strong>In Progress</strong>
+            <small>May 24, 2024, 10:20 AM</small>
+            <p>Vehicle is currently parked</p>
+          </div>
+        </div>
+
+        <div class="booking-timeline-item pending">
+          <span>
+            <i class="fa-solid fa-flag"></i>
+          </span>
+
+          <div>
+            <strong>Expected Checkout</strong>
+            <small>May 24, 2024, 12:20 PM</small>
+            <p>Estimated completion time</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Booking information -->
+
+    <section class="booking-details-card">
+      <div class="booking-details-card-heading">
+        <i class="fa-regular fa-clipboard"></i>
+        <h2>Booking Information</h2>
+      </div>
+
+      <div class="booking-details-info-grid">
+        <div>
+          <span>Booking ID</span>
+          <strong>BK-240524-0018</strong>
+        </div>
+
+        <div>
+          <span>Booking Type</span>
+          <strong>Valet Parking</strong>
+        </div>
+
+        <div>
+          <span>Booking Time</span>
+          <strong>May 24, 2024, 10:15 AM</strong>
+        </div>
+
+        <div>
+          <span>Expected Checkout</span>
+          <strong>May 24, 2024, 12:20 PM</strong>
+        </div>
+
+        <div>
+          <span>Duration</span>
+          <strong>2h 00m</strong>
+        </div>
+
+        <div>
+          <span>Status</span>
+          <em class="booking-detail-status in-progress"> In Progress </em>
+        </div>
+
+        <div>
+          <span>Source</span>
+          <strong>Mobile App (iOS)</strong>
+        </div>
+
+        <div>
+          <span>Special Instructions</span>
+          <strong>—</strong>
+        </div>
+      </div>
+    </section>
+
+    <!-- Customer information -->
+
+    <section class="booking-details-card">
+      <div class="booking-details-card-heading">
+        <i class="fa-regular fa-user"></i>
+        <h2>Customer Information</h2>
+      </div>
+
+      <div class="booking-details-info-grid">
+        <div>
+          <span>Customer ID</span>
+          <strong>CUST-0001</strong>
+        </div>
+
+        <div>
+          <span>Customer Name</span>
+          <strong>Muhammad Ahmed</strong>
+        </div>
+
+        <div>
+          <span>Phone</span>
+          <strong>+966 50 123 4567</strong>
+        </div>
+
+        <div>
+          <span>Email</span>
+          <strong>m.ahmed@example.com</strong>
+        </div>
+
+        <div>
+          <span>Nationality</span>
+          <strong>Saudi Arabia</strong>
+        </div>
+
+        <div>
+          <span>Preferred Communication</span>
+          <strong>Email, SMS</strong>
+        </div>
+
+        <div>
+          <span>Member Since</span>
+          <strong>
+            <i class="fa-regular fa-calendar"></i>
+            May 10, 2024
+          </strong>
+        </div>
+      </div>
+    </section>
+
+    <!-- Location -->
+
+    <section class="booking-details-card">
+      <div class="booking-details-card-heading">
+        <i class="fa-solid fa-location-dot"></i>
+        <h2>Location Details</h2>
+      </div>
+
+      <div class="booking-location-content">
+        <h3>Riyadh Front</h3>
+        <strong>P1 - Premium</strong>
+        <p>King Fahd Road, Al Olaya</p>
+        <p>Riyadh 12211, Saudi Arabia</p>
+
+        <button type="button">
+          View on Map
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+    </section>
+
+    <!-- Vehicle -->
+
+    <section class="booking-details-card">
+      <div class="booking-details-card-heading">
+        <i class="fa-solid fa-car-side"></i>
+        <h2>Vehicle Information</h2>
+      </div>
+
+      <div class="booking-details-info-grid">
+        <div>
+          <span>License Plate</span>
+
+          <div
+            class="booking-details-ksa-plate"
+            aria-label="Saudi vehicle plate 9515 J B A"
+          >
+            <img
+              src="/public/assets/ksa-vehicle-plate.png"
+              alt=""
+              aria-hidden="true"
+            />
+
+            <span class="ksa-plate-arabic-number"> ٩٥١٥ </span>
+
+            <span class="ksa-plate-arabic-letters"> ا ب ج </span>
+
+            <span class="ksa-plate-english-number"> 9515 </span>
+
+            <span class="ksa-plate-english-letters"> J B A </span>
+          </div>
+        </div>
+
+        <div>
+          <span>Vehicle</span>
+          <strong>White Toyota Camry</strong>
+        </div>
+
+        <div>
+          <span>Vehicle Type</span>
+          <strong>Sedan</strong>
+        </div>
+
+        <div>
+          <span>Color</span>
+          <strong>White</strong>
+        </div>
+      </div>
+    </section>
+
+    <!-- Payment -->
+
+    <section class="booking-details-card">
+      <div class="booking-details-card-heading">
+        <i class="fa-regular fa-credit-card"></i>
+        <h2>Payment Details</h2>
+      </div>
+
+      <div class="booking-details-info-grid">
+        <div>
+          <span>Amount</span>
+          <strong>SAR 35.00</strong>
+        </div>
+
+        <div>
+          <span>Payment Method</span>
+
+          <strong class="booking-payment-method">
+            <img src="/public/assets/creditcards/visa.png" alt="Visa" />
+            **** **** **** 4343
+          </strong>
+        </div>
+
+        <div>
+          <span>Payment Status</span>
+          <em class="booking-payment-paid">Paid</em>
+        </div>
+
+        <div>
+          <span>Transaction ID</span>
+          <strong>TXN-240524-0018</strong>
+        </div>
+
+        <div>
+          <span>Paid At</span>
+          <strong>May 24, 2024, 10:15 AM</strong>
+        </div>
+      </div>
+    </section>
+  </div>
+</section>

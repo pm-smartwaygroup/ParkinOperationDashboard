@@ -1,0 +1,814 @@
+<section class="valet-page-shell">
+  <div class="valet-kpi-grid">
+    <article class="valet-kpi-card">
+      <span class="valet-kpi-icon green">🚘</span>
+      <div>
+        <p>Vehicles Parked</p>
+        <strong>612</strong>
+        <small class="up">↑ 15.3% vs yesterday</small>
+      </div>
+    </article>
+
+    <article class="valet-kpi-card">
+      <span class="valet-kpi-icon blue">🔑</span>
+      <div>
+        <p>Vehicles Picked Up</p>
+        <strong>598</strong>
+        <small class="up">↑ 12.8% vs yesterday</small>
+      </div>
+    </article>
+
+    <article class="valet-kpi-card">
+      <span class="valet-kpi-icon purple">⏱</span>
+      <div>
+        <p>Avg. Wait Time</p>
+        <strong>3.2 min</strong>
+        <small class="down">↓ 8.7% vs yesterday</small>
+      </div>
+    </article>
+
+    <article class="valet-kpi-card">
+      <span class="valet-kpi-icon orange">👥</span>
+      <div>
+        <p>Active Drivers</p>
+        <strong>72</strong>
+        <small class="up">↑ 6 vs yesterday</small>
+      </div>
+    </article>
+
+    <article class="valet-kpi-card">
+      <span class="valet-kpi-icon amber">🏢</span>
+      <div>
+        <p>Active Locations</p>
+        <strong>18</strong>
+        <small>2 new this month</small>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- // END OF KPI Section -->
+<div class="valet-tabs-card">
+  <div class="valet-tabs">
+    <button class="active" type="button" data-valet-tab="live">
+      Live Operations
+    </button>
+    <button type="button" data-valet-tab="queue">Vehicle Queue</button>
+    <button type="button" data-valet-tab="activity">Activity Feed</button>
+    <button type="button" data-valet-tab="incidents">Incidents</button>
+  </div>
+
+  <div class="valet-actions">
+    <select>
+      <option>All Locations</option>
+      <option>Riyadh Mall</option>
+      <option>Hilton Hotel</option>
+      <option>Dammam Compound</option>
+    </select>
+
+    <select>
+      <option>All Zones</option>
+      <option>Main Entrance</option>
+      <option>Valet Zone</option>
+      <option>VIP Zone</option>
+    </select>
+
+    <button type="button">+ Add Vehicle</button>
+  </div>
+</div>
+<div class="valet-tab-content active" id="valet-tab-live">
+  <section class="valet-main-grid">
+    <article class="valet-panel live-ops-panel">
+      <div class="valet-panel-heading">
+        <h2>Live Operations Overview</h2>
+        <a href="#locations">View all locations →</a>
+      </div>
+
+      <div class="valet-ops-table">
+        <div class="valet-ops-row valet-ops-head">
+          <span>Location / Zone</span>
+          <span>Vehicles</span>
+          <span>Queue</span>
+          <span>Avg. Wait Time</span>
+          <span>Status</span>
+        </div>
+
+        <div class="valet-ops-row">
+          <span><b>Riyadh Mall</b><small>Main Entrance</small></span>
+          <span><b>128</b><small>Parked</small></span>
+          <span><b>8</b><small>Waiting</small></span>
+          <span><b>2.4 min</b><small class="up">↓ 12%</small></span>
+          <span><em class="healthy"></em>Healthy</span>
+        </div>
+
+        <div class="valet-ops-row">
+          <span><b>Hilton Hotel</b><small>Valet Zone</small></span>
+          <span><b>96</b><small>Parked</small></span>
+          <span><b>6</b><small>Waiting</small></span>
+          <span><b>3.1 min</b><small class="up">↓ 5%</small></span>
+          <span><em class="healthy"></em>Healthy</span>
+        </div>
+
+        <div class="valet-ops-row">
+          <span><b>Dammam Compound</b><small>Main Gate</small></span>
+          <span><b>78</b><small>Parked</small></span>
+          <span><b>4</b><small>Waiting</small></span>
+          <span><b>4.5 min</b><small class="down">↑ 8%</small></span>
+          <span><em class="busy"></em>Busy</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="valet-panel valet-map-panel">
+      <div class="valet-panel-heading">
+        <h2>Operations Map</h2>
+        <button id="open-full-map" class="view-full-map-btn" type="button">
+          View Full Map →
+        </button>
+      </div>
+
+      <div class="valet-google-map" id="valet-google-map"></div>
+
+      <div class="valet-map-legend">
+        <span><i class="healthy"></i>Healthy</span>
+        <span><i class="busy"></i>Busy</span>
+        <span><i class="critical"></i>Critical</span>
+      </div>
+    </article>
+
+    <article class="valet-panel active-drivers-panel">
+      <div class="valet-panel-heading">
+        <h2>Active Drivers</h2>
+        <a href="#drivers">View all drivers →</a>
+      </div>
+
+      <div class="active-driver-list">
+        <div class="active-driver">
+          <span>AH</span>
+          <b>Ahmed Al Harbi<small>Riyadh Mall</small></b>
+          <em>On Duty</em>
+          <strong>12 Tasks</strong>
+        </div>
+
+        <div class="active-driver">
+          <span>FK</span>
+          <b>Faisal Khan<small>Hilton Hotel</small></b>
+          <em>On Duty</em>
+          <strong>8 Tasks</strong>
+        </div>
+
+        <div class="active-driver">
+          <span>MA</span>
+          <b>Mohammed Ali<small>Jeddah Mall</small></b>
+          <em>On Duty</em>
+          <strong>15 Tasks</strong>
+        </div>
+
+        <div class="active-driver">
+          <span>SA</span>
+          <b>Sami Al Dossari<small>Dammam Comp.</small></b>
+          <em class="break">On Break</em>
+          <strong>0 Tasks</strong>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <section class="valet-bottom-grid">
+    <article class="valet-panel">
+      <div class="valet-panel-heading">
+        <h2>Vehicle Queue</h2>
+        <a href="#vehicles">View all queues →</a>
+      </div>
+
+      <div class="vehicle-queue-list">
+        <div>
+          <span>Jeddah Mall</span>
+          <b>ABC-1234</b>
+          <em>6 min</em>
+          <strong>Waiting</strong>
+        </div>
+        <div>
+          <span>Riyadh Mall</span>
+          <b>XYZ-5678</b>
+          <em>4 min</em>
+          <strong>Waiting</strong>
+        </div>
+        <div>
+          <span>Dammam Compound</span>
+          <b>DEF-9012</b>
+          <em>3 min</em>
+          <strong>Waiting</strong>
+        </div>
+        <div>
+          <span>Hilton Hotel</span>
+          <b>GHI-3456</b>
+          <em>2 min</em>
+          <strong>Waiting</strong>
+        </div>
+      </div>
+    </article>
+
+    <article class="valet-panel">
+      <div class="valet-panel-heading">
+        <h2>Recent Activity</h2>
+        <a href="#activity">View all activity →</a>
+      </div>
+
+      <ul class="valet-activity-list">
+        <li>
+          <span>🚘</span><b>Vehicle ABC-1234 parked at Riyadh Mall</b
+          ><time>2 min ago</time>
+        </li>
+        <li>
+          <span>🚘</span><b>Vehicle XYZ-5678 picked up at Jeddah Mall</b
+          ><time>4 min ago</time>
+        </li>
+        <li>
+          <span>👤</span><b>Driver Ahmed Al Harbi started shift</b
+          ><time>6 min ago</time>
+        </li>
+        <li>
+          <span>🚨</span><b>Incident reported at Dammam Compound</b
+          ><time>10 min ago</time>
+        </li>
+      </ul>
+    </article>
+
+    <article class="valet-panel">
+      <div class="valet-panel-heading">
+        <h2>Incidents & Alerts</h2>
+        <a href="#alerts">View all incidents →</a>
+      </div>
+
+      <ul class="valet-alert-list">
+        <li>
+          <span class="high">!</span
+          ><b
+            >High wait time at Makkah Hotel<small
+              >Wait time is 7.2 min</small
+            ></b
+          ><em>High</em>
+        </li>
+        <li>
+          <span class="medium">!</span
+          ><b>Driver not responding<small>Faisal Khan at Hilton Hotel</small></b
+          ><em>Medium</em>
+        </li>
+        <li>
+          <span class="high">!</span
+          ><b>Vehicle damage reported<small>At Dammam Compound</small></b
+          ><em>High</em>
+        </li>
+        <li>
+          <span class="low">i</span
+          ><b>Payment machine offline<small>At Jeddah Mall</small></b
+          ><em>Low</em>
+        </li>
+      </ul>
+    </article>
+  </section>
+</div>
+
+<div class="valet-tab-content hidden" id="valet-tab-queue">
+  <section class="vehicle-queue-dashboard">
+    <article class="valet-panel vehicle-queue-main">
+      <div class="valet-panel-heading">
+        <h2>Vehicle Queue (All Locations)</h2>
+        <span>Showing 1 to 8 of 56 entries</span>
+      </div>
+
+      <div class="queue-summary-row">
+        <div><span>Total in Queue</span><strong>56</strong></div>
+        <div><span>Est. Avg. Wait Time</span><strong>4.2 min</strong></div>
+        <div><span>Waiting</span><strong>38</strong></div>
+        <div><span>Calling Driver</span><strong>12</strong></div>
+        <div><span>En Route</span><strong>4</strong></div>
+        <div><span>Arrived</span><strong>2</strong></div>
+      </div>
+
+      <div class="queue-table">
+        <div class="queue-row queue-head">
+          <span>#</span>
+          <span>Brand</span>
+          <span>Vehicle</span>
+          <span>Customer</span>
+          <span>Location / Zone</span>
+          <span>Arrival Time</span>
+          <span>Wait Time ↓</span>
+          <span>Status</span>
+          <span>Driver</span>
+          <span>Actions</span>
+        </div>
+
+        <div class="queue-row">
+          <span>1</span
+          ><span class="vehicle-brand-logo">
+            <img
+              src="/public/assets/vehicle-brands/toyota.svg"
+              alt="Toyota"
+            /> </span
+          ><b>ABC-1234<small>Toyota Camry · Black</small></b
+          ><span>Ahmed Al Harbi<small>+966 50 123 4567</small></span
+          ><span>Riyadh Mall<small>Main Entrance</small></span
+          ><span>10:24 AM</span><em class="danger">6 min</em
+          ><strong class="waiting">Waiting</strong><span>—</span
+          ><button>⋮</button>
+        </div>
+
+        <div class="queue-row">
+          <span>2</span
+          ><span class="vehicle-brand-logo">
+            <img
+              src="/public/assets/vehicle-brands/hyundai.svg"
+              alt="BMW"
+            /> </span
+          ><b>XYZ-5678<small>Hyundai Tucson · White</small></b
+          ><span>Faisal Khan<small>+966 50 234 5678</small></span
+          ><span>Hilton Hotel<small>Valet Zone</small></span
+          ><span>10:26 AM</span><em class="danger">5 min</em
+          ><strong class="waiting">Waiting</strong><span>—</span
+          ><button>⋮</button>
+        </div>
+
+        <div class="queue-row">
+          <span>3</span
+          ><span class="vehicle-brand-logo">
+            <img
+              src="/public/assets/vehicle-brands/bmw.svg"
+              alt="Mercedes"
+            /> </span
+          ><b>DEF-9012<small>BMW X5 · Gray</small></b
+          ><span>Mohammed Ali<small>+966 50 345 6789</small></span
+          ><span>Dammam Compound<small>Main Gate</small></span
+          ><span>10:28 AM</span><em>4 min</em
+          ><strong class="calling">Calling Driver</strong><span>Samir D.</span
+          ><button>⋮</button>
+        </div>
+      </div>
+    </article>
+
+    <aside class="vehicle-queue-side">
+      <article class="valet-panel">
+        <div class="valet-panel-heading">
+          <h2>Queue Summary</h2>
+
+          <a href="#locations"> View all locations → </a>
+        </div>
+        <div class="queue-chart-box">
+          <canvas id="queue-summary-chart"></canvas>
+          <div class="queue-chart-center">
+            <strong>56</strong>
+            <span>In Queue</span>
+          </div>
+        </div>
+        <div class="queue-legend">
+          <span><i class="waiting"></i>38 Waiting</span>
+          <span><i class="calling"></i>12 Calling Driver</span>
+          <span><i class="route"></i>4 En Route</span>
+          <span><i class="arrived"></i>2 Arrived</span>
+        </div>
+      </article>
+
+      <article class="valet-panel queue-summary-panel">
+        <div class="valet-panel-heading">
+          <h2>Busiest Locations</h2>
+
+          <a href="#locations"> View all locations → </a>
+        </div>
+        <ul class="queue-side-list">
+          <li><b>Riyadh Mall</b><span>18</span></li>
+          <li><b>Jeddah Mall</b><span>14</span></li>
+          <li><b>Hilton Hotel</b><span>10</span></li>
+          <li><b>Dammam Compound</b><span>8</span></li>
+          <li><b>Makkah Hotel</b><span>6</span></li>
+        </ul>
+      </article>
+
+      <article class="valet-panel">
+        <div class="valet-panel-heading">
+          <h2>Avg. Wait Time</h2>
+
+          <a href="#locations"> View all locations → </a>
+        </div>
+
+        <ul class="queue-side-list">
+          <li><b>Riyadh Mall</b><span>6.2 min</span></li>
+          <li><b>Jeddah Mall</b><span>4.8 min</span></li>
+          <li><b>Hilton Hotel</b><span>3.4 min</span></li>
+          <li><b>Dammam Compound</b><span>3.1 min</span></li>
+          <li><b>Makkah Hotel</b><span>2.2 min</span></li>
+        </ul>
+      </article>
+    </aside>
+  </section>
+</div>
+<div class="valet-tab-content hidden" id="valet-tab-activity">
+  <section class="activity-dashboard">
+    <article class="valet-panel activity-main">
+      <div class="valet-panel-heading activity-heading">
+        <div>
+          <h2>Activity Feed</h2>
+          <p>Real-time activity and events across all locations</p>
+        </div>
+      </div>
+
+      <div class="activity-filters">
+        <button class="active">All Activities</button>
+        <button>Parking</button>
+        <button>Pickup</button>
+        <button>Drivers</button>
+        <button>Payments</button>
+        <button>Incidents</button>
+        <button>System</button>
+      </div>
+
+      <div class="activity-table">
+        <div class="activity-row activity-head">
+          <span>Time</span>
+          <span>Activity</span>
+          <span>Details</span>
+          <span>Location</span>
+          <span>By</span>
+          <span>Type</span>
+          <span></span>
+        </div>
+
+        <div class="activity-row">
+          <span><b>10:34 AM</b><small>Today</small></span>
+          <span><i class="blue">🚘</i><b>Vehicle Parked</b></span>
+          <span
+            >ABC-1234 (Toyota Camry · Black)<small
+              >Parked by Ahmed Al Harbi</small
+            ></span
+          >
+          <span>Riyadh Mall<small>Main Entrance</small></span>
+          <span><em>AH</em> Ahmed Al Harbi<small>Driver</small></span>
+          <strong class="type parking">Parking</strong>
+          <button>⋮</button>
+        </div>
+
+        <div class="activity-row">
+          <span><b>10:31 AM</b><small>Today</small></span>
+          <span><i class="green">🚗</i><b>Vehicle Picked Up</b></span>
+          <span
+            >XYZ-5678 (Lexus ES350 · White)<small
+              >Picked up by Faisal Khan</small
+            ></span
+          >
+          <span>Hilton Hotel<small>Valet Zone</small></span>
+          <span><em>FK</em> Faisal Khan<small>Driver</small></span>
+          <strong class="type pickup">Pickup</strong>
+          <button>⋮</button>
+        </div>
+
+        <div class="activity-row">
+          <span><b>10:28 AM</b><small>Today</small></span>
+          <span><i class="orange">👥</i><b>New Customer</b></span>
+          <span>Mohammed Ali<small>+966 56 321 7890</small></span>
+          <span>Dammam Compound<small>Main Gate</small></span>
+          <span><em>SD</em> Samir D.<small>Valet Associate</small></span>
+          <strong class="type customer">Customer</strong>
+          <button>⋮</button>
+        </div>
+
+        <div class="activity-row">
+          <span><b>10:26 AM</b><small>Today</small></span>
+          <span><i class="purple">⏱</i><b>Long Wait Time Alert</b></span>
+          <span
+            >Wait time exceeded 5 min<small
+              >Current wait time: 6 min</small
+            ></span
+          >
+          <span>Riyadh Mall<small>Main Entrance</small></span>
+          <span><em class="system">⚙</em> System<small>Auto Alert</small></span>
+          <strong class="type alert">Alert</strong>
+          <button>⋮</button>
+        </div>
+      </div>
+    </article>
+
+    <aside class="activity-side">
+      <article class="valet-panel activity-overview-panel">
+        <div class="valet-panel-heading">
+          <h2>Activity Overview</h2>
+          <a href="#">View trends →</a>
+        </div>
+        <div class="activity-overview-body">
+          <div class="activity-chart-box">
+            <canvas id="activity-overview-chart"></canvas>
+            <div class="activity-chart-center">
+              <strong>248</strong>
+              <span>Total Activities</span>
+            </div>
+          </div>
+
+          <ul class="activity-legend">
+            <li>
+              <i class="parking"></i><span>Parking</span><b>98</b
+              ><small>(39%)</small>
+            </li>
+            <li>
+              <i class="pickup"></i><span>Pickup</span><b>72</b
+              ><small>(29%)</small>
+            </li>
+            <li>
+              <i class="drivers"></i><span>Drivers</span><b>38</b
+              ><small>(15%)</small>
+            </li>
+            <li>
+              <i class="payments"></i><span>Payments</span><b>24</b
+              ><small>(10%)</small>
+            </li>
+            <li>
+              <i class="incidents"></i><span>Incidents</span><b>16</b
+              ><small>(7%)</small>
+            </li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="valet-panel">
+        <div class="valet-panel-heading">
+          <h2>Recent Alerts</h2>
+          <a href="#">View all →</a>
+        </div>
+
+        <div class="recent-alerts-list">
+          <div class="recent-alert-item">
+            <div class="alert-icon danger">⚠️</div>
+
+            <div class="alert-content">
+              <h5>High wait time at Riyadh Mall</h5>
+              <p>Wait time is 7.2 min</p>
+            </div>
+
+            <div class="alert-time">10:26 AM</div>
+          </div>
+
+          <div class="recent-alert-item">
+            <div class="alert-icon warning">⚠️</div>
+
+            <div class="alert-content">
+              <h5>Vehicle damage reported</h5>
+              <p>DEF-9012 at Dammam Compound</p>
+            </div>
+
+            <div class="alert-time">10:18 AM</div>
+          </div>
+
+          <div class="recent-alert-item">
+            <div class="alert-icon warning">⚠️</div>
+
+            <div class="alert-content">
+              <h5>Driver not responding</h5>
+              <p>Faisal Khan at Hilton Hotel</p>
+            </div>
+
+            <div class="alert-time">09:52 AM</div>
+          </div>
+        </div>
+      </article>
+      <article class="valet-panel">
+        <div class="valet-panel-heading">
+          <h2>Top Active Locations</h2>
+          <a href="#locations">View all →</a>
+        </div>
+
+        <ul class="top-location-bars">
+          <li>
+            <b>Riyadh Mall</b><span>128 activities</span
+            ><em style="--w: 51%"></em><strong>51%</strong>
+          </li>
+          <li>
+            <b>Jeddah Mall</b><span>86 activities</span
+            ><em style="--w: 35%"></em><strong>35%</strong>
+          </li>
+          <li>
+            <b>Hilton Hotel</b><span>54 activities</span
+            ><em style="--w: 22%"></em><strong>22%</strong>
+          </li>
+          <li>
+            <b>Dammam Compound</b><span>38 activities</span
+            ><em style="--w: 15%"></em><strong>15%</strong>
+          </li>
+          <li>
+            <b>Makkah Hotel</b><span>28 activities</span
+            ><em style="--w: 11%"></em><strong>11%</strong>
+          </li>
+        </ul>
+      </article>
+
+      <article class="valet-panel">
+        <div class="valet-panel-heading">
+          <h2>Quick Actions</h2>
+        </div>
+
+        <div class="activity-quick-actions">
+          <button>👤<span>Add Driver</span></button>
+          <button>🔁<span>Assign Shift</span></button>
+          <button>🔔<span>Send Alert</span></button>
+          <button>📄<span>Generate Report</span></button>
+        </div>
+      </article>
+    </aside>
+  </section>
+</div>
+
+<div class="valet-tab-content hidden" id="valet-tab-incidents">
+  <section class="incidents-dashboard">
+    <article class="valet-panel incidents-main">
+      <div class="valet-panel-heading activity-heading">
+        <div>
+          <h2>Incidents List</h2>
+          <p>
+            Track and manage all incidents reported across your valet operations
+          </p>
+        </div>
+      </div>
+
+      <div class="activity-filters">
+        <button class="active">All Incidents</button>
+        <button>Open</button>
+        <button>In Progress</button>
+        <button>Resolved</button>
+        <button>Closed</button>
+      </div>
+
+      <div class="incidents-table">
+        <div class="incident-row incident-head">
+          <span>ID</span>
+          <span>Incident</span>
+          <span>Location</span>
+          <span>Reported By</span>
+          <span>Time / Date</span>
+          <span>Severity</span>
+          <span>Status</span>
+          <span>Actions</span>
+        </div>
+
+        <div class="incident-row high">
+          <span>INC-2024-042</span>
+          <b>Vehicle Damage Reported<small>Scratch on front bumper</small></b>
+          <span>Riyadh Mall<small>Main Entrance</small></span>
+          <span><em>AH</em> Ahmed Al Harbi<small>Driver</small></span>
+          <span>10:26 AM<small>May 24, 2024</small></span>
+          <strong class="sev high">High</strong>
+          <strong class="status open">Open</strong>
+          <button>⋮</button>
+        </div>
+
+        <div class="incident-row medium">
+          <span>INC-2024-041</span>
+          <b>Customer Complaint<small>Long wait time</small></b>
+          <span>Hilton Hotel<small>Valet Zone</small></span>
+          <span><em>FK</em> Faisal Khan<small>Driver</small></span>
+          <span>10:18 AM<small>May 24, 2024</small></span>
+          <strong class="sev medium">Medium</strong>
+          <strong class="status progress">In Progress</strong>
+          <button>⋮</button>
+        </div>
+
+        <div class="incident-row high">
+          <span>INC-2024-040</span>
+          <b
+            >Driver Not Responding<small>Driver unresponsive on radio</small></b
+          >
+          <span>Jeddah Mall<small>North Entrance</small></span>
+          <span><em>SD</em> Samir D.<small>Valet Associate</small></span>
+          <span>09:52 AM<small>May 24, 2024</small></span>
+          <strong class="sev high">High</strong>
+          <strong class="status open">Open</strong>
+          <button>⋮</button>
+        </div>
+      </div>
+    </article>
+
+    <aside class="incidents-side">
+      <!-- Incident Overview -->
+      <article class="valet-panel incident-overview-panel">
+        <div class="valet-panel-heading">
+          <h2>Incident Overview</h2>
+          <a href="#">View full report →</a>
+        </div>
+
+        <div class="incident-overview-body">
+          <div class="incident-chart-box">
+            <canvas id="incident-overview-chart"></canvas>
+
+            <div class="incident-chart-center">
+              <strong>42</strong>
+              <span>Total Incidents</span>
+            </div>
+          </div>
+
+          <ul class="incident-legend">
+            <li>
+              <i class="open"></i>
+              <b>18</b>
+              <span>Open</span>
+              <small>(43%)</small>
+            </li>
+
+            <li>
+              <i class="progress"></i>
+              <b>10</b>
+              <span>In Progress</span>
+              <small>(24%)</small>
+            </li>
+
+            <li>
+              <i class="resolved"></i>
+              <b>12</b>
+              <span>Resolved</span>
+              <small>(29%)</small>
+            </li>
+
+            <li>
+              <i class="closed"></i>
+              <b>2</b>
+              <span>Closed</span>
+              <small>(4%)</small>
+            </li>
+          </ul>
+        </div>
+      </article>
+
+      <!-- Incidents By Severity -->
+      <article class="valet-panel">
+        <div class="valet-panel-heading">
+          <h2>Incidents by Severity</h2>
+          <a href="#">View all →</a>
+        </div>
+
+        <ul class="severity-list">
+          <li>
+            <span>High</span>
+            <div class="severity-track">
+              <i class="high" style="width: 80%"></i>
+            </div>
+            <b>17</b>
+            <em>(40%)</em>
+          </li>
+
+          <li>
+            <span>Medium</span>
+            <div class="severity-track">
+              <i class="medium" style="width: 68%"></i>
+            </div>
+            <b>15</b>
+            <em>(36%)</em>
+          </li>
+
+          <li>
+            <span>Low</span>
+            <div class="severity-track">
+              <i class="low" style="width: 48%"></i>
+            </div>
+            <b>8</b>
+            <em>(19%)</em>
+          </li>
+
+          <li>
+            <span>Info</span>
+            <div class="severity-track">
+              <i class="info" style="width: 28%"></i>
+            </div>
+            <b>2</b>
+            <em>(5%)</em>
+          </li>
+        </ul>
+      </article>
+
+      <article class="valet-panel">
+        <div class="valet-panel-heading">
+          <h2>Top Incident Locations</h2>
+          <a href="#">View all →</a>
+        </div>
+
+        <ul class="queue-side-list">
+          <li><b>Riyadh Mall</b><span>14</span></li>
+          <li><b>Jeddah Mall</b><span>9</span></li>
+          <li><b>Hilton Hotel</b><span>7</span></li>
+          <li><b>Dammam Compound</b><span>6</span></li>
+          <li><b>Makkah Hotel</b><span>6</span></li>
+        </ul>
+      </article>
+    </aside>
+  </section>
+</div>
+
+<div id="full-map-modal" class="full-map-modal hidden">
+  <div class="full-map-card">
+    <div class="full-map-header">
+      <div>
+        <h2>Operations Map</h2>
+        <p>Live valet operations across Saudi Arabia</p>
+      </div>
+
+      <button id="close-full-map">✕</button>
+    </div>
+
+    <div id="full-google-map"></div>
+  </div>
+</div>

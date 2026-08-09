@@ -1,0 +1,410 @@
+<section class="edit-driver-page">
+  <header class="edit-driver-toolbar">
+    <button
+      type="button"
+      id="back-from-edit-driver"
+      class="edit-driver-back-btn"
+    >
+      <i class="fa-solid fa-arrow-left"></i>
+      Back to Driver Details
+    </button>
+
+    <div class="edit-driver-status">
+      <span>Driver ID</span>
+      <strong id="edit-driver-reference">DRV-1001</strong>
+    </div>
+  </header>
+
+  <form id="edit-driver-form" novalidate>
+    <section class="edit-driver-card">
+      <div class="edit-driver-card-heading">
+        <div>
+          <h2>Personal Information</h2>
+          <p>Update the driver's identity and contact details.</p>
+        </div>
+
+        <span class="edit-driver-required-note">
+          <i class="fa-solid fa-circle-info"></i>
+          Fields marked * are required
+        </span>
+      </div>
+
+      <div class="edit-driver-personal-layout">
+        <div class="edit-driver-photo-section">
+          <div class="edit-driver-photo-preview">
+            <img
+              id="edit-driver-photo-preview"
+              src="/public/assets/vehicle-brands/profile_pic_03.png"
+              alt="Driver profile"
+              width="120"
+              height="120"
+            />
+
+            <button
+              type="button"
+              id="change-driver-photo"
+              aria-label="Change driver photo"
+            >
+              <i class="fa-solid fa-camera"></i>
+            </button>
+          </div>
+
+          <input
+            type="file"
+            id="edit-driver-photo-input"
+            accept=".jpg,.jpeg,.png"
+            hidden
+          />
+
+          <strong>Driver Photo</strong>
+          <small>JPG or PNG, maximum 2MB</small>
+
+          <button
+            type="button"
+            id="remove-driver-photo"
+            class="edit-driver-photo-remove"
+          >
+            Remove photo
+          </button>
+        </div>
+
+        <div class="edit-driver-form-grid edit-driver-form-grid-three">
+          <label class="edit-driver-field">
+            <span>Full Name <b>*</b></span>
+            <input
+              type="text"
+              id="edit-driver-full-name"
+              name="fullName"
+              required
+              autocomplete="name"
+            />
+            <small class="edit-driver-field-error"></small>
+          </label>
+
+          <label class="edit-driver-field">
+            <span>Phone Number <b>*</b></span>
+
+            <div class="edit-driver-phone-field">
+              <select id="edit-driver-country-code" aria-label="Country code">
+                <option value="+966">🇸🇦 +966</option>
+              </select>
+
+              <input
+                type="tel"
+                id="edit-driver-phone"
+                name="phone"
+                required
+                inputmode="numeric"
+                maxlength="9"
+              />
+            </div>
+
+            <small class="edit-driver-field-error"></small>
+          </label>
+
+          <label class="edit-driver-field">
+            <span>Email Address</span>
+            <input
+              type="email"
+              id="edit-driver-email"
+              name="email"
+              autocomplete="email"
+            />
+            <small class="edit-driver-field-error"></small>
+          </label>
+
+          <label class="edit-driver-field">
+            <span>Date of Birth <b>*</b></span>
+            <input
+              type="date"
+              id="edit-driver-date-of-birth"
+              name="dateOfBirth"
+              required
+            />
+          </label>
+
+          <label class="edit-driver-field">
+            <span>Nationality <b>*</b></span>
+            <select id="edit-driver-nationality" name="nationality" required>
+              <option value="">Select nationality</option>
+              <option value="Saudi Arabia">Saudi Arabia</option>
+              <option value="Pakistan">Pakistan</option>
+              <option value="India">India</option>
+              <option value="Bangladesh">Bangladesh</option>
+              <option value="Egypt">Egypt</option>
+            </select>
+          </label>
+
+          <label class="edit-driver-field">
+            <span>ID Type <b>*</b></span>
+            <select id="edit-driver-id-type" name="idType" required>
+              <option value="">Select ID type</option>
+              <option value="Iqama">Iqama</option>
+              <option value="National ID">National ID</option>
+              <option value="Passport">Passport</option>
+            </select>
+          </label>
+
+          <label class="edit-driver-field">
+            <span>ID / Iqama Number <b>*</b></span>
+            <input
+              type="text"
+              id="edit-driver-iqama"
+              name="iqamaNumber"
+              required
+              inputmode="numeric"
+            />
+          </label>
+
+          <label class="edit-driver-field">
+            <span>Iqama Expiry Date <b>*</b></span>
+            <input
+              type="date"
+              id="edit-driver-iqama-expiry"
+              name="iqamaExpiry"
+              required
+            />
+          </label>
+
+          <label class="edit-driver-field">
+            <span>Driver Status <b>*</b></span>
+            <select id="edit-driver-status" name="status" required>
+              <option value="On Duty">On Duty</option>
+              <option value="Off Duty">Off Duty</option>
+              <option value="On Break">On Break</option>
+              <option value="Suspended">Suspended</option>
+            </select>
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <section class="edit-driver-card">
+      <div class="edit-driver-card-heading">
+        <div>
+          <h2>Driver Information</h2>
+          <p>Update licensing and employment information.</p>
+        </div>
+      </div>
+
+      <div class="edit-driver-form-grid edit-driver-form-grid-five">
+        <label class="edit-driver-field">
+          <span>Driver Type <b>*</b></span>
+          <select id="edit-driver-type" name="driverType" required>
+            <option value="Valet Company Driver">Valet Company Driver</option>
+            <option value="Independent Driver">Independent Driver</option>
+          </select>
+        </label>
+
+        <label class="edit-driver-field">
+          <span>License Number <b>*</b></span>
+          <input
+            type="text"
+            id="edit-driver-license"
+            name="licenseNumber"
+            required
+          />
+        </label>
+
+        <label class="edit-driver-field">
+          <span>License Expiry Date <b>*</b></span>
+          <input
+            type="date"
+            id="edit-driver-license-expiry"
+            name="licenseExpiry"
+            required
+          />
+        </label>
+
+        <label class="edit-driver-field">
+          <span>License Type <b>*</b></span>
+          <select id="edit-driver-license-type" name="licenseType" required>
+            <option value="Private">Private</option>
+            <option value="Public">Public</option>
+            <option value="Heavy Vehicle">Heavy Vehicle</option>
+          </select>
+        </label>
+
+        <label class="edit-driver-field">
+          <span>Date of Joining <b>*</b></span>
+          <input
+            type="date"
+            id="edit-driver-joining-date"
+            name="joiningDate"
+            required
+          />
+        </label>
+      </div>
+    </section>
+
+    <section class="edit-driver-card">
+      <div class="edit-driver-card-heading">
+        <div>
+          <h2>Employment / Company Information</h2>
+          <p>Manage the driver's company and reporting assignment.</p>
+        </div>
+      </div>
+
+      <div class="edit-driver-form-grid edit-driver-form-grid-four">
+        <label class="edit-driver-field">
+          <span>Company / Valet <b>*</b></span>
+
+          <select id="edit-driver-company" name="companyId" required>
+            <option value="">Select company</option>
+          </select>
+        </label>
+
+        <label class="edit-driver-field">
+          <span>Branch / Department</span>
+
+          <select id="edit-driver-branch" name="locationId">
+            <option value="">Select branch</option>
+          </select>
+        </label>
+
+        <label class="edit-driver-field">
+          <span>Employee ID</span>
+
+          <input
+            type="text"
+            id="edit-driver-employee-id"
+            name="employeeId"
+            placeholder="Enter employee ID"
+          />
+        </label>
+
+        <label class="edit-driver-field">
+          <span>Supervisor / Manager</span>
+
+          <select id="edit-driver-supervisor" name="supervisorId">
+            <option value="">Not assigned</option>
+          </select>
+        </label>
+      </div>
+    </section>
+
+    <section class="edit-driver-card">
+      <div class="edit-driver-card-heading">
+        <div>
+          <h2>Driver Documents</h2>
+          <p>Review uploaded documents and manage verification status.</p>
+        </div>
+
+        <span
+          id="edit-driver-documents-count"
+          class="edit-driver-documents-count"
+        >
+          0 Documents
+        </span>
+      </div>
+
+      <div
+        id="edit-driver-documents-container"
+        class="edit-driver-documents-container"
+      >
+        <div class="edit-driver-documents-loading">
+          <i class="fa-solid fa-spinner fa-spin"></i>
+          Loading documents...
+        </div>
+      </div>
+    </section>
+
+    <section class="edit-driver-card">
+      <div class="edit-driver-card-heading">
+        <div>
+          <h2>Contact Address</h2>
+          <p>Update the driver's registered contact address.</p>
+        </div>
+      </div>
+
+      <div class="edit-driver-form-grid edit-driver-form-grid-four">
+        <label class="edit-driver-field">
+          <span>Address <b>*</b></span>
+          <input type="text" id="edit-driver-address" name="address" required />
+        </label>
+
+        <label class="edit-driver-field">
+          <span>City <b>*</b></span>
+          <input type="text" id="edit-driver-city" name="city" required />
+        </label>
+
+        <label class="edit-driver-field">
+          <span>Region <b>*</b></span>
+          <select id="edit-driver-region" name="region" required>
+            <option value="Riyadh">Riyadh</option>
+            <option value="Makkah">Makkah</option>
+            <option value="Eastern Province">Eastern Province</option>
+            <option value="Madinah">Madinah</option>
+          </select>
+        </label>
+
+        <label class="edit-driver-field">
+          <span>Postal Code</span>
+          <input
+            type="text"
+            id="edit-driver-postal-code"
+            name="postalCode"
+            inputmode="numeric"
+          />
+        </label>
+      </div>
+    </section>
+
+    <footer class="edit-driver-footer">
+      <button
+        type="button"
+        id="cancel-edit-driver"
+        class="edit-driver-cancel-btn"
+      >
+        Cancel
+      </button>
+
+      <div>
+        <button
+          type="button"
+          id="reset-edit-driver"
+          class="edit-driver-reset-btn"
+        >
+          Reset Changes
+        </button>
+
+        <button
+          type="submit"
+          id="save-edit-driver"
+          class="edit-driver-save-btn"
+        >
+          <i class="fa-regular fa-floppy-disk"></i>
+          Save Changes
+        </button>
+      </div>
+    </footer>
+  </form>
+
+  <div
+    id="edit-driver-success-modal"
+    class="edit-driver-modal hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="edit-driver-success-title"
+  >
+    <div class="edit-driver-modal-backdrop"></div>
+
+    <div class="edit-driver-modal-dialog">
+      <div class="edit-driver-modal-icon">
+        <i class="fa-solid fa-check"></i>
+      </div>
+
+      <h2 id="edit-driver-success-title">Driver updated successfully</h2>
+
+      <p>The driver's information has been saved and is now up to date.</p>
+
+      <button
+        type="button"
+        id="view-updated-driver"
+        class="edit-driver-save-btn"
+      >
+        View Driver Details
+      </button>
+    </div>
+  </div>
+</section>

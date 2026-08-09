@@ -1,0 +1,590 @@
+<section class="customers-page">
+  <!-- =====================================
+       KPI CARDS
+  ====================================== -->
+  <section class="customers-kpi-grid">
+    <article class="customer-kpi-card">
+      <div class="customer-kpi-left">
+        <span class="customer-kpi-icon green">
+          <i class="fa-solid fa-users"></i>
+        </span>
+
+        <div>
+          <p>Total Customers</p>
+          <h2>2,548</h2>
+          <small>Across all locations</small>
+        </div>
+      </div>
+
+      <div class="customer-kpi-right">
+        <span class="trend up">
+          <i class="fa-solid fa-caret-up"></i>
+          8.5%
+        </span>
+
+        <small>vs last month</small>
+        <canvas id="customersTrend"></canvas>
+      </div>
+    </article>
+
+    <article class="customer-kpi-card">
+      <div class="customer-kpi-left">
+        <span class="customer-kpi-icon blue">
+          <i class="fa-solid fa-mobile-screen-button"></i>
+        </span>
+
+        <div>
+          <p>Mobile App Customers</p>
+          <h2>1,942</h2>
+          <small>76% of total customers</small>
+        </div>
+      </div>
+
+      <div class="customer-kpi-right">
+        <span class="trend up">
+          <i class="fa-solid fa-caret-up"></i>
+          10.3%
+        </span>
+
+        <small>vs last month</small>
+        <canvas id="mobileTrend"></canvas>
+      </div>
+    </article>
+
+    <article class="customer-kpi-card">
+      <div class="customer-kpi-left">
+        <span class="customer-kpi-icon purple">
+          <i class="fa-solid fa-calendar-plus"></i>
+        </span>
+
+        <div>
+          <p>New Customers</p>
+          <h2>124</h2>
+          <small>This month</small>
+        </div>
+      </div>
+
+      <div class="customer-kpi-right">
+        <span class="trend up">
+          <i class="fa-solid fa-caret-up"></i>
+          12.7%
+        </span>
+
+        <small>vs last month</small>
+        <canvas id="newTrend"></canvas>
+      </div>
+    </article>
+
+    <article class="customer-kpi-card">
+      <div class="customer-kpi-left">
+        <span class="customer-kpi-icon orange">
+          <i class="fa-solid fa-user-clock"></i>
+        </span>
+
+        <div>
+          <p>Returning Customers</p>
+          <h2>1,876</h2>
+          <small>This month</small>
+        </div>
+      </div>
+
+      <div class="customer-kpi-right">
+        <span class="trend up">
+          <i class="fa-solid fa-caret-up"></i>
+          7.2%
+        </span>
+
+        <small>vs last month</small>
+        <canvas id="returnTrend"></canvas>
+      </div>
+    </article>
+  </section>
+
+  <!-- =====================================
+       TOOLBAR
+  ====================================== -->
+  <section class="customers-toolbar">
+    <div class="customers-toolbar-left">
+      <div class="customers-search">
+        <i class="fa-solid fa-magnifying-glass"></i>
+
+        <input
+          type="search"
+          placeholder="Search by name, phone, email or ID..."
+          aria-label="Search customers"
+        />
+      </div>
+
+      <button type="button" class="customer-toggle active">
+        <i class="fa-solid fa-mobile-screen-button"></i>
+        Mobile App Customers
+      </button>
+
+      <button type="button" class="customer-toggle">
+        <i class="fa-solid fa-users"></i>
+        All Customers
+      </button>
+    </div>
+
+    <div class="customers-toolbar-right">
+      <button type="button" class="customer-toolbar-btn">
+        <i class="fa-solid fa-filter"></i>
+        Filter
+      </button>
+
+      <button type="button" class="customer-toolbar-btn">
+        <i class="fa-solid fa-download"></i>
+        Export
+      </button>
+
+      <button type="button" class="customer-add-btn">
+        <i class="fa-solid fa-plus"></i>
+        Add Customer
+      </button>
+    </div>
+  </section>
+
+  <!-- =====================================
+       CUSTOMERS TABLE
+  ====================================== -->
+  <section class="customers-table-card">
+    <div class="customers-table-heading">
+      <div>
+        <h2>All Customers</h2>
+        <p>2,548 customers found</p>
+      </div>
+
+      <div class="customers-table-controls">
+        <select aria-label="Filter customers by status">
+          <option>All Status</option>
+          <option>Active</option>
+          <option>Inactive</option>
+          <option>Blocked</option>
+        </select>
+
+        <select aria-label="Sort customers">
+          <option>Newest First</option>
+          <option>Oldest First</option>
+          <option>Name A-Z</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="customers-table-scroll">
+      <!-- TABLE HEADER -->
+      <div class="customers-row customers-head">
+        <span class="customer-checkbox">
+          <input
+            type="checkbox"
+            id="select-all-customers"
+            aria-label="Select all customers"
+          />
+        </span>
+
+        <span>Customer</span>
+        <span>Contact</span>
+        <span>Customer Type</span>
+        <span>Location</span>
+        <span>Vehicles</span>
+        <span>Bookings</span>
+        <span>Total Spent</span>
+        <span>Last Activity</span>
+        <span>Status</span>
+        <span>Actions</span>
+      </div>
+
+      <!-- CUSTOMER 1 -->
+      <div class="customers-row">
+        <span class="customer-checkbox">
+          <input
+            type="checkbox"
+            class="customer-row-checkbox"
+            aria-label="Select Ahmed Al Harbi"
+          />
+        </span>
+
+        <span class="customer-profile">
+          <img
+            src="/public/assets/vehicle-brands/profile_pic_01.png"
+            alt="Ahmed Al Harbi"
+          />
+
+          <b>
+            Ahmed Al Harbi
+            <small>CUS-1001</small>
+          </b>
+        </span>
+
+        <span class="customer-contact">
+          <span class="customer-contact-line">
+            <i class="fa-solid fa-phone"></i>
+            <span>+966 55 123 4567</span>
+          </span>
+
+          <span class="customer-contact-line">
+            <i class="fa-regular fa-envelope"></i>
+            <span>ahmed.alharbi@example.com</span>
+          </span>
+        </span>
+
+        <span>
+          <em class="customer-type mobile">
+            <i class="fa-solid fa-mobile-screen-button"></i>
+            Mobile App
+          </em>
+        </span>
+
+        <span>
+          Riyadh Mall
+          <small>Main Entrance</small>
+        </span>
+
+        <span class="customer-vehicles">
+          <b>2</b>
+          <i class="fa-solid fa-car-side"></i>
+        </span>
+
+        <span>
+          <b>28</b>
+          <small>Bookings</small>
+        </span>
+
+        <span>
+          <b>SAR 3,480</b>
+          <small>Total value</small>
+        </span>
+
+        <span>
+          08 Jul 2026
+          <small>10:45 AM</small>
+        </span>
+
+        <span>
+          <strong class="customer-status active">Active</strong>
+        </span>
+
+        <span class="customer-actions-cell">
+          <button
+            type="button"
+            class="customer-more-btn"
+            aria-label="Open actions for Ahmed Al Harbi"
+            aria-expanded="false"
+          >
+            <i class="fa-solid fa-ellipsis-vertical"></i>
+          </button>
+
+          <div class="customer-actions-menu hidden">
+            <button type="button" data-customer-action="view">
+              <i class="fa-regular fa-eye"></i>
+              View Customer
+            </button>
+
+            <button type="button" data-customer-action="edit">
+              <i class="fa-regular fa-pen-to-square"></i>
+              Edit Customer
+            </button>
+
+            <button type="button" data-customer-action="vehicle">
+              <i class="fa-solid fa-car-side"></i>
+              Add Vehicle
+            </button>
+
+            <button type="button" data-customer-action="bookings">
+              <i class="fa-regular fa-calendar-check"></i>
+              View Bookings
+            </button>
+
+            <button type="button" data-customer-action="payments">
+              <i class="fa-regular fa-credit-card"></i>
+              Payment Methods
+            </button>
+
+            <button type="button" data-customer-action="activity">
+              <i class="fa-solid fa-clock-rotate-left"></i>
+              Activity Log
+            </button>
+
+            <div class="customer-actions-divider"></div>
+
+            <button
+              type="button"
+              class="danger"
+              data-customer-action="deactivate"
+            >
+              <i class="fa-solid fa-user-slash"></i>
+              Deactivate Customer
+            </button>
+          </div>
+        </span>
+      </div>
+      <!-- CUSTOMER 1 -->
+
+      <!-- CUSTOMER 2 -->
+      <div class="customers-row">
+        <span class="customer-checkbox">
+          <input
+            type="checkbox"
+            class="customer-row-checkbox"
+            aria-label="Select Faisal Khan"
+          />
+        </span>
+
+        <span class="customer-profile">
+          <img
+            src="/public/assets/vehicle-brands/profile_pic_02.png"
+            alt="Faisal Khan"
+          />
+
+          <b>
+            Faisal Khan
+            <small>CUS-1002</small>
+          </b>
+        </span>
+
+        <span class="customer-contact">
+          <span class="customer-contact-line">
+            <i class="fa-solid fa-phone"></i>
+            <span>+966 50 987 6543</span>
+          </span>
+
+          <span class="customer-contact-line">
+            <i class="fa-regular fa-envelope"></i>
+            <span>faisal.khan@example.com</span>
+          </span>
+        </span>
+
+        <span>
+          <em class="customer-type walkin">
+            <i class="fa-solid fa-user"></i>
+            Walk-in
+          </em>
+        </span>
+
+        <span>
+          Hilton Hotel
+          <small>Valet Zone</small>
+        </span>
+
+        <span class="customer-vehicles">
+          <b>1</b>
+          <i class="fa-solid fa-car-side"></i>
+        </span>
+
+        <span>
+          <b>14</b>
+          <small>Bookings</small>
+        </span>
+
+        <span>
+          <b>SAR 1,920</b>
+          <small>Total value</small>
+        </span>
+
+        <span>
+          07 Jul 2026
+          <small>08:10 PM</small>
+        </span>
+
+        <span>
+          <strong class="customer-status active">Active</strong>
+        </span>
+
+        <span class="customer-actions-cell">
+          <button
+            type="button"
+            class="customer-more-btn"
+            aria-label="Open actions for Faisal Khan"
+            aria-expanded="false"
+          >
+            <i class="fa-solid fa-ellipsis-vertical"></i>
+          </button>
+
+          <div class="customer-actions-menu hidden">
+            <button type="button" data-customer-action="view">
+              <i class="fa-regular fa-eye"></i>
+              View Customer
+            </button>
+
+            <button type="button" data-customer-action="edit">
+              <i class="fa-regular fa-pen-to-square"></i>
+              Edit Customer
+            </button>
+
+            <button type="button" data-customer-action="vehicle">
+              <i class="fa-solid fa-car-side"></i>
+              Add Vehicle
+            </button>
+
+            <button type="button" data-customer-action="bookings">
+              <i class="fa-regular fa-calendar-check"></i>
+              View Bookings
+            </button>
+
+            <button type="button" data-customer-action="payments">
+              <i class="fa-regular fa-credit-card"></i>
+              Payment Methods
+            </button>
+
+            <button type="button" data-customer-action="activity">
+              <i class="fa-solid fa-clock-rotate-left"></i>
+              Activity Log
+            </button>
+
+            <div class="customer-actions-divider"></div>
+
+            <button
+              type="button"
+              class="danger"
+              data-customer-action="deactivate"
+            >
+              <i class="fa-solid fa-user-slash"></i>
+              Deactivate Customer
+            </button>
+          </div>
+        </span>
+      </div>
+      <!-- CUSTOMER 2 -->
+      <!-- CUSTOMER 3 -->
+      <div class="customers-row">
+        <span class="customer-checkbox">
+          <input
+            type="checkbox"
+            class="customer-row-checkbox"
+            aria-label="Select Mohammed Ali"
+          />
+        </span>
+
+        <span class="customer-profile">
+          <img
+            src="/public/assets/vehicle-brands/profile_pic_03.png"
+            alt="Mohammed Ali"
+          />
+
+          <b>
+            Mohammed Ali
+            <small>CUS-1003</small>
+          </b>
+        </span>
+
+        <span class="customer-contact">
+          <span class="customer-contact-line">
+            <i class="fa-solid fa-phone"></i>
+            <span>+966 56 321 7890</span>
+          </span>
+
+          <span class="customer-contact-line">
+            <i class="fa-regular fa-envelope"></i>
+            <span>mohammed.ali@example.com</span>
+          </span>
+        </span>
+
+        <span>
+          <em class="customer-type mobile">
+            <i class="fa-solid fa-mobile-screen-button"></i>
+            Mobile App
+          </em>
+        </span>
+
+        <span>
+          Jeddah Mall
+          <small>North Entrance</small>
+        </span>
+
+        <span class="customer-vehicles">
+          <b>3</b>
+          <i class="fa-solid fa-car-side"></i>
+        </span>
+
+        <span>
+          <b>32</b>
+          <small>Bookings</small>
+        </span>
+
+        <span>
+          <b>SAR 4,260</b>
+          <small>Total value</small>
+        </span>
+
+        <span>
+          06 Jul 2026
+          <small>04:30 PM</small>
+        </span>
+
+        <span>
+          <strong class="customer-status inactive">Inactive</strong>
+        </span>
+
+        <span class="customer-actions-cell">
+          <button
+            type="button"
+            class="customer-more-btn"
+            aria-label="Open actions for Faisal Khan"
+            aria-expanded="false"
+          >
+            <i class="fa-solid fa-ellipsis-vertical"></i>
+          </button>
+
+          <div class="customer-actions-menu hidden">
+            <button type="button" data-customer-action="view">
+              <i class="fa-regular fa-eye"></i>
+              View Customer
+            </button>
+
+            <button type="button" data-customer-action="edit">
+              <i class="fa-regular fa-pen-to-square"></i>
+              Edit Customer
+            </button>
+
+            <button type="button" data-customer-action="vehicle">
+              <i class="fa-solid fa-car-side"></i>
+              Add Vehicle
+            </button>
+
+            <button type="button" data-customer-action="bookings">
+              <i class="fa-regular fa-calendar-check"></i>
+              View Bookings
+            </button>
+
+            <button type="button" data-customer-action="payments">
+              <i class="fa-regular fa-credit-card"></i>
+              Payment Methods
+            </button>
+
+            <button type="button" data-customer-action="activity">
+              <i class="fa-solid fa-clock-rotate-left"></i>
+              Activity Log
+            </button>
+
+            <div class="customer-actions-divider"></div>
+
+            <button
+              type="button"
+              class="danger"
+              data-customer-action="deactivate"
+            >
+              <i class="fa-solid fa-user-slash"></i>
+              Deactivate Customer
+            </button>
+          </div>
+        </span>
+      </div>
+    </div>
+
+    <!-- =====================================
+         PAGINATION
+    ====================================== -->
+    <div class="customers-pagination">
+      <p>Showing 1–3 of 2,548 customers</p>
+
+      <div>
+        <button type="button" disabled>← Previous</button>
+        <button type="button" class="active">1</button>
+        <button type="button">2</button>
+        <button type="button">3</button>
+        <span>…</span>
+        <button type="button">85</button>
+        <button type="button">Next →</button>
+      </div>
+    </div>
+  </section>
+</section>

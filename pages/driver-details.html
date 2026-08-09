@@ -1,0 +1,631 @@
+<section class="driver-details-page">
+  <header class="driver-details-header">
+    <button type="button" id="back-to-drivers" class="driver-details-back-btn">
+      <i class="fa-solid fa-arrow-left"></i>
+      Back to Drivers
+    </button>
+
+    <div class="driver-details-header-actions">
+      <button
+        type="button"
+        id="edit-driver-details"
+        class="driver-details-secondary-btn"
+      >
+        <i class="fa-regular fa-pen-to-square"></i>
+        Edit Driver
+      </button>
+
+      <button
+        type="button"
+        id="suspend-driver-details"
+        class="driver-details-danger-btn"
+      >
+        <i class="fa-solid fa-circle-pause"></i>
+        Suspend Driver
+      </button>
+
+      <div class="driver-details-more-wrap">
+        <button
+          type="button"
+          id="driver-details-more-btn"
+          class="driver-details-icon-btn"
+          aria-expanded="false"
+        >
+          <i class="fa-solid fa-ellipsis"></i>
+        </button>
+
+        <div
+          id="driver-details-more-menu"
+          class="driver-details-more-menu hidden"
+        >
+          <button type="button">
+            <i class="fa-regular fa-file-pdf"></i>
+            Export Profile
+          </button>
+
+          <button type="button">
+            <i class="fa-solid fa-key"></i>
+            Reset Access
+          </button>
+
+          <button type="button" class="danger">
+            <i class="fa-regular fa-trash-can"></i>
+            Delete Driver
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="driver-details-summary-grid">
+    <article class="driver-profile-summary-card">
+      <div class="driver-profile-summary-top">
+        <div class="driver-profile-main">
+          <img
+            id="driver-details-photo"
+            class="driver-details-profile-photo"
+            src="/public/assets/vehicle-brands/profile_pic_03.png"
+            alt="Driver profile"
+            width="84"
+            height="84"
+          />
+          <div>
+            <div class="driver-profile-name-row">
+              <h2 id="driver-details-name">Ahmed Al Harbi</h2>
+
+              <span
+                id="driver-details-duty-status"
+                class="driver-details-status on-duty"
+              >
+                On Duty
+              </span>
+            </div>
+
+            <div class="driver-profile-meta">
+              <span>
+                Driver ID
+                <strong id="driver-details-id"> DRV-1001 </strong>
+              </span>
+
+              <span>
+                Driver Type
+                <strong id="driver-details-type"> Valet Company Driver </strong>
+              </span>
+
+              <span>
+                Company
+                <strong id="driver-details-company"> Smart Valet Co. </strong>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="driver-details-information-grid">
+        <div class="driver-information-column">
+          <div class="driver-information-item">
+            <i class="fa-solid fa-phone"></i>
+            <div>
+              <span>Phone Number</span>
+              <strong id="driver-details-phone"> +966 55 123 4567 </strong>
+            </div>
+          </div>
+
+          <div class="driver-information-item">
+            <i class="fa-regular fa-envelope"></i>
+            <div>
+              <span>Email Address</span>
+              <strong id="driver-details-email">
+                ahmed.alharbi@smartvalet.co
+              </strong>
+            </div>
+          </div>
+
+          <div class="driver-information-item">
+            <i class="fa-solid fa-globe"></i>
+            <div>
+              <span>Nationality</span>
+              <strong id="driver-details-nationality"> Saudi Arabia </strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="driver-information-column">
+          <div class="driver-information-item">
+            <i class="fa-regular fa-id-card"></i>
+            <div>
+              <span>ID / Iqama Number</span>
+              <strong id="driver-details-iqama"> 1234567890 </strong>
+            </div>
+          </div>
+
+          <div class="driver-information-item">
+            <i class="fa-regular fa-calendar"></i>
+            <div>
+              <span>Iqama Expiry Date</span>
+              <strong id="driver-details-iqama-expiry" class="warning-text">
+                20 Dec 2025
+              </strong>
+            </div>
+          </div>
+
+          <div class="driver-information-item">
+            <i class="fa-regular fa-address-card"></i>
+            <div>
+              <span>License Number</span>
+              <strong id="driver-details-license"> 9876543210 </strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="driver-information-column">
+          <div class="driver-information-item">
+            <i class="fa-regular fa-calendar-check"></i>
+            <div>
+              <span>License Expiry Date</span>
+              <strong id="driver-details-license-expiry" class="warning-text">
+                15 Aug 2025
+              </strong>
+            </div>
+          </div>
+
+          <div class="driver-information-item">
+            <i class="fa-regular fa-calendar-plus"></i>
+            <div>
+              <span>Date of Joining</span>
+              <strong id="driver-details-joining"> 10 Jan 2024 </strong>
+            </div>
+          </div>
+
+          <div class="driver-information-item">
+            <i class="fa-regular fa-user"></i>
+            <div>
+              <span>Supervisor / Manager</span>
+              <strong id="driver-details-supervisor"> Faisal Khan </strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="driver-information-column">
+          <div class="driver-information-item">
+            <i class="fa-regular fa-building"></i>
+            <div>
+              <span>Assigned Company</span>
+              <strong id="driver-details-assigned-company">
+                Smart Valet Co.
+              </strong>
+            </div>
+          </div>
+
+          <div class="driver-information-item">
+            <i class="fa-regular fa-building"></i>
+            <div>
+              <span>Branch</span>
+              <strong id="driver-details-branch"> Jeddah Mall </strong>
+            </div>
+          </div>
+
+          <div class="driver-information-item">
+            <i class="fa-regular fa-star"></i>
+            <div>
+              <span>Driver Rating</span>
+              <strong>
+                <span class="driver-rating-star">★</span>
+                <span id="driver-details-rating">4.8</span>
+                <small id="driver-details-reviews"> (128 reviews) </small>
+              </strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <aside class="driver-overview-card">
+      <div class="driver-overview-heading">
+        <h2>Driver Overview</h2>
+
+        <span>
+          <i class="fa-regular fa-calendar"></i>
+          Joined
+          <strong id="driver-overview-joined"> 10 Jan 2024 </strong>
+        </span>
+      </div>
+
+      <div class="driver-overview-metrics">
+        <article>
+          <span class="green">
+            <i class="fa-regular fa-user"></i>
+          </span>
+          <div>
+            <small>Total Bookings</small>
+            <strong id="driver-total-bookings">326</strong>
+          </div>
+        </article>
+
+        <article>
+          <span class="blue">
+            <i class="fa-regular fa-building"></i>
+          </span>
+          <div>
+            <small>Active Assignments</small>
+            <strong id="driver-active-assignments">2</strong>
+          </div>
+        </article>
+
+        <article>
+          <span class="purple">
+            <i class="fa-solid fa-car"></i>
+          </span>
+          <div>
+            <small>Assigned Vehicles</small>
+            <strong id="driver-assigned-vehicles">2</strong>
+          </div>
+        </article>
+
+        <article>
+          <span class="amber">
+            <i class="fa-regular fa-star"></i>
+          </span>
+          <div>
+            <small>Rating</small>
+            <strong id="driver-overview-rating">4.8</strong>
+            <small>(128 reviews)</small>
+          </div>
+        </article>
+      </div>
+    </aside>
+  </section>
+
+  <nav class="driver-details-tabs">
+    <button type="button" class="active" data-driver-details-tab="overview">
+      Overview
+    </button>
+
+    <button type="button" data-driver-details-tab="assignments">
+      Assignments
+    </button>
+
+    <button type="button" data-driver-details-tab="documents">Documents</button>
+
+    <button type="button" data-driver-details-tab="performance">
+      Performance
+    </button>
+
+    <button type="button" data-driver-details-tab="activity">
+      Activity Log
+    </button>
+
+    <button type="button" data-driver-details-tab="notes">Notes</button>
+  </nav>
+
+  <section
+    class="driver-details-tab-panel active"
+    data-driver-details-panel="overview"
+  >
+    <div class="driver-overview-section-title">Driver Overview</div>
+
+    <div class="driver-details-overview-grid">
+      <article class="driver-detail-panel">
+        <div class="driver-detail-panel-heading">
+          <h3>
+            <i class="fa-regular fa-user"></i>
+            Current Assignment
+          </h3>
+
+          <span class="driver-details-status on-duty"> On Duty </span>
+        </div>
+
+        <dl class="driver-assignment-list">
+          <div>
+            <dt>Company</dt>
+            <dd>Smart Valet Co.</dd>
+          </div>
+
+          <div>
+            <dt>Location</dt>
+            <dd>Riyadh Mall - Main Entrance</dd>
+          </div>
+
+          <div>
+            <dt>Parking Zone</dt>
+            <dd>Premium Zone A</dd>
+          </div>
+
+          <div>
+            <dt>Shift</dt>
+            <dd>Day Shift (08:00 - 16:00)</dd>
+          </div>
+
+          <div>
+            <dt>Supervisor</dt>
+            <dd>Faisal Khan</dd>
+          </div>
+
+          <div>
+            <dt>Assignment Status</dt>
+            <dd>
+              <span class="driver-details-status active"> Active </span>
+            </dd>
+          </div>
+        </dl>
+      </article>
+
+      <article class="driver-detail-panel">
+        <div class="driver-detail-panel-heading">
+          <h3>
+            <i class="fa-solid fa-car"></i>
+            Assigned Vehicles
+          </h3>
+
+          <button type="button">View all</button>
+        </div>
+
+        <div class="driver-assigned-vehicle">
+          <img
+            src="/public/assets/vehicle-brands/toyota.svg"
+            alt="Toyota Camry"
+          />
+
+          <div class="driver-mini-plate">
+            <small>KSA</small>
+            <strong>ABC-1234</strong>
+          </div>
+
+          <div>
+            <strong>Toyota Camry 2023</strong>
+            <small>Sedan</small>
+          </div>
+        </div>
+
+        <div class="driver-assigned-vehicle">
+          <img
+            src="/public/assets/vehicle-brands/hyundai.svg"
+            alt="Hyundai Palisade"
+          />
+
+          <div class="driver-mini-plate">
+            <small>KSA</small>
+            <strong>XYZ-5678</strong>
+          </div>
+
+          <div>
+            <strong>Hyundai Palisade 2023</strong>
+            <small>SUV</small>
+          </div>
+        </div>
+      </article>
+
+      <article class="driver-detail-panel">
+        <div class="driver-detail-panel-heading">
+          <h3>
+            <i class="fa-regular fa-file-lines"></i>
+            Documents & Compliance
+          </h3>
+
+          <button type="button" data-open-driver-tab="documents">
+            View all
+          </button>
+        </div>
+
+        <div class="driver-document-list">
+          <div>
+            <span>
+              <i class="fa-regular fa-file-lines"></i>
+              Driving License
+            </span>
+            <strong class="valid">Valid</strong>
+            <small>15 Aug 2025</small>
+            <button type="button">View</button>
+          </div>
+
+          <div>
+            <span>
+              <i class="fa-regular fa-file-lines"></i>
+              Iqama
+            </span>
+            <strong class="expiring">Expiring Soon</strong>
+            <small>20 Dec 2025</small>
+            <button type="button">View</button>
+          </div>
+
+          <div>
+            <span>
+              <i class="fa-regular fa-file-lines"></i>
+              Company ID
+            </span>
+            <strong class="valid">Valid</strong>
+            <small>10 Jan 2026</small>
+            <button type="button">View</button>
+          </div>
+
+          <div>
+            <span>
+              <i class="fa-regular fa-file-lines"></i>
+              Background Check
+            </span>
+            <strong class="valid">Valid</strong>
+            <small>12 Jan 2026</small>
+            <button type="button">View</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="driver-detail-panel">
+        <div class="driver-detail-panel-heading">
+          <h3>
+            <i class="fa-solid fa-chart-column"></i>
+            Performance Summary
+          </h3>
+
+          <select>
+            <option>This Month</option>
+            <option>Last Month</option>
+            <option>Last 3 Months</option>
+          </select>
+        </div>
+
+        <div class="driver-performance-metrics">
+          <article>
+            <small>Completed Jobs</small>
+            <strong>48</strong>
+            <span class="positive"> ↑ 12% vs last month </span>
+          </article>
+
+          <article>
+            <small>Avg. Response Time</small>
+            <strong>4m 32s</strong>
+            <span class="positive"> ↓ 8% vs last month </span>
+          </article>
+
+          <article>
+            <small>Customer Rating</small>
+            <strong>⭐ 4.8</strong>
+            <span class="positive"> ↑ 0.3 vs last month </span>
+          </article>
+
+          <article>
+            <small>Incident Count</small>
+            <strong>0</strong>
+            <span>No change</span>
+          </article>
+        </div>
+      </article>
+
+      <article class="driver-detail-panel driver-recent-bookings">
+        <div class="driver-detail-panel-heading">
+          <h3>
+            <i class="fa-regular fa-calendar"></i>
+            Recent Bookings
+          </h3>
+
+          <button type="button">View all</button>
+        </div>
+
+        <div class="driver-bookings-table">
+          <div class="driver-booking-row head">
+            <span>Booking ID</span>
+            <span>Customer</span>
+            <span>Location</span>
+            <span>Time</span>
+            <span>Status</span>
+          </div>
+
+          <div class="driver-booking-row">
+            <button type="button">BK-2026-0721-001</button>
+            <span>Mohammed Al Saud</span>
+            <span>Riyadh Mall</span>
+            <span>Today, 10:30 AM</span>
+            <strong class="completed">Completed</strong>
+          </div>
+
+          <div class="driver-booking-row">
+            <button type="button">BK-2026-0721-002</button>
+            <span>Sara Al Qahtani</span>
+            <span>Riyadh Mall</span>
+            <span>Today, 12:45 PM</span>
+            <strong class="completed">Completed</strong>
+          </div>
+
+          <div class="driver-booking-row">
+            <button type="button">BK-2026-0721-003</button>
+            <span>Khalid Al Harbi</span>
+            <span>Riyadh Mall</span>
+            <span>Today, 03:20 PM</span>
+            <strong class="in-progress"> In Progress </strong>
+          </div>
+        </div>
+      </article>
+
+      <article class="driver-detail-panel driver-activity-timeline">
+        <div class="driver-detail-panel-heading">
+          <h3>
+            <i class="fa-regular fa-clock"></i>
+            Activity Timeline
+          </h3>
+        </div>
+
+        <ol>
+          <li>
+            <span></span>
+            <strong>Driver Created</strong>
+            <p>Driver profile was created in the system</p>
+            <time>10 Jan 2024, 09:15 AM</time>
+          </li>
+
+          <li>
+            <span></span>
+            <strong>Assigned to Company</strong>
+            <p>Assigned to Smart Valet Co. - Jeddah Mall</p>
+            <time>10 Jan 2024, 09:30 AM</time>
+          </li>
+
+          <li>
+            <span></span>
+            <strong>Shift Started</strong>
+            <p>Day Shift started at Riyadh Mall - Main Entrance</p>
+            <time>Today, 08:00 AM</time>
+          </li>
+
+          <li>
+            <span></span>
+            <strong>Booking Completed</strong>
+            <p>Completed booking BK-2026-0721-001</p>
+            <time>Today, 10:30 AM</time>
+          </li>
+        </ol>
+      </article>
+    </div>
+  </section>
+
+  <section
+    class="driver-details-tab-panel hidden"
+    data-driver-details-panel="assignments"
+  >
+    <div
+      id="driver-assignments-container"
+      class="driver-assignments-container"
+    ></div>
+  </section>
+
+  <section
+    class="driver-details-tab-panel hidden"
+    data-driver-details-panel="documents"
+  >
+    <div class="driver-placeholder-panel">
+      <h2>Driver Documents</h2>
+      <p>
+        Uploaded documents, expiry dates and compliance status will appear here.
+      </p>
+    </div>
+  </section>
+
+  <section
+    class="driver-details-tab-panel hidden"
+    data-driver-details-panel="performance"
+  >
+    <div class="driver-placeholder-panel">
+      <h2>Driver Performance</h2>
+      <p>Performance metrics and trends will appear here.</p>
+    </div>
+  </section>
+
+  <section
+    class="driver-details-tab-panel hidden"
+    data-driver-details-panel="activity"
+  >
+    <div class="driver-placeholder-panel">
+      <h2>Activity Log</h2>
+      <p>Driver activity history will appear here.</p>
+    </div>
+  </section>
+
+  <section
+    class="driver-details-tab-panel hidden"
+    data-driver-details-panel="notes"
+  >
+    <div class="driver-placeholder-panel">
+      <h2>Driver Notes</h2>
+      <p>Internal notes and comments will appear here.</p>
+    </div>
+  </section>
+</section>

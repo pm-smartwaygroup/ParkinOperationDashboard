@@ -1,0 +1,1917 @@
+<section class="customer-details-page">
+  <!-- TOP ACTION BAR -->
+  <div class="customer-details-topbar">
+    <button
+      type="button"
+      class="customer-details-back"
+      id="back-to-customers-list"
+    >
+      <i class="fa-solid fa-arrow-left"></i>
+      Back to Customers
+    </button>
+
+    <div class="customer-details-actions">
+      <button
+        type="button"
+        class="customer-details-edit-btn"
+        id="open-edit-customer"
+      >
+        <i class="fa-regular fa-pen-to-square"></i>
+        Edit Customer
+      </button>
+
+      <button
+        type="button"
+        class="customer-details-more-btn"
+        aria-label="More customer actions"
+      >
+        <i class="fa-solid fa-ellipsis"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="customer-profile-overview-layout">
+    <!-- CUSTOMER PROFILE -->
+    <section class="customer-profile-card">
+      <div class="customer-profile-main">
+        <div class="customer-profile-avatar">MA</div>
+
+        <div class="customer-profile-identity">
+          <span class="customer-app-badge"> APP USER </span>
+
+          <h2>Muhammad Ahmed</h2>
+
+          <p>CUST-0001</p>
+
+          <strong class="customer-details-status active"> Active </strong>
+        </div>
+      </div>
+
+      <div class="customer-profile-info-grid">
+        <div class="customer-profile-info-item">
+          <i class="fa-solid fa-phone"></i>
+
+          <div>
+            <span>Phone</span>
+            <b>+966 50 123 4567</b>
+          </div>
+        </div>
+
+        <div class="customer-profile-info-item">
+          <i class="fa-regular fa-envelope"></i>
+
+          <div>
+            <span>Email</span>
+            <b>m.ahmed@example.com</b>
+          </div>
+        </div>
+
+        <div class="customer-profile-info-item">
+          <i class="fa-solid fa-globe"></i>
+
+          <div>
+            <span>Nationality</span>
+            <b>Saudi Arabia</b>
+          </div>
+        </div>
+
+        <div class="customer-profile-info-item">
+          <i class="fa-regular fa-calendar"></i>
+
+          <div>
+            <span>Member Since</span>
+            <b>May 10, 2024</b>
+          </div>
+        </div>
+
+        <div class="customer-profile-info-item">
+          <i class="fa-regular fa-clock"></i>
+
+          <div>
+            <span>Last Activity</span>
+            <b>Today, 10:30 AM</b>
+          </div>
+        </div>
+
+        <div class="customer-profile-info-item">
+          <i class="fa-solid fa-headset"></i>
+
+          <div>
+            <span>Preferred Communication</span>
+            <b>Email, SMS</b>
+          </div>
+        </div>
+
+        <div class="customer-profile-info-item">
+          <i class="fa-solid fa-language"></i>
+
+          <div>
+            <span>Language</span>
+            <b>English</b>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="customer-details-panel customer-top-overview-panel">
+      <div class="customer-details-panel-heading">
+        <h3>
+          <i class="fa-regular fa-id-badge"></i>
+          Customer Overview
+        </h3>
+      </div>
+
+      <div class="customer-overview-grid">
+        <div>
+          <i class="fa-regular fa-calendar blue"></i>
+          <span>Total Bookings</span>
+          <b>24</b>
+        </div>
+
+        <div>
+          <i class="fa-solid fa-wallet green"></i>
+          <span>Total Spent</span>
+          <b>SAR 1,250.00</b>
+        </div>
+
+        <div>
+          <i class="fa-solid fa-car-side green"></i>
+          <span>Vehicles</span>
+          <b>0</b>
+        </div>
+
+        <div>
+          <i class="fa-regular fa-clock green"></i>
+          <span>Active Bookings</span>
+          <b>1</b>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- CUSTOMER TABS -->
+  <nav class="customer-details-tabs" aria-label="Customer details sections">
+    <button
+      type="button"
+      class="customer-details-tab active"
+      data-customer-tab="overview"
+    >
+      Overview
+    </button>
+
+    <button
+      type="button"
+      class="customer-details-tab"
+      data-customer-tab="vehicles"
+    >
+      Vehicles (0)
+    </button>
+
+    <button
+      type="button"
+      class="customer-details-tab"
+      data-customer-tab="bookings"
+    >
+      Bookings (24)
+    </button>
+
+    <button
+      type="button"
+      class="customer-details-tab"
+      data-customer-tab="payment-methods"
+    >
+      Payment Methods (4)
+    </button>
+
+    <button
+      type="button"
+      class="customer-details-tab"
+      data-customer-tab="activity-log"
+    >
+      Activity Log
+    </button>
+
+    <!-- <button
+      type="button"
+      class="customer-details-tab"
+      data-customer-tab="notes"
+    >
+      Notes
+    </button> -->
+  </nav>
+
+  <!-- =====================================================
+       OVERVIEW TAB
+  ====================================================== -->
+  <section class="customer-tab-panel active" data-customer-panel="overview">
+    <section class="customer-details-layout">
+      <!-- OVERVIEW MAIN -->
+      <div class="customer-details-main">
+        <section class="customer-details-grid">
+          <!-- CONTACT INFORMATION -->
+          <article class="customer-details-panel">
+            <div class="customer-details-panel-heading">
+              <h3>
+                <i class="fa-regular fa-user"></i>
+                Contact Information
+              </h3>
+            </div>
+
+            <div class="customer-contact-details-list">
+              <p>
+                <span>Full Name</span>
+                <b>Muhammad Ahmed</b>
+              </p>
+
+              <p>
+                <span>Phone Number</span>
+
+                <b>
+                  +966 50 123 4567
+                  <small class="verified-badge">Verified</small>
+                </b>
+              </p>
+
+              <p>
+                <span>Email Address</span>
+
+                <b>
+                  m.ahmed@example.com
+                  <small class="verified-badge">Verified</small>
+                </b>
+              </p>
+
+              <p>
+                <span>Address</span>
+
+                <b>
+                  Olaya Street, Riyadh
+                  <br />
+                  Riyadh, Saudi Arabia
+                </b>
+              </p>
+
+              <p>
+                <span>Emergency Contact</span>
+
+                <b>
+                  Ahmed Ali (Brother)
+                  <br />
+                  +966 55 987 6543
+                </b>
+              </p>
+            </div>
+          </article>
+
+          <!-- RECENT ACTIVITY -->
+          <article class="customer-details-panel">
+            <div class="customer-details-panel-heading">
+              <h3>
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                Recent Activity
+              </h3>
+
+              <button type="button">View All</button>
+            </div>
+
+            <div class="customer-activity-list">
+              <div class="customer-activity-item">
+                <span class="customer-activity-icon green">
+                  <i class="fa-regular fa-calendar"></i>
+                </span>
+
+                <div>
+                  <b>New Booking Created</b>
+                  <p>Booking #SWG-00245 · VIP Parking · Riyadh Mall</p>
+                </div>
+
+                <time>Today, 10:30 AM</time>
+              </div>
+
+              <div class="customer-activity-item">
+                <span class="customer-activity-icon orange">
+                  <i class="fa-solid fa-money-check-dollar"></i>
+                </span>
+
+                <div>
+                  <b>Payment Successful</b>
+                  <p>SAR 120.00 · Visa **** 4242</p>
+                </div>
+
+                <time>May 23, 2024, 08:15 PM</time>
+              </div>
+
+              <div class="customer-activity-item">
+                <span class="customer-activity-icon blue">
+                  <i class="fa-regular fa-circle-check"></i>
+                </span>
+
+                <div>
+                  <b>Booking Completed</b>
+                  <p>Booking #SWG-00244 · Al Nakheel Tower</p>
+                </div>
+
+                <time>May 22, 2024, 06:45 PM</time>
+              </div>
+
+              <div class="customer-activity-item">
+                <span class="customer-activity-icon blue">
+                  <i class="fa-solid fa-car-side"></i>
+                </span>
+
+                <div>
+                  <b>Vehicle Added</b>
+                  <p>Toyota Camry · ABC-1234</p>
+                </div>
+
+                <time>May 21, 2024, 11:20 AM</time>
+              </div>
+
+              <div class="customer-activity-item">
+                <span class="customer-activity-icon gray">
+                  <i class="fa-regular fa-user"></i>
+                </span>
+
+                <div>
+                  <b>Account Created</b>
+                  <p>Welcome to Parkin</p>
+                </div>
+
+                <time>May 10, 2024, 09:15 AM</time>
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <!-- BOOKING SUMMARY -->
+        <section class="customer-details-panel customer-booking-summary-panel">
+          <div class="customer-details-panel-heading">
+            <h3>
+              <i class="fa-solid fa-hourglass-half"></i>
+              Booking Summary
+            </h3>
+
+            <button
+              type="button"
+              class="customer-panel-link"
+              data-customer-tab-target="bookings"
+            >
+              View All Bookings
+            </button>
+          </div>
+
+          <div class="customer-booking-summary-grid">
+            <div class="customer-booking-summary-item">
+              <span class="summary-icon blue">
+                <i class="fa-regular fa-calendar"></i>
+              </span>
+              <div>
+                <span>Total Bookings</span>
+                <strong>24</strong>
+              </div>
+            </div>
+
+            <div class="customer-booking-summary-item">
+              <span class="summary-icon green">
+                <i class="fa-regular fa-circle-check"></i>
+              </span>
+              <div>
+                <span>Completed</span>
+                <strong>20</strong>
+              </div>
+            </div>
+
+            <div class="customer-booking-summary-item">
+              <span class="summary-icon blue">
+                <i class="fa-regular fa-clock"></i>
+              </span>
+              <div>
+                <span>Upcoming</span>
+                <strong>2</strong>
+              </div>
+            </div>
+
+            <div class="customer-booking-summary-item">
+              <span class="summary-icon red">
+                <i class="fa-regular fa-circle-xmark"></i>
+              </span>
+              <div>
+                <span>Cancelled</span>
+                <strong>2</strong>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <button type="button" class="customer-deactivate-btn">
+          <i class="fa-regular fa-trash-can"></i>
+          Deactivate Customer
+        </button>
+      </div>
+
+      <!-- OVERVIEW SIDEBAR -->
+      <aside class="customer-details-sidebar">
+        <!-- REGISTERED VEHICLES -->
+        <section class="customer-details-panel">
+          <div class="customer-details-panel-heading">
+            <h3>
+              <i class="fa-solid fa-car-side"></i>
+              Registered Vehicles (2)
+            </h3>
+
+            <button
+              type="button"
+              class="customer-panel-link"
+              data-customer-tab-target="vehicles"
+            >
+              View All
+            </button>
+          </div>
+
+          <div class="customer-registered-vehicle-list">
+            <article class="customer-registered-vehicle-item">
+              <div class="registered-vehicle-logo">
+                <img
+                  src="/public/assets/vehicle-brands/toyota.svg"
+                  alt="Toyota Camry"
+                />
+              </div>
+
+              <div>
+                <strong>
+                  Toyota Camry
+                  <small>Primary</small>
+                </strong>
+                <span>ABC-1234</span>
+                <em>White · Sedan</em>
+              </div>
+
+              <button type="button" aria-label="Toyota Camry actions">
+                <i class="fa-solid fa-ellipsis-vertical"></i>
+              </button>
+            </article>
+
+            <article class="customer-registered-vehicle-item">
+              <div class="registered-vehicle-logo">
+                <img
+                  src="/public/assets/vehicle-brands/hyundai.svg"
+                  alt="Hyundai Elantra"
+                />
+              </div>
+              <div>
+                <strong>Hyundai Elantra</strong>
+                <span>DEF-5678</span>
+                <em>Silver · Sedan</em>
+              </div>
+
+              <button type="button" aria-label="Hyundai Elantra actions">
+                <i class="fa-solid fa-ellipsis-vertical"></i>
+              </button>
+            </article>
+          </div>
+        </section>
+
+        <!-- PAYMENT METHODS -->
+        <section class="customer-details-panel customer-overview-payment-panel">
+          <div class="customer-details-panel-heading">
+            <h3>
+              <i class="fa-regular fa-credit-card"></i>
+              Payment Methods (2)
+            </h3>
+
+            <button
+              type="button"
+              class="customer-panel-link"
+              data-customer-tab-target="payment-methods"
+            >
+              View All
+            </button>
+          </div>
+
+          <div class="customer-overview-payment-list">
+            <article class="customer-overview-payment-item">
+              <span class="overview-payment-logo">
+                <img src="/public/assets/creditcards/visa.png" alt="Visa" />
+              </span>
+
+              <div>
+                <strong>
+                  Visa **** 4242
+                  <small>Default</small>
+                </strong>
+                <span>Expires 12/26</span>
+              </div>
+
+              <button type="button" aria-label="Visa payment method actions">
+                <i class="fa-solid fa-ellipsis-vertical"></i>
+              </button>
+            </article>
+
+            <article class="customer-overview-payment-item">
+              <span class="overview-payment-logo">
+                <img
+                  src="/public/assets/creditcards/master.png"
+                  alt="Mastercard"
+                />
+              </span>
+
+              <div>
+                <strong>Mastercard **** 8888</strong>
+                <span>Expires 08/25</span>
+              </div>
+
+              <button
+                type="button"
+                aria-label="Mastercard payment method actions"
+              >
+                <i class="fa-solid fa-ellipsis-vertical"></i>
+              </button>
+            </article>
+          </div>
+        </section>
+
+        <button type="button" class="customer-export-data-btn">
+          <i class="fa-solid fa-download"></i>
+          Export Customer Data
+        </button>
+      </aside>
+    </section>
+  </section>
+
+  <!-- =====================================================
+       VEHICLES TAB
+  ====================================================== -->
+  <section class="customer-tab-panel" data-customer-panel="vehicles">
+    <section class="customer-vehicles-tab-card">
+      <div class="customer-vehicles-tab-heading">
+        <div class="customer-vehicles-tab-title">
+          <span class="customer-vehicles-tab-icon">
+            <i class="fa-solid fa-car-side"></i>
+          </span>
+
+          <div>
+            <h2>Registered Vehicles</h2>
+            <p>Manage vehicles registered by this customer</p>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="customer-add-vehicle-btn"
+          id="customer-add-vehicle-top"
+        >
+          <i class="fa-solid fa-plus"></i>
+          Add Vehicle
+        </button>
+      </div>
+
+      <div class="customer-vehicles-empty-layout">
+        <div class="customer-vehicles-empty-state">
+          <span class="customer-vehicles-empty-icon">
+            <i class="fa-solid fa-car-side"></i>
+
+            <small>
+              <i class="fa-solid fa-plus"></i>
+            </small>
+          </span>
+
+          <h3>No vehicles registered yet</h3>
+
+          <p>
+            This customer hasn't added any vehicles.
+            <br />
+            Add a vehicle to make parking faster and easier for them.
+          </p>
+
+          <button
+            type="button"
+            class="customer-add-vehicle-btn"
+            id="customer-add-vehicle-empty"
+          >
+            <i class="fa-solid fa-plus"></i>
+            Add Vehicle
+          </button>
+        </div>
+
+        <aside class="customer-vehicle-tips-card">
+          <div class="customer-vehicle-tips-heading">
+            <i class="fa-solid fa-circle-info"></i>
+
+            <h3>Vehicle Tips</h3>
+          </div>
+
+          <p>Adding a vehicle helps customers to:</p>
+
+          <ul>
+            <li>
+              <i class="fa-solid fa-check"></i>
+              Park faster with saved details
+            </li>
+
+            <li>
+              <i class="fa-solid fa-check"></i>
+              Get reservation recommendations
+            </li>
+
+            <li>
+              <i class="fa-solid fa-check"></i>
+              Track parking history by vehicle
+            </li>
+          </ul>
+
+          <div class="customer-vehicle-tips-illustration">
+            <i class="fa-solid fa-car-side"></i>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </section>
+
+  <!-- BOOKINGS TAB -->
+  <!-- =====================================================
+     BOOKINGS TAB - When customer doesnot have booking
+     =====================================================-->
+
+  <!-- <section
+  class="customer-tab-panel"
+  data-customer-panel="bookings"
+>
+  <section class="customer-bookings-tab-card">
+
+    <div class="customer-bookings-empty-layout">
+
+      <div class="customer-bookings-empty-state">
+
+        <div class="customer-bookings-empty-illustration">
+
+          <span class="customer-bookings-document">
+            <i class="fa-regular fa-calendar-days"></i>
+
+            <small>
+              <i class="fa-solid fa-xmark"></i>
+            </small>
+          </span>
+
+        </div>
+
+        <h2>No Bookings Yet</h2>
+
+        <p>
+          This customer doesn’t have any bookings.
+          <br>
+          Once a booking is created, it will appear here.
+        </p>
+
+        <button
+          type="button"
+          class="customer-create-booking-btn"
+          id="create-customer-booking"
+        >
+          <i class="fa-solid fa-plus"></i>
+          Create New Booking
+        </button>
+
+      </div>
+
+      <aside class="customer-bookings-info-card">
+
+        <div class="customer-bookings-info-heading">
+
+          <span>
+            <i class="fa-regular fa-calendar-days"></i>
+          </span>
+
+          <div>
+            <h2>About Bookings</h2>
+
+            <p>
+              Bookings help you manage all parking reservations
+              made by this customer.
+            </p>
+          </div>
+
+        </div>
+
+        <div class="customer-bookings-info-divider"></div>
+
+        <div class="customer-bookings-info-list">
+
+          <article>
+
+            <span class="customer-bookings-info-icon">
+              <i class="fa-solid fa-plus"></i>
+            </span>
+
+            <div>
+              <h3>Create a new booking for this customer</h3>
+
+              <p>
+                Make a new reservation on their behalf.
+              </p>
+            </div>
+
+          </article>
+
+          <article>
+
+            <span class="customer-bookings-info-icon">
+              <i class="fa-regular fa-rectangle-list"></i>
+            </span>
+
+            <div>
+              <h3>View booking details and status</h3>
+
+              <p>
+                Track upcoming, active, completed, and cancelled bookings.
+              </p>
+            </div>
+
+          </article>
+
+          <article>
+
+            <span class="customer-bookings-info-icon">
+              <i class="fa-solid fa-gear"></i>
+            </span>
+
+            <div>
+              <h3>Manage bookings easily</h3>
+
+              <p>
+                Update, cancel, or review any booking when needed.
+              </p>
+            </div>
+
+          </article>
+
+        </div>
+
+      </aside>
+
+    </div>
+
+  </section>
+</section> -->
+  <section class="customer-tab-panel" data-customer-panel="bookings">
+    <section class="customer-bookings-list-card">
+      <!-- Toolbar -->
+
+      <div class="customer-bookings-toolbar">
+        <div class="customer-bookings-toolbar-left">
+          <div class="customer-bookings-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+            <input
+              type="search"
+              id="customer-bookings-search"
+              placeholder="Search by booking ID, location..."
+            />
+          </div>
+
+          <select id="customer-bookings-status-filter">
+            <option value="all">All Status</option>
+            <option value="in-progress">In Progress</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+
+          <select id="customer-bookings-location-filter">
+            <option value="all">All Locations</option>
+            <option value="riyadh-front">Riyadh Front</option>
+            <option value="riyadh-park">Riyadh Park Mall</option>
+            <option value="nakheel-mall">Nakheel Mall</option>
+          </select>
+
+          <button
+            type="button"
+            class="customer-bookings-filter-btn"
+            id="open-customer-booking-filters"
+          >
+            <i class="fa-solid fa-filter"></i>
+            Filters
+          </button>
+        </div>
+
+        <button
+          type="button"
+          class="customer-bookings-add-btn"
+          id="add-new-customer-booking"
+        >
+          <i class="fa-regular fa-calendar-plus"></i>
+          Add New Booking
+        </button>
+      </div>
+
+      <!-- Desktop table -->
+
+      <div class="customer-bookings-table-scroll">
+        <div class="customer-bookings-table">
+          <div class="customer-booking-row customer-booking-head">
+            <span>Booking ID</span>
+            <span>Location</span>
+            <span>Vehicle</span>
+            <span>Date &amp; Time</span>
+            <span>Duration</span>
+            <span>Payment Method</span>
+            <span>Status</span>
+            <span>Amount</span>
+            <span>Actions</span>
+          </div>
+
+          <!-- Booking 1 -->
+
+          <div
+            class="customer-booking-row"
+            data-booking-status="in-progress"
+            data-booking-location="riyadh-front"
+          >
+            <span class="customer-booking-id">
+              <button type="button" data-booking-id="SWG-260524-0018">
+                SWG-240524-0018
+              </button>
+
+              <small>24 May 2026, 10:15 AM</small>
+            </span>
+
+            <span class="customer-booking-location">
+              <b>Riyadh Front</b>
+              <small>P1 - Premium</small>
+            </span>
+
+            <span>
+              <div class="customer-booking-plate-image">
+                <img
+                  src="/public/assets/ksa-vehicle-plate.png"
+                  alt="Saudi vehicle plate"
+                />
+
+                <span class="booking-plate-arabic-number"> ٩٥١٥ </span>
+
+                <span class="booking-plate-arabic-letters"> ا ب ج </span>
+
+                <span class="booking-plate-english-number"> 9515 </span>
+
+                <span class="booking-plate-english-letters"> J B A </span>
+              </div>
+            </span>
+
+            <span class="customer-booking-date">
+              <b>24 May 2024</b>
+              <small>10:00 AM - 12:00 PM</small>
+            </span>
+
+            <span>2h 00m</span>
+            <span class="customer-booking-payment">
+              <span class="payment-badge mada">
+                <i class="fa-regular fa-credit-card"></i>
+                MADA
+              </span>
+            </span>
+            <span>
+              <strong class="booking-status in-progress"> In Progress </strong>
+            </span>
+
+            <span class="customer-booking-amount"> SAR 35.00 </span>
+
+            <span class="customer-booking-actions-cell">
+              <button
+                type="button"
+                class="customer-booking-more-btn"
+                aria-label="Booking actions"
+                aria-expanded="false"
+              >
+                <i class="fa-solid fa-ellipsis"></i>
+              </button>
+
+              <div class="customer-booking-actions-menu hidden">
+                <button
+                  type="button"
+                  data-booking-action="view"
+                  data-booking-id="SWG-260524-0018"
+                >
+                  <i class="fa-regular fa-eye"></i>
+                  View Booking
+                </button>
+
+                <button
+                  type="button"
+                  data-booking-action="edit"
+                  data-booking-id="SWG-260524-0018"
+                >
+                  <i class="fa-regular fa-pen-to-square"></i>
+                  Edit Booking
+                </button>
+
+                <button
+                  type="button"
+                  data-booking-action="cancel"
+                  data-booking-id="SWG-260524-0018"
+                  class="danger"
+                >
+                  <i class="fa-regular fa-circle-xmark"></i>
+                  Cancel Booking
+                </button>
+              </div>
+            </span>
+          </div>
+
+          <!-- Booking 2 -->
+
+          <div
+            class="customer-booking-row"
+            data-booking-status="completed"
+            data-booking-location="riyadh-park"
+          >
+            <span class="customer-booking-id">
+              <button type="button" data-booking-id="SWG-260524-0017">
+                SWG-260524-0017
+              </button>
+
+              <small>24 May 2026, 09:45 AM</small>
+            </span>
+
+            <span class="customer-booking-location">
+              <b>Riyadh Park Mall</b>
+              <small>P2 - VIP</small>
+            </span>
+
+            <span>
+              <div class="customer-booking-plate-image">
+                <img
+                  src="/public/assets/ksa-vehicle-plate.png"
+                  alt="Saudi vehicle plate"
+                />
+
+                <span class="booking-plate-arabic-number"> ٣٢٨٧ </span>
+
+                <span class="booking-plate-arabic-letters"> ل ز د </span>
+
+                <span class="booking-plate-english-number"> 3287 </span>
+
+                <span class="booking-plate-english-letters"> L Z D </span>
+              </div>
+            </span>
+
+            <span class="customer-booking-date">
+              <b>24 May 2024</b>
+              <small>09:30 AM - 11:30 AM</small>
+            </span>
+
+            <span>2h 00m</span>
+
+            <span class="customer-booking-payment">
+              <span class="payment-badge visa">
+                <i class="fa-brands fa-cc-visa"></i>
+                Visa
+              </span>
+            </span>
+
+            <span>
+              <strong class="booking-status completed"> Completed </strong>
+            </span>
+
+            <span class="customer-booking-amount"> SAR 30.00 </span>
+
+            <span class="customer-booking-actions-cell">
+              <button
+                type="button"
+                class="customer-booking-more-btn"
+                aria-label="Booking actions"
+                aria-expanded="false"
+              >
+                <i class="fa-solid fa-ellipsis"></i>
+              </button>
+
+              <div class="customer-booking-actions-menu hidden">
+                <button
+                  type="button"
+                  data-booking-action="view"
+                  data-booking-id="SWG-260524-0017"
+                >
+                  <i class="fa-regular fa-eye"></i>
+                  View Booking
+                </button>
+
+                <button
+                  type="button"
+                  data-booking-action="receipt"
+                  data-booking-id="SWG-260524-0017"
+                >
+                  <i class="fa-regular fa-file-lines"></i>
+                  View Receipt
+                </button>
+              </div>
+            </span>
+          </div>
+
+          <!-- Booking 3 -->
+
+          <div
+            class="customer-booking-row"
+            data-booking-status="cancelled"
+            data-booking-location="nakheel-mall"
+          >
+            <span class="customer-booking-id">
+              <button type="button" data-booking-id="SWG-260524-0016">
+                SWG-260524-0016
+              </button>
+
+              <small>24 May 2026, 09:20 AM</small>
+            </span>
+
+            <span class="customer-booking-location">
+              <b>Nakheel Mall</b>
+              <small>P1 - Premium</small>
+            </span>
+
+            <span>
+              <div class="customer-booking-plate-image">
+                <img
+                  src="/public/assets/ksa-vehicle-plate.png"
+                  alt="Saudi vehicle plate"
+                />
+
+                <span class="booking-plate-arabic-number"> ٧١٥٤ </span>
+
+                <span class="booking-plate-arabic-letters"> ر ا ب </span>
+
+                <span class="booking-plate-english-number"> 7154 </span>
+
+                <span class="booking-plate-english-letters"> R A B </span>
+              </div>
+            </span>
+
+            <span class="customer-booking-date">
+              <b>24 May 2024</b>
+              <small>09:00 AM - 11:00 AM</small>
+            </span>
+
+            <span>2h 00m</span>
+
+            <span class="customer-booking-payment">
+              <span class="payment-badge applepay">
+                <i class="fa-brands fa-apple-pay"></i>
+                Apple Pay
+              </span>
+            </span>
+
+            <span>
+              <strong class="booking-status cancelled"> Cancelled </strong>
+            </span>
+
+            <span class="customer-booking-amount"> SAR 0.00 </span>
+
+            <span class="customer-booking-actions-cell">
+              <button
+                type="button"
+                class="customer-booking-more-btn"
+                aria-label="Booking actions"
+                aria-expanded="false"
+              >
+                <i class="fa-solid fa-ellipsis"></i>
+              </button>
+
+              <div class="customer-booking-actions-menu hidden">
+                <button
+                  type="button"
+                  data-booking-action="view"
+                  data-booking-id="SWG-260524-0016"
+                >
+                  <i class="fa-regular fa-eye"></i>
+                  View Booking
+                </button>
+              </div>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+
+      <div class="customer-bookings-footer">
+        <p id="customer-bookings-result-count">Showing 1 to 3 of 24 bookings</p>
+
+        <select id="customer-bookings-page-size">
+          <option value="10">10 / page</option>
+          <option value="20">20 / page</option>
+          <option value="50">50 / page</option>
+        </select>
+      </div>
+
+      <!-- No results -->
+
+      <div
+        class="customer-bookings-no-results hidden"
+        id="customer-bookings-no-results"
+      >
+        <i class="fa-regular fa-calendar-xmark"></i>
+        <h3>No matching bookings</h3>
+        <p>Try changing the search or selected filters.</p>
+      </div>
+    </section>
+  </section>
+
+  <!-- PAYMENT METHODS TAB -->
+  <!-- <section
+  class="customer-tab-panel"
+  data-customer-panel="payment-methods"
+>
+  <section class="customer-payment-methods-card">
+
+    <div class="customer-payment-methods-header">
+
+      <div>
+        <h2>Saved Payment Methods</h2>
+
+        <p>
+          Manage payment methods saved by this customer
+        </p>
+      </div>
+
+      <button
+        type="button"
+        class="customer-add-payment-btn"
+        id="add-customer-payment-method"
+      >
+        <i class="fa-regular fa-credit-card"></i>
+        Add Payment Method
+      </button>
+
+    </div>
+
+    <div class="customer-payment-empty-state">
+
+      <div class="customer-payment-empty-illustration">
+
+        <span class="customer-payment-card-shape">
+          <i class="fa-regular fa-credit-card"></i>
+
+          <small>
+            <i class="fa-solid fa-xmark"></i>
+          </small>
+        </span>
+
+      </div>
+
+      <h3>No payment methods saved yet</h3>
+
+      <p>
+        This customer hasn’t added any payment methods.
+        <br>
+        Add a payment method to make bookings faster and easier.
+      </p>
+
+      <button
+        type="button"
+        class="customer-add-payment-empty-btn"
+        id="add-customer-payment-method-empty"
+      >
+        <i class="fa-solid fa-plus"></i>
+        Add Payment Method
+      </button>
+
+    </div>
+
+  </section>
+</section> -->
+
+  <section class="customer-tab-panel" data-customer-panel="payment-methods">
+    <section class="customer-payment-methods-card">
+      <div class="customer-payment-methods-header">
+        <div>
+          <h2>Saved Payment Methods</h2>
+          <p>Manage customer cards and default payment preferences</p>
+        </div>
+
+        <button
+          type="button"
+          class="customer-add-payment-btn"
+          id="add-customer-payment-method"
+        >
+          <i class="fa-regular fa-credit-card"></i>
+          Add Payment Method
+        </button>
+      </div>
+
+      <div class="customer-payment-table-scroll">
+        <div class="customer-payment-table">
+          <div class="customer-payment-row customer-payment-head">
+            <span>Card Type</span>
+            <span>Card Holder</span>
+            <span>Card Number</span>
+            <span>Expiry Date</span>
+            <span>Status</span>
+            <span>Default</span>
+            <span>Actions</span>
+          </div>
+
+          <!-- Visa -->
+
+          <div class="customer-payment-row" data-payment-id="PM-0001">
+            <span class="customer-payment-brand">
+              <span class="payment-logo">
+                <img src="/public/assets/creditcards/visa.png" alt="Visa" />
+              </span>
+              <span>
+                <strong>Visa</strong>
+                <small>Credit Card</small>
+              </span>
+            </span>
+
+            <span>
+              <strong>Muhammad Ahmed</strong>
+            </span>
+
+            <span class="customer-payment-number"> •••• •••• •••• 4343 </span>
+
+            <span>
+              <strong>12 / 26</strong>
+            </span>
+
+            <span>
+              <strong class="payment-method-status active"> Active </strong>
+            </span>
+
+            <span>
+              <button
+                type="button"
+                class="payment-default-btn active"
+                data-payment-default="true"
+              >
+                <i class="fa-solid fa-star"></i>
+                Default
+              </button>
+            </span>
+
+            <span class="customer-payment-actions-cell">
+              <button
+                type="button"
+                class="customer-payment-more-btn"
+                aria-label="Payment method actions"
+              >
+                <i class="fa-solid fa-ellipsis"></i>
+              </button>
+
+              <div class="customer-payment-actions-menu hidden">
+                <button type="button" data-payment-action="view">
+                  <i class="fa-regular fa-eye"></i>
+                  View Details
+                </button>
+
+                <button type="button" data-payment-action="edit">
+                  <i class="fa-regular fa-pen-to-square"></i>
+                  Edit Method
+                </button>
+
+                <button
+                  type="button"
+                  class="danger"
+                  data-payment-action="remove"
+                >
+                  <i class="fa-regular fa-trash-can"></i>
+                  Remove Method
+                </button>
+              </div>
+            </span>
+          </div>
+
+          <!-- Mastercard -->
+
+          <div class="customer-payment-row" data-payment-id="PM-0002">
+            <span class="customer-payment-brand">
+              <span class="payment-logo">
+                <img
+                  src="/public/assets/creditcards/master.png"
+                  alt="Mastercard"
+                />
+              </span>
+              <span>
+                <strong>Mastercard</strong>
+                <small>Credit Card</small>
+              </span>
+            </span>
+
+            <span>
+              <strong>Muhammad Ahmed</strong>
+            </span>
+
+            <span class="customer-payment-number"> •••• •••• •••• 5555 </span>
+
+            <span>
+              <strong>08 / 26</strong>
+            </span>
+
+            <span>
+              <strong class="payment-method-status active"> Active </strong>
+            </span>
+
+            <span>
+              <button
+                type="button"
+                class="payment-default-btn"
+                data-payment-default="false"
+              >
+                <i class="fa-regular fa-star"></i>
+                Set as Default
+              </button>
+            </span>
+
+            <span class="customer-payment-actions-cell">
+              <button
+                type="button"
+                class="customer-payment-more-btn"
+                aria-label="Payment method actions"
+              >
+                <i class="fa-solid fa-ellipsis"></i>
+              </button>
+
+              <div class="customer-payment-actions-menu hidden">
+                <button type="button" data-payment-action="view">
+                  <i class="fa-regular fa-eye"></i>
+                  View Details
+                </button>
+
+                <button type="button" data-payment-action="edit">
+                  <i class="fa-regular fa-pen-to-square"></i>
+                  Edit Method
+                </button>
+
+                <button
+                  type="button"
+                  class="danger"
+                  data-payment-action="remove"
+                >
+                  <i class="fa-regular fa-trash-can"></i>
+                  Remove Method
+                </button>
+              </div>
+            </span>
+          </div>
+
+          <!-- MADA -->
+
+          <div class="customer-payment-row" data-payment-id="PM-0003">
+            <span class="customer-payment-brand">
+              <span class="payment-logo">
+                <img src="/public/assets/creditcards/mada.png" alt="MADA" />
+              </span>
+
+              <span>
+                <strong>MADA</strong>
+                <small>Debit Card</small>
+              </span>
+            </span>
+
+            <span>
+              <strong>Muhammad Ahmed</strong>
+            </span>
+
+            <span class="customer-payment-number"> •••• •••• •••• 1234 </span>
+
+            <span>
+              <strong>05 / 27</strong>
+            </span>
+
+            <span>
+              <strong class="payment-method-status active"> Active </strong>
+            </span>
+
+            <span>
+              <button
+                type="button"
+                class="payment-default-btn"
+                data-payment-default="false"
+              >
+                <i class="fa-regular fa-star"></i>
+                Set as Default
+              </button>
+            </span>
+
+            <span class="customer-payment-actions-cell">
+              <button
+                type="button"
+                class="customer-payment-more-btn"
+                aria-label="Payment method actions"
+              >
+                <i class="fa-solid fa-ellipsis"></i>
+              </button>
+
+              <div class="customer-payment-actions-menu hidden">
+                <button type="button" data-payment-action="view">
+                  <i class="fa-regular fa-eye"></i>
+                  View Details
+                </button>
+
+                <button type="button" data-payment-action="edit">
+                  <i class="fa-regular fa-pen-to-square"></i>
+                  Edit Method
+                </button>
+
+                <button
+                  type="button"
+                  class="danger"
+                  data-payment-action="remove"
+                >
+                  <i class="fa-regular fa-trash-can"></i>
+                  Remove Method
+                </button>
+              </div>
+            </span>
+          </div>
+
+          <!-- American Express -->
+
+          <div class="customer-payment-row" data-payment-id="PM-0004">
+            <span class="customer-payment-brand">
+              <span class="payment-logo">
+                <img src="/public/assets/creditcards/amex.png" alt="MADA" />
+              </span>
+              <span>
+                <strong>American Express</strong>
+                <small>Credit Card</small>
+              </span>
+            </span>
+
+            <span>
+              <strong>Muhammad Ahmed</strong>
+            </span>
+
+            <span class="customer-payment-number"> •••• •••• •••• 9876 </span>
+
+            <span>
+              <strong>09 / 24</strong>
+            </span>
+
+            <span>
+              <strong class="payment-method-status expired"> Expired </strong>
+            </span>
+
+            <span>
+              <button
+                type="button"
+                class="payment-default-btn"
+                data-payment-default="false"
+              >
+                <i class="fa-regular fa-star"></i>
+                Set as Default
+              </button>
+            </span>
+
+            <span class="customer-payment-actions-cell">
+              <button
+                type="button"
+                class="customer-payment-more-btn"
+                aria-label="Payment method actions"
+              >
+                <i class="fa-solid fa-ellipsis"></i>
+              </button>
+
+              <div class="customer-payment-actions-menu hidden">
+                <button type="button" data-payment-action="view">
+                  <i class="fa-regular fa-eye"></i>
+                  View Details
+                </button>
+
+                <button
+                  type="button"
+                  class="danger"
+                  data-payment-action="remove"
+                >
+                  <i class="fa-regular fa-trash-can"></i>
+                  Remove Method
+                </button>
+              </div>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="customer-payment-security-note">
+        <span>
+          <i class="fa-solid fa-lock"></i>
+        </span>
+
+        <div>
+          <strong>
+            Your payment details are securely saved and encrypted.
+          </strong>
+
+          <p>We never store or display your full card details.</p>
+        </div>
+      </div>
+    </section>
+  </section>
+
+  <!-- ACTIVITY LOG TAB -->
+  <section class="customer-tab-panel" data-customer-panel="activity-log">
+    <section class="customer-activity-card">
+      <div class="customer-activity-toolbar">
+        <div class="customer-activity-toolbar-left">
+          <div class="customer-activity-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+            <input
+              type="search"
+              id="customer-activity-search"
+              placeholder="Search activity..."
+            />
+          </div>
+
+          <select id="customer-activity-filter">
+            <option value="all">All Activities</option>
+            <option value="booking">Bookings</option>
+            <option value="payment">Payments</option>
+            <option value="profile">Profile</option>
+            <option value="security">Security</option>
+            <option value="account">Account</option>
+          </select>
+        </div>
+
+        <button
+          type="button"
+          class="customer-activity-export-btn"
+          id="export-customer-activity"
+        >
+          <i class="fa-solid fa-download"></i>
+          Export
+        </button>
+      </div>
+
+      <div class="customer-activity-table-scroll">
+        <div class="customer-activity-table">
+          <div class="customer-activity-row customer-activity-head">
+            <span>Date &amp; Time</span>
+            <span>Activity</span>
+            <span>Details</span>
+            <span>Performed By</span>
+            <span>Channel</span>
+            <span>IP Address</span>
+          </div>
+
+          <div class="customer-activity-row" data-activity-type="booking">
+            <span class="customer-activity-date">
+              <span class="activity-icon booking-created">
+                <i class="fa-regular fa-calendar-plus"></i>
+              </span>
+
+              <span>
+                <strong>May 24, 2024</strong>
+                <small>10:15 AM</small>
+              </span>
+            </span>
+
+            <span class="customer-activity-name">
+              <span class="activity-mini-icon booking-created">
+                <i class="fa-regular fa-calendar-plus"></i>
+              </span>
+
+              <span>
+                <strong>Booking Created</strong>
+                <small>Booking ID: BK-240524-0018</small>
+              </span>
+            </span>
+
+            <span>
+              <strong>Parking at Riyadh Front</strong>
+              <small>24 May 2024, 10:00 AM - 12:00 PM</small>
+            </span>
+
+            <span class="customer-activity-user">
+              <strong>Muhammad Ahmed</strong>
+              <small class="activity-user-badge customer">Customer</small>
+            </span>
+
+            <span class="customer-activity-channel">
+              <i class="fa-solid fa-mobile-screen-button"></i>
+              Mobile App
+            </span>
+
+            <span>192.168.1.45</span>
+          </div>
+
+          <div class="customer-activity-row" data-activity-type="payment">
+            <span class="customer-activity-date">
+              <span class="activity-icon payment-added">
+                <i class="fa-regular fa-credit-card"></i>
+              </span>
+
+              <span>
+                <strong>May 24, 2024</strong>
+                <small>09:45 AM</small>
+              </span>
+            </span>
+
+            <span class="customer-activity-name">
+              <span class="activity-mini-icon payment-added">
+                <i class="fa-regular fa-credit-card"></i>
+              </span>
+
+              <span>
+                <strong>Payment Method Added</strong>
+                <small>Visa ending with 4343</small>
+              </span>
+            </span>
+
+            <span>
+              <small>New payment method added via mobile app</small>
+            </span>
+
+            <span class="customer-activity-user">
+              <strong>Muhammad Ahmed</strong>
+              <small class="activity-user-badge customer">Customer</small>
+            </span>
+
+            <span class="customer-activity-channel">
+              <i class="fa-solid fa-mobile-screen-button"></i>
+              Mobile App
+            </span>
+
+            <span>192.168.1.45</span>
+          </div>
+
+          <div class="customer-activity-row" data-activity-type="booking">
+            <span class="customer-activity-date">
+              <span class="activity-icon booking-completed">
+                <i class="fa-regular fa-circle-check"></i>
+              </span>
+
+              <span>
+                <strong>May 24, 2024</strong>
+                <small>09:30 AM</small>
+              </span>
+            </span>
+
+            <span class="customer-activity-name">
+              <span class="activity-mini-icon booking-completed">
+                <i class="fa-regular fa-circle-check"></i>
+              </span>
+
+              <span>
+                <strong>Booking Completed</strong>
+                <small>Booking ID: BK-240524-0017</small>
+              </span>
+            </span>
+
+            <span>
+              <strong>Riyadh Park Mall</strong>
+              <small>24 May 2024, 09:30 AM - 11:30 AM</small>
+            </span>
+
+            <span class="customer-activity-user">
+              <strong>System</strong>
+              <small class="activity-user-badge system">System</small>
+            </span>
+
+            <span class="customer-activity-channel">
+              <i class="fa-solid fa-mobile-screen-button"></i>
+              Mobile App
+            </span>
+
+            <span>—</span>
+          </div>
+
+          <div class="customer-activity-row" data-activity-type="booking">
+            <span class="customer-activity-date">
+              <span class="activity-icon booking-cancelled">
+                <i class="fa-regular fa-circle-xmark"></i>
+              </span>
+
+              <span>
+                <strong>May 24, 2024</strong>
+                <small>08:50 AM</small>
+              </span>
+            </span>
+
+            <span class="customer-activity-name">
+              <span class="activity-mini-icon booking-cancelled">
+                <i class="fa-regular fa-circle-xmark"></i>
+              </span>
+
+              <span>
+                <strong>Booking Cancelled</strong>
+                <small>Booking ID: BK-240524-0015</small>
+              </span>
+            </span>
+
+            <span>
+              <strong>Riyadh Front</strong>
+              <small>24 May 2024, 08:30 AM - 10:30 AM</small>
+            </span>
+
+            <span class="customer-activity-user">
+              <strong>Muhammad Ahmed</strong>
+              <small class="activity-user-badge customer">Customer</small>
+            </span>
+
+            <span class="customer-activity-channel">
+              <i class="fa-solid fa-mobile-screen-button"></i>
+              Mobile App
+            </span>
+
+            <span>192.168.1.45</span>
+          </div>
+
+          <div class="customer-activity-row" data-activity-type="profile">
+            <span class="customer-activity-date">
+              <span class="activity-icon profile-updated">
+                <i class="fa-regular fa-pen-to-square"></i>
+              </span>
+
+              <span>
+                <strong>May 24, 2024</strong>
+                <small>08:20 AM</small>
+              </span>
+            </span>
+
+            <span class="customer-activity-name">
+              <span class="activity-mini-icon profile-updated">
+                <i class="fa-regular fa-user"></i>
+              </span>
+
+              <span>
+                <strong>Profile Updated</strong>
+              </span>
+            </span>
+
+            <span>
+              <small>
+                Updated phone number<br />
+                +966 50 987 6543
+              </small>
+            </span>
+
+            <span class="customer-activity-user">
+              <strong>Muhammad Ahmed</strong>
+              <small class="activity-user-badge customer">Customer</small>
+            </span>
+
+            <span class="customer-activity-channel">
+              <i class="fa-solid fa-mobile-screen-button"></i>
+              Mobile App
+            </span>
+
+            <span>192.168.1.45</span>
+          </div>
+
+          <div class="customer-activity-row" data-activity-type="security">
+            <span class="customer-activity-date">
+              <span class="activity-icon login">
+                <i class="fa-solid fa-right-to-bracket"></i>
+              </span>
+
+              <span>
+                <strong>May 23, 2024</strong>
+                <small>07:15 PM</small>
+              </span>
+            </span>
+
+            <span class="customer-activity-name">
+              <span class="activity-mini-icon login">
+                <i class="fa-solid fa-right-to-bracket"></i>
+              </span>
+
+              <span>
+                <strong>Login</strong>
+              </span>
+            </span>
+
+            <span>
+              <small>Successful login</small>
+            </span>
+
+            <span class="customer-activity-user">
+              <strong>Muhammad Ahmed</strong>
+              <small class="activity-user-badge customer">Customer</small>
+            </span>
+
+            <span class="customer-activity-channel">
+              <i class="fa-solid fa-mobile-screen-button"></i>
+              Mobile App
+            </span>
+
+            <span>192.168.1.45</span>
+          </div>
+
+          <div class="customer-activity-row" data-activity-type="security">
+            <span class="customer-activity-date">
+              <span class="activity-icon password-changed">
+                <i class="fa-solid fa-lock"></i>
+              </span>
+
+              <span>
+                <strong>May 23, 2024</strong>
+                <small>06:40 PM</small>
+              </span>
+            </span>
+
+            <span class="customer-activity-name">
+              <span class="activity-mini-icon password-changed">
+                <i class="fa-regular fa-user"></i>
+              </span>
+
+              <span>
+                <strong>Password Changed</strong>
+              </span>
+            </span>
+
+            <span>
+              <small>Password changed successfully</small>
+            </span>
+
+            <span class="customer-activity-user">
+              <strong>Muhammad Ahmed</strong>
+              <small class="activity-user-badge customer">Customer</small>
+            </span>
+
+            <span class="customer-activity-channel">
+              <i class="fa-solid fa-mobile-screen-button"></i>
+              Mobile App
+            </span>
+
+            <span>192.168.1.45</span>
+          </div>
+
+          <div class="customer-activity-row" data-activity-type="account">
+            <span class="customer-activity-date">
+              <span class="activity-icon account-created">
+                <i class="fa-regular fa-user"></i>
+              </span>
+
+              <span>
+                <strong>May 23, 2024</strong>
+                <small>06:35 PM</small>
+              </span>
+            </span>
+
+            <span class="customer-activity-name">
+              <span class="activity-mini-icon account-created">
+                <i class="fa-regular fa-user"></i>
+              </span>
+
+              <span>
+                <strong>Account Created</strong>
+              </span>
+            </span>
+
+            <span>
+              <small>New account created via mobile app</small>
+            </span>
+
+            <span class="customer-activity-user">
+              <strong>Muhammad Ahmed</strong>
+              <small class="activity-user-badge customer">Customer</small>
+            </span>
+
+            <span class="customer-activity-channel">
+              <i class="fa-solid fa-mobile-screen-button"></i>
+              Mobile App
+            </span>
+
+            <span>192.168.1.45</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="customer-activity-footer">
+        <p id="customer-activity-count">Showing 1 to 8 of 28 activities</p>
+
+        <div class="customer-activity-pagination">
+          <button type="button" aria-label="Previous page">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+
+          <button type="button" class="active">1</button>
+          <button type="button">2</button>
+          <button type="button">3</button>
+          <button type="button">4</button>
+
+          <button type="button" aria-label="Next page">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+
+        <select id="customer-activity-page-size">
+          <option value="10">10 / page</option>
+          <option value="20">20 / page</option>
+          <option value="50">50 / page</option>
+        </select>
+      </div>
+
+      <div class="customer-activity-empty hidden" id="customer-activity-empty">
+        <i class="fa-regular fa-rectangle-list"></i>
+        <h3>No matching activity</h3>
+        <p>Try changing your search or activity filter.</p>
+      </div>
+    </section>
+  </section>
+
+  <!-- NOTES TAB -->
+  <!-- <section
+    class="customer-tab-panel"
+    data-customer-panel="notes"
+  >
+    <div class="customer-tab-placeholder">
+      Customer Notes content will appear here.
+    </div>
+  </section> -->
+</section>
