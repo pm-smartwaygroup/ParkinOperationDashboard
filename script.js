@@ -163,6 +163,10 @@ async function loadValetFeatureScripts() {
   await loadDashboardScript("/js/valet.js");
 }
 
+async function loadCompanyFeatureScripts() {
+  await loadDashboardScript("/js/companies.js");
+}
+
 function getCurrentCustomerId() {
   const queryString = window.location.hash.split("?")[1] || "";
 
@@ -353,6 +357,8 @@ function showDashboard({ preserveRoute = false } = {}) {
 
   document.title = "Parkin Dashboard | Operations";
 
+  applyRoleNavigationVisibility();
+
   if (!preserveRoute) {
     window.history.replaceState(null, "", "/#dashboard");
 
@@ -373,9 +379,59 @@ function showDashboard({ preserveRoute = false } = {}) {
     preventScroll: false,
   });
 
-    hideLoader();
-    startSessionMonitor();
-    connectAuthSocket();
+  hideLoader();
+  startSessionMonitor();
+  connectAuthSocket();
+}
+
+function applyRoleNavigationVisibility() {
+  const companiesLink = document.querySelector(
+    '.dashboard-nav a[href="#companies"]',
+  );
+  const canManageCompanies = canManageValetCompanies();
+
+  if (companiesLink) {
+    companiesLink.hidden = !canManageCompanies;
+    companiesLink.classList.toggle("hidden", !canManageCompanies);
+    companiesLink.setAttribute("aria-hidden", String(!canManageCompanies));
+
+    if (canManageCompanies) {
+      companiesLink.removeAttribute("tabindex");
+    } else {
+      companiesLink.setAttribute("tabindex", "-1");
+    }
+  }
+
+  if (!canManageCompanies) {
+    clearRestrictedCompaniesView();
+  }
+}
+
+function getAuthenticatedDashboardUser() {
+  let user = null;
+
+  try {
+    user = JSON.parse(localStorage.getItem("parkin_user") || "null");
+  } catch {
+    user = null;
+  }
+
+  return user;
+}
+
+function canManageValetCompanies() {
+  return getAuthenticatedDashboardUser()?.role === "SUPER_ADMIN";
+}
+
+function clearRestrictedCompaniesView() {
+  const container = document.querySelector("#companies-container");
+
+  if (!container) {
+    return;
+  }
+
+  container.replaceChildren();
+  delete container.dataset.loaded;
 }
 
 function showLogin() {
@@ -652,6 +708,7 @@ const addDriverView = document.querySelector("#add-driver-view");
 const editDriverView = document.querySelector("#edit-driver-view");
 const driverDetailsView = document.querySelector("#driver-details-view");
 const customersView = document.querySelector("#customers-view");
+const companiesView = document.querySelector("#companies-view");
 const addCustomerView = document.querySelector("#add-customer-view");
 const customerDetailsView = document.querySelector("#customer-details-view");
 const editCustomerView = document.querySelector("#edit-customer-view");
@@ -675,6 +732,7 @@ const dashboardSections = document.querySelectorAll(
     ":not(#edit-driver-view)",
     ":not(#add-driver-view)",
     ":not(#customers-view)",
+    ":not(#companies-view)",
     ":not(#add-customer-view)",
     ":not(#customer-details-view)",
     ":not(#edit-customer-view)",
@@ -693,6 +751,10 @@ const locationItems = document.querySelectorAll(".location-item");
 const locationsResultCount = document.querySelector("#locations-result-count");
 
 function hideAllFeatureViews() {
+  if (typeof window.closeCompanyDrawer === "function") {
+    window.closeCompanyDrawer();
+  }
+
   locationsView?.classList.add("hidden");
   addLocationView?.classList.add("hidden");
   valetOperationsView?.classList.add("hidden");
@@ -703,6 +765,7 @@ function hideAllFeatureViews() {
   editDriverView?.classList.add("hidden");
 
   customersView?.classList.add("hidden");
+  companiesView?.classList.add("hidden");
   addCustomerView?.classList.add("hidden");
   customerDetailsView?.classList.add("hidden");
   editCustomerView?.classList.add("hidden");
@@ -1012,6 +1075,43 @@ async function showCustomersView() {
   await loadCustomersPage();
 }
 
+async function showCompaniesView() {
+  if (!canManageValetCompanies()) {
+    clearRestrictedCompaniesView();
+    window.history.replaceState(null, "", "/#dashboard");
+    showMainDashboardView();
+    showDashboardAlert(
+      "Valet Companies management is restricted to Super Administrators.",
+      {
+        title: "Access restricted",
+        type: "warning",
+      },
+    );
+    return;
+  }
+
+  dashboardSections.forEach((section) => section.classList.add("hidden"));
+  hideAllFeatureViews();
+
+  companiesView?.classList.remove("hidden");
+
+  const title = document.querySelector(".dashboard-title h1");
+  const subtitle = document.querySelector(".dashboard-title p");
+
+  if (title) {
+    title.textContent = "Valet Companies";
+  }
+
+  if (subtitle) {
+    subtitle.textContent = "Manage valet companies, accounts and locations";
+  }
+
+  setActiveNav("#companies");
+
+  await loadCompanyFeatureScripts();
+  await loadCompaniesPage();
+}
+
 async function showAddCustomerView() {
   dashboardSections.forEach((section) => {
     section.classList.add("hidden");
@@ -1160,6 +1260,11 @@ function handleDashboardRoute() {
 
   if (window.location.hash === "#customers") {
     showCustomersView();
+    return;
+  }
+
+  if (window.location.hash === "#companies") {
+    showCompaniesView();
     return;
   }
 

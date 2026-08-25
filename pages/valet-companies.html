@@ -1,0 +1,194 @@
+<div class="companies-page-shell">
+  <section class="companies-actions" aria-label="Company actions">
+    <div class="companies-mobile-heading">
+      <p class="companies-eyebrow">Business</p>
+      <h2>Valet Companies</h2>
+      <p>Manage companies, accounts, locations and driver capacity.</p>
+    </div>
+
+    <div class="companies-action-buttons">
+      <button class="companies-button secondary" id="export-companies" type="button">
+        <i class="fa-solid fa-download" aria-hidden="true"></i>
+        <span>Export</span>
+      </button>
+      <button class="companies-button primary" id="add-company" type="button">
+        <i class="fa-solid fa-plus" aria-hidden="true"></i>
+        <span>Add Company</span>
+      </button>
+    </div>
+  </section>
+
+  <section class="companies-kpi-grid" aria-label="Company statistics">
+    <article class="company-kpi-card">
+      <span class="company-kpi-icon green"><i class="fa-solid fa-building"></i></span>
+      <div><p>Total Companies</p><strong id="companies-total">0</strong><small>Registered tenants</small></div>
+    </article>
+    <article class="company-kpi-card">
+      <span class="company-kpi-icon emerald"><i class="fa-solid fa-briefcase"></i></span>
+      <div><p>Active Companies</p><strong id="companies-active">0</strong><small id="companies-active-share">0% active</small></div>
+    </article>
+    <article class="company-kpi-card">
+      <span class="company-kpi-icon blue"><i class="fa-solid fa-id-card"></i></span>
+      <div><p>Total Drivers</p><strong id="companies-drivers">0</strong><small id="companies-active-drivers">0 active drivers</small></div>
+    </article>
+    <article class="company-kpi-card">
+      <span class="company-kpi-icon violet"><i class="fa-solid fa-location-dot"></i></span>
+      <div><p>Assigned Locations</p><strong id="companies-locations">0</strong><small>Across all companies</small></div>
+    </article>
+  </section>
+
+  <section class="companies-directory-card">
+    <div class="companies-filter-bar">
+      <label class="companies-search">
+        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+        <span class="sr-only">Search companies</span>
+        <input id="company-search" type="search" placeholder="Search company, contact, code or email" autocomplete="off" />
+      </label>
+
+      <label class="companies-select-filter">
+        <span class="sr-only">Filter by city</span>
+        <select id="company-city-filter"><option value="">All Cities</option></select>
+      </label>
+
+      <label class="companies-select-filter">
+        <span class="sr-only">Filter by status</span>
+        <select id="company-status-filter">
+          <option value="">All Statuses</option>
+          <option value="ACTIVE">Active</option>
+          <option value="INACTIVE">Inactive</option>
+          <option value="SUSPENDED">Suspended</option>
+        </select>
+      </label>
+
+      <button class="companies-button filter-reset" id="reset-company-filters" type="button">
+        <i class="fa-solid fa-filter-circle-xmark" aria-hidden="true"></i>
+        <span>Reset</span>
+      </button>
+    </div>
+
+    <div class="companies-list-heading">
+      <h3>Companies List</h3>
+      <span id="companies-result-summary">0 companies</span>
+    </div>
+
+    <div class="companies-table-scroll">
+      <div class="companies-table" role="table" aria-label="Valet companies">
+        <div class="companies-row companies-head" role="row">
+          <span role="columnheader">Company</span>
+          <span role="columnheader">Contact</span>
+          <span role="columnheader">Location</span>
+          <span role="columnheader">Drivers</span>
+          <span role="columnheader">Accounts</span>
+          <span role="columnheader">Status</span>
+          <span role="columnheader">Actions</span>
+        </div>
+        <div id="companies-list" role="rowgroup"></div>
+      </div>
+    </div>
+
+    <div class="companies-empty hidden" id="companies-empty">
+      <span><i class="fa-solid fa-building-circle-xmark" aria-hidden="true"></i></span>
+      <h3>No valet companies found</h3>
+      <p>Create the first company or adjust the current filters.</p>
+      <button class="companies-button primary" type="button" data-open-company-drawer>Add Company</button>
+    </div>
+
+    <div class="companies-loading" id="companies-loading" aria-live="polite">
+      <span class="companies-spinner" aria-hidden="true"></span>
+      <p>Loading companies...</p>
+    </div>
+
+    <nav class="companies-pagination" id="companies-pagination" aria-label="Company list pages"></nav>
+  </section>
+
+  <section class="companies-insights-grid" aria-label="Company insights">
+    <article class="company-insight-card">
+      <h3>Companies by Status</h3>
+      <div class="company-status-visual">
+        <div class="company-donut" id="company-status-donut" role="img" aria-label="No company status data">
+          <span id="company-status-total">0</span>
+        </div>
+        <ul class="company-chart-legend" id="company-status-legend"></ul>
+      </div>
+    </article>
+
+    <article class="company-insight-card">
+      <h3>Drivers by Company</h3>
+      <div class="company-bar-chart" id="company-driver-chart" aria-label="Drivers by company"></div>
+    </article>
+
+    <article class="company-insight-card">
+      <h3>Locations by Company</h3>
+      <div class="company-bar-chart" id="company-location-chart" aria-label="Locations by company"></div>
+    </article>
+  </section>
+</div>
+
+<div class="company-drawer-backdrop hidden" id="company-drawer-backdrop" data-close-company-drawer></div>
+
+<aside class="company-drawer hidden" id="company-drawer" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="company-drawer-title">
+  <form id="company-form" onsubmit="return false;" novalidate>
+    <header class="company-drawer-header">
+      <div>
+        <p class="companies-eyebrow" id="company-drawer-eyebrow">New tenant</p>
+        <h2 id="company-drawer-title">Add Valet Company</h2>
+        <p>Set up company details and operational access.</p>
+      </div>
+      <button class="company-drawer-close" type="button" data-close-company-drawer aria-label="Close company form">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+      </button>
+    </header>
+
+    <div class="company-drawer-body">
+      <div class="company-form-alert hidden" id="company-form-alert" role="alert"></div>
+      <input id="company-record-id" type="hidden" />
+
+      <section class="company-form-section">
+        <div class="company-form-section-title"><span>1</span><div><h3>Company Information</h3><p>Identity and registration details</p></div></div>
+        <div class="company-form-grid two">
+          <label><span>Company Name <b>*</b></span><input id="company-name" name="name" type="text" maxlength="150" required placeholder="Smart Valet Company" /></label>
+          <label><span>Company Code <b>*</b></span><input id="company-code" name="code" type="text" maxlength="29" required placeholder="COMP-SMART" /></label>
+          <label class="span-two"><span>Legal Name</span><input id="company-legal-name" name="legalName" type="text" maxlength="180" placeholder="Registered legal company name" /></label>
+          <label><span>Commercial Registration</span><input id="company-registration" name="commercialRegistrationNumber" inputmode="numeric" maxlength="10" placeholder="10 digits" /></label>
+          <label><span>VAT Number</span><input id="company-vat" name="vatNumber" inputmode="numeric" maxlength="15" placeholder="15 digits" /></label>
+          <label><span>Status <b>*</b></span><select id="company-status" name="status" required><option value="ACTIVE">Active</option><option value="INACTIVE">Inactive</option><option value="SUSPENDED">Suspended</option></select></label>
+          <label><span>City</span><input id="company-city" name="city" type="text" maxlength="100" placeholder="Riyadh" /></label>
+          <label class="span-two"><span>Address</span><input id="company-address" name="address" type="text" maxlength="300" placeholder="Building, street and district" /></label>
+        </div>
+      </section>
+
+      <section class="company-form-section">
+        <div class="company-form-section-title"><span>2</span><div><h3>Primary Contact</h3><p>Company and contact information</p></div></div>
+        <div class="company-form-grid two">
+          <label><span>Contact Person <b>*</b></span><input id="company-contact-person" name="contactPerson" type="text" maxlength="120" required placeholder="Full name" /></label>
+          <label><span>Job Title</span><input id="company-contact-title" name="contactJobTitle" type="text" maxlength="120" placeholder="Operations Manager" /></label>
+          <label><span>Email Address <b>*</b></span><input id="company-email" name="email" type="email" maxlength="180" required placeholder="operations@company.sa" /></label>
+          <label><span>Phone Number <b>*</b></span><input id="company-phone" name="phone" type="tel" maxlength="14" required placeholder="+9665XXXXXXXX" /></label>
+          <label class="span-two"><span>Website</span><input id="company-website" name="website" type="url" maxlength="250" placeholder="https://company.sa" /></label>
+        </div>
+      </section>
+
+      <section class="company-form-section">
+        <div class="company-form-section-title"><span>3</span><div><h3>Account Assignment</h3><p>Link available tenant accounts now or assign them later</p></div></div>
+        <div class="company-option-list" id="company-account-options" aria-live="polite"></div>
+      </section>
+
+      <section class="company-form-section">
+        <div class="company-form-section-title"><span>4</span><div><h3>Location Assignment</h3><p>Assign currently available locations</p></div></div>
+        <div class="company-option-list" id="company-location-options" aria-live="polite"></div>
+      </section>
+
+      <section class="company-form-section">
+        <div class="company-form-section-title"><span>5</span><div><h3>Notes</h3><p>Optional internal context</p></div></div>
+        <label class="company-notes-label"><span class="sr-only">Company notes</span><textarea id="company-notes" name="notes" maxlength="1000" placeholder="Operational notes, service scope or onboarding details"></textarea><small><span id="company-notes-count">0</span> / 1000</small></label>
+      </section>
+    </div>
+
+    <footer class="company-drawer-footer">
+      <button class="companies-button secondary" type="button" data-close-company-drawer>Cancel</button>
+      <button class="companies-button primary" id="save-company" type="submit"><i class="fa-solid fa-check" aria-hidden="true"></i><span>Save Company</span></button>
+    </footer>
+  </form>
+</aside>
+
+<div class="company-toast hidden" id="company-toast" role="status" aria-live="polite"></div>

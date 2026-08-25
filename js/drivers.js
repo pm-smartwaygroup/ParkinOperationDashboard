@@ -12,14 +12,12 @@ let activeDriverDraftVersion = 1;
 let isDriverFormDirty = false;
 let selectedDriverVehicles = [];
 let driverVehicleCatalog = new Map();
+let driverLocationOptions = [];
 
 let pendingDriverVehicleIds = new Set();
 
 function getDriverApiBaseUrl() {
-  return (
-    window.PARKIN_CONFIG?.apiBaseUrl ||
-    "https://api.parkin.com.sa"
-  );
+  return window.PARKIN_CONFIG?.apiBaseUrl || "https://api.parkin.com.sa";
 }
 
 function getDriverAuthHeaders(includeJson = false) {
@@ -2656,6 +2654,8 @@ function restoreDriverAssignmentForm(draft) {
     assignment.branchId,
   );
 
+  populateDriverLocationSelect(assignment.branchId, assignment.locationId);
+
   setDriverAssignmentSelectValue(
     "driver-assignment-location",
     assignment.locationId,
@@ -2837,6 +2837,11 @@ async function loadAddDriverPage() {
       initializeDriverDocumentUploader(container);
     }
 
+    await Promise.all([
+      loadDriverCompanyOptions(),
+      loadDriverLocationOptions(),
+    ]);
+
     bindAddDriverSteps();
     bindDriverVehicleAssignmentControls();
 
@@ -2880,6 +2885,217 @@ async function loadAddDriverPage() {
         await loadAddDriverPage();
       });
   }
+}
+
+async function loadDriverCompanyOptions() {
+  const companySelect = document.querySelector("#companyId");
+  const assignmentCompanySelect = document.querySelector(
+    "#driver-assignment-employer",
+  );
+
+  if (!companySelect) {
+    return [];
+  }
+
+  const response = await fetch(`${getDriverApiBaseUrl()}/companies/options`, {
+    headers: getDriverAuthHeaders(),
+  });
+
+  const companies = await parseDriverDraftResponse(response);
+  const options = Array.isArray(companies) ? companies : [];
+
+  [companySelect, assignmentCompanySelect].filter(Boolean).forEach((select) => {
+    const placeholder =
+      select.id === "companyId" ? "Select company" : "Select Employer";
+
+    select.innerHTML = `<option value="">${placeholder}</option>`;
+
+    options.forEach((company) => {
+      const option = document.createElement("option");
+      option.value = company.id;
+      option.textContent = `${company.name} (${company.code})`;
+      select.appendChild(option);
+    });
+
+    select.disabled = options.length === 0;
+    select.dataset.assignedCompanyId =
+      options.length === 1 ? options[0].id : "";
+
+    if (options.length === 1) {
+      select.value = options[0].id;
+    }
+  });
+
+  if (!companySelect.dataset.companySyncBound) {
+    companySelect.addEventListener("change", () => {
+      if (assignmentCompanySelect) {
+        assignmentCompanySelect.value = companySelect.value;
+      }
+    });
+
+    companySelect.dataset.companySyncBound = "true";
+  }
+
+  const card = companySelect.closest(".driver-form-card");
+  card?.querySelector(".driver-company-assignment-notice")?.remove();
+
+  if (!options.length && card) {
+    const notice = document.createElement("div");
+    notice.className = "driver-company-assignment-notice";
+    notice.innerHTML = `
+      <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+      <span>Your account is not assigned to an active valet company. Assign it from <a href="#companies">Valet Companies</a> before saving a driver.</span>
+    `;
+    card.prepend(notice);
+  }
+
+  return options;
+}
+
+function getDriverBranchOptions(locations) {
+  const branchesByName = new Map();
+
+  locations.forEach((location) => {
+    const branchName = String(location.city || location.district || "").trim();
+
+    if (!branchName) {
+      return;
+    }
+
+    const key = branchName.toLocaleLowerCase();
+
+    if (!branchesByName.has(key)) {
+      branchesByName.set(key, branchName);
+    }
+  });
+
+  return [...branchesByName.values()].sort((left, right) =>
+    left.localeCompare(right),
+  );
+}
+
+function populateDriverBranchSelect(select, branches) {
+  if (!select) {
+    return;
+  }
+
+  const previousValue = select.value;
+  const placeholder = branches.length
+    ? "Select branch"
+    : "No assigned branches";
+
+  select.innerHTML = `<option value="">${placeholder}</option>`;
+
+  branches.forEach((branch) => {
+    const option = document.createElement("option");
+    option.value = branch;
+    option.textContent = `${branch} Branch`;
+    select.appendChild(option);
+  });
+
+  select.disabled = branches.length === 0;
+
+  if (branches.includes(previousValue)) {
+    select.value = previousValue;
+  } else if (branches.length === 1) {
+    select.value = branches[0];
+  }
+}
+
+function populateDriverLocationSelect(
+  branchName = "",
+  selectedLocationId = "",
+) {
+  const locationSelect = document.querySelector("#driver-assignment-location");
+
+  if (!locationSelect) {
+    return;
+  }
+
+  const normalizedBranch = branchName.trim().toLocaleLowerCase();
+  const matchingLocations = normalizedBranch
+    ? driverLocationOptions.filter(
+        (location) =>
+          String(location.city || location.district || "")
+            .trim()
+            .toLocaleLowerCase() === normalizedBranch,
+      )
+    : driverLocationOptions;
+
+  const placeholder = matchingLocations.length
+    ? "Select Location"
+    : "No assigned locations";
+
+  locationSelect.innerHTML = `<option value="">${placeholder}</option>`;
+
+  matchingLocations.forEach((location) => {
+    const option = document.createElement("option");
+    option.value = location.id;
+    option.textContent = `${location.name} (${location.code})`;
+    locationSelect.appendChild(option);
+  });
+
+  locationSelect.disabled = matchingLocations.length === 0;
+
+  if (
+    selectedLocationId &&
+    matchingLocations.some((location) => location.id === selectedLocationId)
+  ) {
+    locationSelect.value = selectedLocationId;
+  } else if (matchingLocations.length === 1) {
+    locationSelect.value = matchingLocations[0].id;
+  }
+}
+
+async function loadDriverLocationOptions() {
+  const response = await fetch(
+    `${getDriverApiBaseUrl()}/companies/location-options`,
+    {
+      headers: getDriverAuthHeaders(),
+    },
+  );
+
+  const locations = await parseDriverDraftResponse(response);
+  driverLocationOptions = Array.isArray(locations) ? locations : [];
+
+  const branches = getDriverBranchOptions(driverLocationOptions);
+  const detailsBranchSelect = document.querySelector("#branchId");
+  const assignmentBranchSelect = document.querySelector(
+    "#driver-assignment-branch",
+  );
+
+  populateDriverBranchSelect(detailsBranchSelect, branches);
+  populateDriverBranchSelect(assignmentBranchSelect, branches);
+
+  if (detailsBranchSelect && assignmentBranchSelect) {
+    if (detailsBranchSelect.value && !assignmentBranchSelect.value) {
+      assignmentBranchSelect.value = detailsBranchSelect.value;
+    }
+
+    if (!detailsBranchSelect.dataset.branchSyncBound) {
+      detailsBranchSelect.addEventListener("change", () => {
+        assignmentBranchSelect.value = detailsBranchSelect.value;
+        populateDriverLocationSelect(detailsBranchSelect.value);
+      });
+
+      detailsBranchSelect.dataset.branchSyncBound = "true";
+    }
+
+    if (!assignmentBranchSelect.dataset.locationFilterBound) {
+      assignmentBranchSelect.addEventListener("change", () => {
+        detailsBranchSelect.value = assignmentBranchSelect.value;
+        populateDriverLocationSelect(assignmentBranchSelect.value);
+      });
+
+      assignmentBranchSelect.dataset.locationFilterBound = "true";
+    }
+  }
+
+  populateDriverLocationSelect(
+    assignmentBranchSelect?.value || detailsBranchSelect?.value || "",
+  );
+
+  return driverLocationOptions;
 }
 
 const requiredDriverDetailFields = [
@@ -4847,6 +5063,16 @@ function bindAddDriverSteps() {
 
       driverDocumentUploader?.setDriverId(activeDriverDraftId);
 
+      const companyId = getDriverFieldValue("companyId");
+      const branchId = getDriverFieldValue("branchId");
+      const selectedLocationId = getDriverFieldValue(
+        "driver-assignment-location",
+      );
+
+      setDriverAssignmentSelectValue("driver-assignment-employer", companyId);
+      setDriverAssignmentSelectValue("driver-assignment-branch", branchId);
+      populateDriverLocationSelect(branchId, selectedLocationId);
+
       details.classList.add("hidden");
 
       assignment.classList.remove("hidden");
@@ -5549,6 +5775,13 @@ function resetAddDriverWizard() {
     const form = details.querySelector("#driver-details-form");
 
     form?.reset();
+
+    const companySelect = details.querySelector("#companyId");
+    const assignedCompanyId = companySelect?.dataset.assignedCompanyId;
+
+    if (companySelect && assignedCompanyId) {
+      companySelect.value = assignedCompanyId;
+    }
 
     const photoBox = details.querySelector(".photo-upload-box");
 

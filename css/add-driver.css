@@ -2668,3 +2668,22 @@ body.driver-confirm-open {
   height: 36px;
   min-height: 36px;
 }
+.driver-company-assignment-notice {
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  border: 1px solid #f2d38a;
+  border-radius: 10px;
+  background: #fff9e8;
+  color: #76520b;
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.driver-company-assignment-notice a {
+  color: #08783f;
+  font-weight: 900;
+}
