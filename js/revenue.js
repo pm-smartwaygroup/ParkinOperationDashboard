@@ -171,6 +171,8 @@ function initRevenueOverviewChart() {
     revenueOverviewChart.destroy();
   }
 
+  const chartTheme = getRevenueChartTheme();
+
   revenueOverviewChart = new Chart(canvas, {
     type: "line",
     data: {
@@ -185,7 +187,7 @@ function initRevenueOverviewChart() {
           pointRadius: 4,
           pointHoverRadius: 6,
           pointBackgroundColor: revenueChartColors.green,
-          pointBorderColor: "#ffffff",
+          pointBorderColor: chartTheme.pointBorder,
           pointBorderWidth: 2,
           tension: 0.32,
           fill: true,
@@ -202,11 +204,11 @@ function initRevenueOverviewChart() {
       plugins: {
         legend: { display: false },
         tooltip: {
-          backgroundColor: "#ffffff",
-          borderColor: "#dfe7ef",
+          backgroundColor: chartTheme.tooltipBackground,
+          borderColor: chartTheme.tooltipBorder,
           borderWidth: 1,
-          titleColor: "#071322",
-          bodyColor: "#071322",
+          titleColor: chartTheme.tooltipText,
+          bodyColor: chartTheme.tooltipText,
           displayColors: false,
           padding: 12,
           callbacks: {
@@ -226,7 +228,7 @@ function initRevenueOverviewChart() {
             display: false,
           },
           ticks: {
-            color: "#42536d",
+            color: chartTheme.axisText,
             font: {
               size: 11,
               weight: 700,
@@ -238,7 +240,7 @@ function initRevenueOverviewChart() {
           max: 10000,
           ticks: {
             stepSize: 2000,
-            color: revenueChartColors.tick,
+            color: chartTheme.axisText,
             font: {
               size: 11,
               weight: 700,
@@ -248,7 +250,7 @@ function initRevenueOverviewChart() {
             },
           },
           grid: {
-            color: revenueChartColors.grid,
+            color: chartTheme.grid,
             drawTicks: false,
           },
           border: {
@@ -269,6 +271,8 @@ function initRevenueLocationChart() {
     revenueLocationChart.destroy();
   }
 
+  const chartTheme = getRevenueChartTheme();
+
   revenueLocationChart = new Chart(canvas, {
     type: "doughnut",
     data: {
@@ -282,7 +286,7 @@ function initRevenueLocationChart() {
             revenueChartColors.purple,
             revenueChartColors.orange,
           ],
-          borderColor: "#ffffff",
+          borderColor: chartTheme.donutBorder,
           borderWidth: 3,
           hoverOffset: 3,
         },
@@ -296,6 +300,11 @@ function initRevenueLocationChart() {
       plugins: {
         legend: { display: false },
         tooltip: {
+          backgroundColor: chartTheme.tooltipBackground,
+          borderColor: chartTheme.tooltipBorder,
+          borderWidth: 1,
+          titleColor: chartTheme.tooltipText,
+          bodyColor: chartTheme.tooltipText,
           callbacks: {
             label(context) {
               const item = revenueLocationData[context.dataIndex];
@@ -306,8 +315,8 @@ function initRevenueLocationChart() {
         revenueCenterText: {
           lineHeight: 22,
           lines: [
-            { text: "SAR", size: 12, weight: 750, color: "#65748b" },
-            { text: "48,560.00", size: 19, weight: 900, color: "#05090d" },
+            { text: "SAR", size: 12, weight: 750, color: chartTheme.centerMuted },
+            { text: "48,560.00", size: 19, weight: 900, color: chartTheme.centerText },
           ],
         },
       },
@@ -324,6 +333,8 @@ function initRevenuePaymentChart() {
     revenuePaymentChart.destroy();
   }
 
+  const chartTheme = getRevenueChartTheme();
+
   revenuePaymentChart = new Chart(canvas, {
     type: "doughnut",
     data: {
@@ -336,7 +347,7 @@ function initRevenuePaymentChart() {
             revenueChartColors.blue,
             revenueChartColors.purple,
           ],
-          borderColor: "#ffffff",
+          borderColor: chartTheme.donutBorder,
           borderWidth: 3,
           hoverOffset: 3,
         },
@@ -350,6 +361,11 @@ function initRevenuePaymentChart() {
       plugins: {
         legend: { display: false },
         tooltip: {
+          backgroundColor: chartTheme.tooltipBackground,
+          borderColor: chartTheme.tooltipBorder,
+          borderWidth: 1,
+          titleColor: chartTheme.tooltipText,
+          bodyColor: chartTheme.tooltipText,
           callbacks: {
             label(context) {
               const item = paymentMethodData[context.dataIndex];
@@ -360,13 +376,70 @@ function initRevenuePaymentChart() {
         revenueCenterText: {
           lineHeight: 20,
           lines: [
-            { text: "SAR", size: 11, weight: 750, color: "#65748b" },
-            { text: "48,560.00", size: 17, weight: 900, color: "#05090d" },
-            { text: "Total", size: 11, weight: 750, color: "#65748b" },
+            { text: "SAR", size: 11, weight: 750, color: chartTheme.centerMuted },
+            { text: "48,560.00", size: 17, weight: 900, color: chartTheme.centerText },
+            { text: "Total", size: 11, weight: 750, color: chartTheme.centerMuted },
           ],
         },
       },
     },
+  });
+}
+
+function getRevenueChartTheme() {
+  const isDark = document.documentElement.dataset.theme === "dark";
+
+  return {
+    axisText: isDark ? "#a8b3be" : revenueChartColors.tick,
+    centerMuted: isDark ? "#a8b3be" : "#65748b",
+    centerText: isDark ? "#f3f6f8" : "#05090d",
+    donutBorder: isDark ? "#182431" : "#ffffff",
+    grid: isDark ? "rgba(255, 255, 255, 0.1)" : revenueChartColors.grid,
+    pointBorder: isDark ? "#182431" : "#ffffff",
+    tooltipBackground: isDark ? "#1d2a38" : "#ffffff",
+    tooltipBorder: isDark ? "rgba(255, 255, 255, 0.12)" : "#dfe7ef",
+    tooltipText: isDark ? "#f3f6f8" : "#071322",
+  };
+}
+
+function updateRevenueChartTheme() {
+  const chartTheme = getRevenueChartTheme();
+
+  if (revenueOverviewChart) {
+    const { options } = revenueOverviewChart;
+    const dataset = revenueOverviewChart.data.datasets[0];
+
+    dataset.pointBorderColor = chartTheme.pointBorder;
+    options.plugins.tooltip.backgroundColor = chartTheme.tooltipBackground;
+    options.plugins.tooltip.borderColor = chartTheme.tooltipBorder;
+    options.plugins.tooltip.titleColor = chartTheme.tooltipText;
+    options.plugins.tooltip.bodyColor = chartTheme.tooltipText;
+    options.scales.x.ticks.color = chartTheme.axisText;
+    options.scales.y.ticks.color = chartTheme.axisText;
+    options.scales.y.grid.color = chartTheme.grid;
+    revenueOverviewChart.update("none");
+  }
+
+  [revenueLocationChart, revenuePaymentChart].forEach((chart) => {
+    if (!chart) return;
+
+    const dataset = chart.data.datasets[0];
+    const { tooltip, revenueCenterText } = chart.options.plugins;
+
+    dataset.borderColor = chartTheme.donutBorder;
+    tooltip.backgroundColor = chartTheme.tooltipBackground;
+    tooltip.borderColor = chartTheme.tooltipBorder;
+    tooltip.titleColor = chartTheme.tooltipText;
+    tooltip.bodyColor = chartTheme.tooltipText;
+
+    if (revenueCenterText?.lines?.length) {
+      revenueCenterText.lines = revenueCenterText.lines.map((line, index) => ({
+        ...line,
+        color: index === 1 ? chartTheme.centerText : chartTheme.centerMuted,
+      }));
+    }
+
+    chart.update("none");
   });
 }
 
@@ -394,3 +467,4 @@ function escapeRevenueHtml(value) {
 }
 
 window.loadRevenuePage = loadRevenuePage;
+window.addEventListener("parkin:themechange", updateRevenueChartTheme);

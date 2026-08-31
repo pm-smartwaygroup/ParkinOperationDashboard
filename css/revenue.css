@@ -822,3 +822,94 @@
     grid-template-columns: 1fr;
   }
 }
+
+html[data-theme="dark"] .revenue-page {
+  --revenue-ink: var(--dash-ink, #f3f6f8);
+  --revenue-muted: var(--dash-muted, #a8b3be);
+  --revenue-line: var(--dash-line, rgb(255 255 255 / 8%));
+  --revenue-soft-line: var(--dash-soft-line, rgb(255 255 255 / 6%));
+  --revenue-card: var(--dash-card, #182431);
+  --revenue-shadow: var(--dash-shadow, 0 18px 46px rgb(0 0 0 / 26%));
+}
+
+html[data-theme="dark"] .revenue-page,
+html[data-theme="dark"] .revenue-page :is(.revenue-panel, .revenue-kpi-card) {
+  color: var(--revenue-ink);
+}
+
+html[data-theme="dark"] .revenue-page :is(.revenue-panel, .revenue-kpi-card) {
+  border-color: var(--revenue-line);
+  background: var(--revenue-card);
+  box-shadow: var(--revenue-shadow);
+}
+
+html[data-theme="dark"] .revenue-page :is(
+  .revenue-panel-heading h2,
+  .revenue-kpi-card strong,
+  .revenue-summary-row strong,
+  .revenue-chart-legend strong,
+  .revenue-table,
+  .revenue-table td,
+  .revenue-company-cell b,
+  .revenue-top-row,
+  .revenue-top-row strong,
+  .revenue-top-row b
+) {
+  color: var(--revenue-ink);
+}
+
+html[data-theme="dark"] .revenue-page :is(
+  .revenue-kpi-card p,
+  .revenue-kpi-card p em,
+  .revenue-summary-row b,
+  .revenue-summary-row small,
+  .revenue-chart-legend b,
+  .revenue-chart-legend small,
+  .revenue-company-cell small,
+  .revenue-table th,
+  .revenue-top-row.head
+) {
+  color: var(--revenue-muted);
+}
+
+html[data-theme="dark"] .revenue-page :is(.revenue-button, .revenue-period-button) {
+  color: var(--revenue-ink);
+  border-color: var(--revenue-line);
+  background: var(--dash-elevated, #1d2a38);
+  box-shadow: 0 8px 20px rgb(0 0 0 / 18%);
+}
+
+html[data-theme="dark"] .revenue-page .revenue-button i:last-child {
+  color: var(--revenue-muted);
+}
+
+html[data-theme="dark"] .revenue-page .revenue-export-menu {
+  border-color: var(--revenue-line);
+  background: var(--dash-elevated, #1d2a38);
+  box-shadow: 0 18px 38px rgb(0 0 0 / 28%);
+}
+
+html[data-theme="dark"] .revenue-page .revenue-export-menu button {
+  color: var(--revenue-ink);
+}
+
+html[data-theme="dark"] .revenue-page .revenue-export-menu button:hover {
+  background: rgb(255 255 255 / 7%);
+}
+
+html[data-theme="dark"] .revenue-page :is(.revenue-table th, .revenue-top-row.head) {
+  background: var(--dash-table-head, #151f2b);
+}
+
+html[data-theme="dark"] .revenue-page :is(.revenue-table th, .revenue-table td, .revenue-top-row) {
+  border-color: var(--revenue-soft-line);
+}
+
+html[data-theme="dark"] .revenue-page .revenue-table tbody tr:hover {
+  background: var(--dash-row-hover, #1d2a38);
+}
+
+html[data-theme="dark"] .revenue-page .revenue-paid-badge {
+  color: #32d583;
+  background: rgb(10 155 85 / 18%);
+}
