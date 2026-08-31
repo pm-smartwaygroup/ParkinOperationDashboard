@@ -1,0 +1,393 @@
+<div class="revenue-page">
+  <section class="revenue-toolbar" aria-label="Revenue controls">
+    <div class="revenue-toolbar-actions">
+      <div class="revenue-export-wrapper">
+        <button
+          class="revenue-button revenue-export-toggle"
+          type="button"
+          data-revenue-export-toggle
+          aria-haspopup="menu"
+          aria-expanded="false"
+        >
+          <i class="fa-solid fa-download" aria-hidden="true"></i>
+          <span>Export</span>
+          <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+        </button>
+        <div
+          class="revenue-export-menu hidden"
+          data-revenue-export-menu
+          role="menu"
+        >
+          <button type="button" role="menuitem">Export CSV</button>
+          <button type="button" role="menuitem">Export PDF</button>
+          <button type="button" role="menuitem">Export Excel</button>
+        </div>
+      </div>
+
+      <button class="revenue-primary-button" type="button">
+        <i class="fa-regular fa-file-lines" aria-hidden="true"></i>
+        <span>Generate Report</span>
+      </button>
+    </div>
+  </section>
+
+  <section class="revenue-kpi-grid" aria-label="Revenue key metrics">
+    <article class="revenue-kpi-card revenue-kpi-green">
+      <div class="revenue-kpi-icon">
+        <i class="fa-solid fa-sack-dollar" aria-hidden="true"></i>
+      </div>
+      <div>
+        <p>TOTAL REVENUE</p>
+        <strong>SAR 48,560.00</strong>
+        <small><span aria-hidden="true">&uarr;</span> 12.6% vs yesterday</small>
+      </div>
+    </article>
+
+    <article class="revenue-kpi-card revenue-kpi-mint">
+      <div class="revenue-kpi-icon">
+        <i class="fa-solid fa-calendar-day" aria-hidden="true"></i>
+      </div>
+      <div>
+        <p>TODAY'S REVENUE</p>
+        <strong>SAR 6,780.00</strong>
+        <small><span aria-hidden="true">&uarr;</span> 8.4% vs yesterday</small>
+      </div>
+    </article>
+
+    <article class="revenue-kpi-card revenue-kpi-blue">
+      <div class="revenue-kpi-icon">
+        <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
+      </div>
+      <div>
+        <p>THIS WEEK <em>May 19 - May 25</em></p>
+        <strong>SAR 32,540.00</strong>
+        <small><span aria-hidden="true">&uarr;</span> 15.2% vs last week</small>
+      </div>
+    </article>
+
+    <article class="revenue-kpi-card revenue-kpi-purple">
+      <div class="revenue-kpi-icon">
+        <i class="fa-solid fa-chart-pie" aria-hidden="true"></i>
+      </div>
+      <div>
+        <p>THIS MONTH <em>May</em></p>
+        <strong>SAR 118,230.00</strong>
+        <small><span aria-hidden="true">&uarr;</span> 11.7% vs last month</small>
+      </div>
+    </article>
+
+    <article class="revenue-kpi-card revenue-kpi-orange">
+      <div class="revenue-kpi-icon">
+        <i class="fa-solid fa-coins" aria-hidden="true"></i>
+      </div>
+      <div>
+        <p>AVERAGE PER DAY</p>
+        <strong>SAR 5,384.09</strong>
+        <small><span aria-hidden="true">&uarr;</span> 10.3% vs last 30 days</small>
+      </div>
+    </article>
+  </section>
+
+  <section class="revenue-insights-grid">
+    <article class="revenue-panel revenue-overview">
+      <div class="revenue-panel-heading">
+        <h2>Revenue Overview</h2>
+        <button class="revenue-period-button" type="button">
+          <span>Daily</span>
+          <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div class="revenue-line-chart">
+        <canvas id="revenue-overview-chart"></canvas>
+      </div>
+    </article>
+
+    <article class="revenue-panel revenue-summary">
+      <div class="revenue-panel-heading">
+        <h2>Revenue Summary</h2>
+      </div>
+      <div class="revenue-summary-list">
+        <div class="revenue-summary-row">
+          <span class="revenue-summary-icon green">
+            <i class="fa-solid fa-square-parking" aria-hidden="true"></i>
+          </span>
+          <b>Parking Fees</b>
+          <strong>SAR 34,250.0</strong>
+          <small>70.5%</small>
+        </div>
+        <div class="revenue-summary-row">
+          <span class="revenue-summary-icon mint">
+            <i class="fa-solid fa-car-side" aria-hidden="true"></i>
+          </span>
+          <b>Valet Services</b>
+          <strong>SAR 9,860.0</strong>
+          <small>20.3%</small>
+        </div>
+        <div class="revenue-summary-row">
+          <span class="revenue-summary-icon blue">
+            <i class="fa-solid fa-receipt" aria-hidden="true"></i>
+          </span>
+          <b>Subscription Fees</b>
+          <strong>SAR 3,250.0</strong>
+          <small>6.7%</small>
+        </div>
+        <div class="revenue-summary-row">
+          <span class="revenue-summary-icon orange">
+            <i class="fa-solid fa-wallet" aria-hidden="true"></i>
+          </span>
+          <b>Other Fees</b>
+          <strong>SAR 1,200.0</strong>
+          <small>2.5%</small>
+        </div>
+      </div>
+    </article>
+
+    <article class="revenue-panel revenue-location-panel">
+      <div class="revenue-panel-heading">
+        <h2>Revenue by Location</h2>
+      </div>
+      <div class="revenue-donut-layout">
+        <div class="revenue-donut-wrap">
+          <canvas id="revenue-location-chart"></canvas>
+        </div>
+        <ul class="revenue-chart-legend" aria-label="Revenue by location legend">
+          <li>
+            <span class="legend-dot green"></span>
+            <b>Riyadh Front</b>
+            <strong>40%</strong>
+            <small>SAR 19,424.00</small>
+          </li>
+          <li>
+            <span class="legend-dot blue"></span>
+            <b>Jeddah Mall</b>
+            <strong>25%</strong>
+            <small>SAR 12,140.00</small>
+          </li>
+          <li>
+            <span class="legend-dot purple"></span>
+            <b>Hilton Hotel</b>
+            <strong>20%</strong>
+            <small>SAR 9,712.00</small>
+          </li>
+          <li>
+            <span class="legend-dot orange"></span>
+            <b>Dammam Compound</b>
+            <strong>15%</strong>
+            <small>SAR 7,284.00</small>
+          </li>
+        </ul>
+      </div>
+    </article>
+  </section>
+
+  <section class="revenue-lower-grid">
+    <article class="revenue-panel revenue-company-panel">
+      <div class="revenue-panel-heading">
+        <h2>Revenue by Valet Company</h2>
+      </div>
+      <div class="revenue-table-scroll">
+        <table class="revenue-table revenue-company-table">
+          <thead>
+            <tr>
+              <th>Company</th>
+              <th>Total Revenue (SAR)</th>
+              <th>Bookings</th>
+              <th>Drivers</th>
+              <th>Locations</th>
+              <th>vs Yesterday</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <span class="revenue-company-cell">
+                  <span class="revenue-avatar blue">SVC</span>
+                  <b>Smart Valet Co.<small>COMP-001</small></b>
+                </span>
+              </td>
+              <td>SAR 19,250.00</td>
+              <td>312</td>
+              <td>32</td>
+              <td>3</td>
+              <td><span class="revenue-change up">+14.2%</span></td>
+            </tr>
+            <tr>
+              <td>
+                <span class="revenue-company-cell">
+                  <span class="revenue-avatar purple">PP</span>
+                  <b>Premium Parking<small>COMP-002</small></b>
+                </span>
+              </td>
+              <td>SAR 12,140.00</td>
+              <td>245</td>
+              <td>24</td>
+              <td>2</td>
+              <td><span class="revenue-change up">+9.8%</span></td>
+            </tr>
+            <tr>
+              <td>
+                <span class="revenue-company-cell">
+                  <span class="revenue-avatar orange">EP</span>
+                  <b>Elite Parking<small>COMP-003</small></b>
+                </span>
+              </td>
+              <td>SAR 9,860.0</td>
+              <td>189</td>
+              <td>18</td>
+              <td>2</td>
+              <td><span class="revenue-change up">+7.6%</span></td>
+            </tr>
+            <tr>
+              <td>
+                <span class="revenue-company-cell">
+                  <span class="revenue-avatar green">SP</span>
+                  <b>Secure Parking<small>COMP-004</small></b>
+                </span>
+              </td>
+              <td>SAR 5,760.0</td>
+              <td>143</td>
+              <td>16</td>
+              <td>2</td>
+              <td><span class="revenue-change down">-2.1%</span></td>
+            </tr>
+            <tr>
+              <td>
+                <span class="revenue-company-cell">
+                  <span class="revenue-avatar amber">VP</span>
+                  <b>VIP Parking Services<small>COMP-005</small></b>
+                </span>
+              </td>
+              <td>SAR 4,320.0</td>
+              <td>98</td>
+              <td>14</td>
+              <td>2</td>
+              <td><span class="revenue-change up">+11.3%</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <a class="revenue-panel-link" href="#companies">View all companies &rarr;</a>
+    </article>
+
+    <div class="revenue-side-stack">
+      <article class="revenue-panel revenue-payment-panel">
+        <div class="revenue-panel-heading">
+          <h2>Payment Methods</h2>
+        </div>
+        <div class="revenue-donut-layout payment">
+          <div class="revenue-payment-donut-wrap">
+            <canvas id="revenue-payment-chart"></canvas>
+          </div>
+          <ul
+            class="revenue-chart-legend revenue-payment-legend"
+            aria-label="Payment methods legend"
+          >
+            <li>
+              <span class="legend-dot green"></span>
+              <b>Card Payments</b>
+              <strong>72%</strong>
+              <small>SAR 34,963.20</small>
+            </li>
+            <li>
+              <span class="legend-dot blue"></span>
+              <b>Cash</b>
+              <strong>20%</strong>
+              <small>SAR 9,712.00</small>
+            </li>
+            <li>
+              <span class="legend-dot purple"></span>
+              <b>Wallet / Online</b>
+              <strong>8%</strong>
+              <small>SAR 3,884.80</small>
+            </li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="revenue-panel revenue-top-panel">
+        <div class="revenue-panel-heading">
+          <h2>Top Performing Locations</h2>
+          <a href="#locations">View all &rarr;</a>
+        </div>
+        <div class="revenue-top-table">
+          <div class="revenue-top-row head">
+            <span>Location</span>
+            <span>Revenue (SAR)</span>
+            <span>vs Yesterday</span>
+          </div>
+          <div class="revenue-top-row">
+            <span><i class="legend-dot green"></i> Riyadh Front</span>
+            <strong>SAR 19,424.00</strong>
+            <b class="up">+15.1%</b>
+          </div>
+          <div class="revenue-top-row">
+            <span><i class="legend-dot blue"></i> Jeddah Mall</span>
+            <strong>SAR 12,140.0</strong>
+            <b class="up">+8.3%</b>
+          </div>
+          <div class="revenue-top-row">
+            <span><i class="legend-dot purple"></i> Hilton Hotel</span>
+            <strong>SAR 9,712.00</strong>
+            <b class="up">+6.7%</b>
+          </div>
+          <div class="revenue-top-row">
+            <span><i class="legend-dot orange"></i> Dammam Compound</span>
+            <strong>SAR 7,284.00</strong>
+            <b class="down">-1.8%</b>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <article class="revenue-panel revenue-transactions-panel">
+    <div class="revenue-panel-heading">
+      <h2>Recent Transactions</h2>
+      <a href="#bookings">View all &rarr;</a>
+    </div>
+    <div class="revenue-table-scroll">
+      <table class="revenue-table revenue-transaction-table">
+        <thead>
+          <tr>
+            <th>Date &amp; Time</th>
+            <th>Booking ID</th>
+            <th>Location</th>
+            <th>Company</th>
+            <th>Amount (SAR)</th>
+            <th>Payment Method</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>May 24, 2024, 10:15 AM</td>
+            <td>BK-240524-0018</td>
+            <td>Riyadh Front</td>
+            <td>Smart Valet Co.</td>
+            <td>35.00</td>
+            <td>VISA &bull;&bull;&bull;&bull; 4343</td>
+            <td><span class="revenue-paid-badge">Paid</span></td>
+          </tr>
+          <tr>
+            <td>May 24, 2024, 09:30 AM</td>
+            <td>BK-240524-0017</td>
+            <td>Hilton Hotel</td>
+            <td>Premium Parking</td>
+            <td>30.00</td>
+            <td>Cash</td>
+            <td><span class="revenue-paid-badge">Paid</span></td>
+          </tr>
+          <tr>
+            <td>May 24, 2024, 08:50 AM</td>
+            <td>BK-240524-0016</td>
+            <td>Jeddah Mall</td>
+            <td>Elite Parking</td>
+            <td>30.00</td>
+            <td>Mastercard &bull;&bull;&bull;&bull; 7788</td>
+            <td><span class="revenue-paid-badge">Paid</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </article>
+</div>

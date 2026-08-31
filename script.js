@@ -167,6 +167,10 @@ async function loadCompanyFeatureScripts() {
   await loadDashboardScript("/js/companies.js");
 }
 
+async function loadRevenueFeatureScripts() {
+  await loadDashboardScript("/js/revenue.js");
+}
+
 function getCurrentCustomerId() {
   const queryString = window.location.hash.split("?")[1] || "";
 
@@ -709,6 +713,7 @@ const editDriverView = document.querySelector("#edit-driver-view");
 const driverDetailsView = document.querySelector("#driver-details-view");
 const customersView = document.querySelector("#customers-view");
 const companiesView = document.querySelector("#companies-view");
+const revenueView = document.querySelector("#revenue-view");
 const addCustomerView = document.querySelector("#add-customer-view");
 const customerDetailsView = document.querySelector("#customer-details-view");
 const editCustomerView = document.querySelector("#edit-customer-view");
@@ -733,6 +738,7 @@ const dashboardSections = document.querySelectorAll(
     ":not(#add-driver-view)",
     ":not(#customers-view)",
     ":not(#companies-view)",
+    ":not(#revenue-view)",
     ":not(#add-customer-view)",
     ":not(#customer-details-view)",
     ":not(#edit-customer-view)",
@@ -766,6 +772,7 @@ function hideAllFeatureViews() {
 
   customersView?.classList.add("hidden");
   companiesView?.classList.add("hidden");
+  revenueView?.classList.add("hidden");
   addCustomerView?.classList.add("hidden");
   customerDetailsView?.classList.add("hidden");
   editCustomerView?.classList.add("hidden");
@@ -1112,6 +1119,30 @@ async function showCompaniesView() {
   await loadCompaniesPage();
 }
 
+async function showRevenueView() {
+  dashboardSections.forEach((section) => section.classList.add("hidden"));
+  hideAllFeatureViews();
+
+  revenueView?.classList.remove("hidden");
+
+  const title = document.querySelector(".dashboard-title h1");
+  const subtitle = document.querySelector(".dashboard-title p");
+
+  if (title) {
+    title.textContent = "Revenue";
+  }
+
+  if (subtitle) {
+    subtitle.textContent =
+      "Track and analyze revenue performance across all operations";
+  }
+
+  setActiveNav("#revenue");
+
+  await loadRevenueFeatureScripts();
+  await loadRevenuePage();
+}
+
 async function showAddCustomerView() {
   dashboardSections.forEach((section) => {
     section.classList.add("hidden");
@@ -1201,6 +1232,10 @@ async function showAddDriverView() {
 }
 
 function handleDashboardRoute() {
+  if (window.location.hash !== "#revenue") {
+    revenueView?.classList.add("hidden");
+  }
+
   if (window.location.hash === "#add-location") {
     showAddLocationView();
     return;
@@ -1265,6 +1300,11 @@ function handleDashboardRoute() {
 
   if (window.location.hash === "#companies") {
     showCompaniesView();
+    return;
+  }
+
+  if (window.location.hash === "#revenue") {
+    showRevenueView();
     return;
   }
 
