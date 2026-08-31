@@ -64,7 +64,13 @@ const translations = {
 const loginPage = document.querySelector("#login-page");
 const dashboardPage = document.querySelector("#dashboard-page");
 const dashboardMain = document.querySelector(".dashboard-main");
+const dashboardToolbar = document.querySelector(".dashboard-toolbar");
 const dashboardLogout = document.querySelector("#dashboard-logout");
+const profileMenuWrapper = document.querySelector(".profile-menu-wrapper");
+const profileMenuToggle = document.querySelector("[data-profile-menu-toggle]");
+const profileMenu = document.querySelector("[data-profile-menu]");
+const profileDarkToggle = document.querySelector("[data-profile-dark-toggle]");
+const profileLogout = document.querySelector("[data-profile-logout]");
 const form = document.querySelector("#login-form");
 const emailInput = document.querySelector("#email");
 const passwordInput = document.querySelector("#password");
@@ -78,8 +84,45 @@ const submitButton = document.querySelector("#sign-in-button");
 const formStatus = document.querySelector("#form-status");
 const loginLoader = document.querySelector("#login-loader");
 
+const DARK_MODE_STORAGE_KEY = "parkin_dark_mode";
+
 const API_BASE_URL =
   window.PARKIN_CONFIG?.apiBaseUrl || "https://api.parkin.com.sa";
+
+function getStoredDarkModePreference() {
+  try {
+    return localStorage.getItem(DARK_MODE_STORAGE_KEY) === "true";
+  } catch {
+    return false;
+  }
+}
+
+function applyDashboardTheme(isDark, { persist = false, emit = true } = {}) {
+  const theme = isDark ? "dark" : "light";
+
+  document.documentElement.dataset.theme = theme;
+  document
+    .querySelector('meta[name="theme-color"]')
+    ?.setAttribute("content", isDark ? "#0f1720" : "#086b32");
+
+  if (persist) {
+    try {
+      localStorage.setItem(DARK_MODE_STORAGE_KEY, String(isDark));
+    } catch (error) {
+      console.warn("Unable to persist dashboard theme preference:", error);
+    }
+  }
+
+  if (emit) {
+    window.dispatchEvent(
+      new CustomEvent("parkin:themechange", {
+        detail: { isDark, theme },
+      }),
+    );
+  }
+}
+
+applyDashboardTheme(getStoredDarkModePreference(), { emit: false });
 
 function getImageUrl(imageUrl) {
   if (!imageUrl) return "/public/assets/parkin-valet-hero.jpg";
@@ -643,7 +686,7 @@ async function performDashboardLogout() {
   }
 }
 
-dashboardLogout?.addEventListener("click", () => {
+function requestDashboardLogoutConfirmation() {
   showDashboardAlert(
     "Are you sure you want to sign out of your dashboard account?",
     {
@@ -654,7 +697,142 @@ dashboardLogout?.addEventListener("click", () => {
       onConfirm: performDashboardLogout,
     },
   );
+}
+
+function isProfileMenuOpen() {
+  return Boolean(profileMenu && !profileMenu.classList.contains("hidden"));
+}
+
+function setProfileMenuOpen(isOpen, { focusToggle = false } = {}) {
+  if (!profileMenu || !profileMenuToggle) {
+    return;
+  }
+
+  profileMenu.classList.toggle("hidden", !isOpen);
+  profileMenuToggle.classList.toggle("is-open", isOpen);
+  profileMenuToggle.setAttribute("aria-expanded", String(isOpen));
+  profileMenuToggle.setAttribute(
+    "aria-label",
+    isOpen ? "Close profile menu" : "Open profile menu",
+  );
+  dashboardToolbar?.classList.toggle("has-profile-dropdown-open", isOpen);
+
+  if (isOpen) {
+    window.requestAnimationFrame(positionProfileMenu);
+  } else {
+    resetProfileMenuPosition();
+  }
+
+  if (focusToggle) {
+    profileMenuToggle.focus({ preventScroll: true });
+  }
+}
+
+function positionProfileMenu() {
+  if (!profileMenu || !profileMenuToggle || !isProfileMenuOpen()) {
+    return;
+  }
+
+  resetProfileMenuPosition();
+
+  if (window.innerWidth <= 470) {
+    const toggleRect = profileMenuToggle.getBoundingClientRect();
+    const top = Math.round(toggleRect.bottom + 10);
+
+    profileMenu.style.position = "fixed";
+    profileMenu.style.top = `${top}px`;
+    profileMenu.style.right = "16px";
+    profileMenu.style.left = "16px";
+    profileMenu.style.width = "auto";
+    profileMenu.style.maxHeight = `calc(100dvh - ${top + 16}px)`;
+    profileMenu.style.overflowY = "auto";
+  }
+}
+
+function resetProfileMenuPosition() {
+  if (!profileMenu) {
+    return;
+  }
+
+  profileMenu.removeAttribute("style");
+}
+
+function closeProfileMenu(options = {}) {
+  setProfileMenuOpen(false, options);
+}
+
+function toggleProfileMenu() {
+  setProfileMenuOpen(!isProfileMenuOpen());
+}
+
+function setProfileDarkToggleState(isEnabled, { persist = true } = {}) {
+  if (profileDarkToggle) {
+    profileDarkToggle.setAttribute("aria-checked", String(isEnabled));
+    profileDarkToggle.classList.toggle("is-on", isEnabled);
+  }
+
+  applyDashboardTheme(isEnabled, { persist });
+}
+
+profileMenuToggle?.addEventListener("click", (event) => {
+  event.stopPropagation();
+  toggleProfileMenu();
 });
+
+profileMenu?.addEventListener("click", (event) => {
+  event.stopPropagation();
+});
+
+profileMenu
+  ?.querySelectorAll(
+    ".profile-menu-item:not([data-profile-dark-toggle]):not([data-profile-logout])",
+  )
+  .forEach((item) => {
+    item.addEventListener("click", () => closeProfileMenu());
+  });
+
+profileDarkToggle?.addEventListener("click", () => {
+  setProfileDarkToggleState(
+    profileDarkToggle.getAttribute("aria-checked") !== "true",
+  );
+});
+
+profileLogout?.addEventListener("click", () => {
+  closeProfileMenu();
+  requestDashboardLogoutConfirmation();
+});
+
+document.addEventListener("click", (event) => {
+  if (!isProfileMenuOpen()) {
+    return;
+  }
+
+  if (!profileMenuWrapper?.contains(event.target)) {
+    closeProfileMenu();
+  }
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && isProfileMenuOpen()) {
+    event.preventDefault();
+    closeProfileMenu({ focusToggle: true });
+  }
+});
+
+window.addEventListener("resize", () => {
+  if (isProfileMenuOpen()) {
+    positionProfileMenu();
+  }
+});
+
+window.addEventListener("hashchange", () => closeProfileMenu());
+
+setProfileDarkToggleState(
+  getStoredDarkModePreference(),
+  { persist: false },
+);
+
+dashboardLogout?.addEventListener("click", requestDashboardLogoutConfirmation);
 
 function updateCurrentDate() {
   const dateElement = document.getElementById("current-date");

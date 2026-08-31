@@ -29,6 +29,35 @@
   font-synthesis: none;
 }
 
+html[data-theme="light"] {
+  color-scheme: light;
+}
+
+html[data-theme="dark"] {
+  --dash-bg: #0f1720;
+  --dash-ink: #f3f6f8;
+  --dash-muted: #a8b3be;
+  --dash-subtle: #7f8c99;
+  --dash-line: rgb(255 255 255 / 8%);
+  --dash-soft-line: rgb(255 255 255 / 6%);
+  --dash-card: #182431;
+  --dash-elevated: #1d2a38;
+  --dash-panel: #151f2b;
+  --dash-input: #111b26;
+  --dash-input-border: rgb(255 255 255 / 13%);
+  --dash-table-head: #151f2b;
+  --dash-row-hover: #1d2a38;
+  --dash-green: #0a9b55;
+  --dash-green-dark: #32d583;
+  --dash-blue: #4ea1ff;
+  --dash-purple: #9b7cff;
+  --dash-orange: #ffb443;
+  --dash-red: #ff5b63;
+  --dash-shadow: 0 18px 46px rgb(0 0 0 / 26%);
+  color-scheme: dark;
+  background: #0f1720;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -1510,6 +1539,12 @@ body.dashboard-open {
     #f7fafb;
 }
 
+html[data-theme="dark"] body.dashboard-open {
+  background:
+    radial-gradient(circle at top left, rgb(10 155 85 / 10%), transparent 28rem),
+    #0f1720;
+}
+
 .dashboard-page {
   --dash-bg: #f7fafb;
   --dash-ink: #071322;
@@ -1517,6 +1552,13 @@ body.dashboard-open {
   --dash-line: #e4eaf0;
   --dash-soft-line: #eef3f7;
   --dash-card: #ffffff;
+  --dash-elevated: #ffffff;
+  --dash-panel: #ffffff;
+  --dash-input: #ffffff;
+  --dash-input-border: #e4eaf0;
+  --dash-subtle: #65748b;
+  --dash-table-head: #f8fafc;
+  --dash-row-hover: #f8fbfb;
   --dash-sidebar: #001d1b;
   --dash-sidebar-2: #002b27;
   --dash-green: #0a9b55;
@@ -1541,6 +1583,31 @@ body.dashboard-open {
     "Segoe UI",
     Arial,
     sans-serif;
+}
+
+html[data-theme="dark"] .dashboard-page {
+  --dash-bg: #0f1720;
+  --dash-ink: #f3f6f8;
+  --dash-muted: #a8b3be;
+  --dash-subtle: #7f8c99;
+  --dash-line: rgb(255 255 255 / 8%);
+  --dash-soft-line: rgb(255 255 255 / 6%);
+  --dash-card: #182431;
+  --dash-elevated: #1d2a38;
+  --dash-panel: #151f2b;
+  --dash-input: #111b26;
+  --dash-input-border: rgb(255 255 255 / 13%);
+  --dash-table-head: #151f2b;
+  --dash-row-hover: #1d2a38;
+  --dash-sidebar: #061713;
+  --dash-sidebar-2: #09241d;
+  --dash-green: #0a9b55;
+  --dash-green-dark: #32d583;
+  --dash-blue: #4ea1ff;
+  --dash-purple: #9b7cff;
+  --dash-orange: #ffb443;
+  --dash-red: #ff5b63;
+  --dash-shadow: 0 18px 46px rgb(0 0 0 / 26%);
 }
 
 .dashboard-page svg {
@@ -1967,6 +2034,14 @@ body.dashboard-open {
   font-weight: 900;
 }
 
+.profile-menu-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+}
+
 .profile-button {
   grid-template-columns: 38px 16px;
   gap: 7px;
@@ -1974,12 +2049,214 @@ body.dashboard-open {
   border-color: transparent;
   background: transparent;
   box-shadow: none;
+  transition:
+    color var(--transition),
+    background-color var(--transition);
+}
+
+.profile-button:hover,
+.profile-button.is-open {
+  color: var(--dash-green-dark);
 }
 
 .profile-button span {
   width: 38px;
   height: 38px;
   font-size: 0.83rem;
+}
+
+.profile-button svg {
+  transition: transform var(--transition);
+}
+
+.profile-button.is-open svg {
+  transform: rotate(180deg);
+}
+
+.profile-dropdown {
+  position: absolute;
+  z-index: 60;
+  top: calc(100% + 12px);
+  right: 0;
+  width: min(306px, calc(100vw - 32px));
+  padding: 10px;
+  color: var(--dash-ink);
+  border: 1px solid var(--dash-line);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 24px 54px rgb(15 31 54 / 16%);
+}
+
+.profile-dropdown::before {
+  position: absolute;
+  top: -6px;
+  right: 22px;
+  width: 12px;
+  height: 12px;
+  content: "";
+  border-top: 1px solid var(--dash-line);
+  border-left: 1px solid var(--dash-line);
+  background: #fff;
+  transform: rotate(45deg);
+}
+
+.profile-dropdown-header {
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  padding: 10px 10px 12px;
+}
+
+.profile-dropdown-avatar {
+  display: grid;
+  width: 46px;
+  height: 46px;
+  place-items: center;
+  color: #fff;
+  border-radius: 50%;
+  background:
+    linear-gradient(135deg, rgb(255 255 255 / 18%), transparent),
+    var(--dash-green);
+  font-size: 0.88rem;
+  font-weight: 900;
+}
+
+.profile-dropdown-header strong,
+.profile-dropdown-header small,
+.profile-status {
+  display: block;
+  min-width: 0;
+}
+
+.profile-dropdown-header strong {
+  color: #071322;
+  font-size: 0.94rem;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.profile-dropdown-header small {
+  margin-top: 3px;
+  color: #607088;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.profile-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 8px;
+  color: var(--dash-green-dark);
+  font-size: 0.76rem;
+  font-weight: 850;
+}
+
+.profile-status i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #11cb62;
+}
+
+.profile-dropdown-group {
+  display: grid;
+  gap: 2px;
+  padding: 8px 0;
+  border-top: 1px solid var(--dash-soft-line);
+}
+
+.profile-menu-item {
+  appearance: none;
+  display: grid;
+  width: 100%;
+  min-height: 42px;
+  grid-template-columns: 20px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 11px;
+  padding: 0 10px;
+  color: #1e2f48;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 780;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    color var(--transition),
+    background-color var(--transition);
+}
+
+.profile-menu-item:hover,
+.profile-menu-item:focus-visible {
+  color: var(--dash-green-dark);
+  background: #f4faf7;
+  outline: 0;
+}
+
+.profile-menu-item > i {
+  color: #607088;
+  font-size: 0.92rem;
+  text-align: center;
+}
+
+.profile-menu-item:hover > i,
+.profile-menu-item:focus-visible > i {
+  color: var(--dash-green-dark);
+}
+
+.profile-menu-item span:not(.profile-switch) {
+  min-width: 0;
+}
+
+.profile-switch {
+  position: relative;
+  width: 38px;
+  height: 22px;
+  border-radius: 999px;
+  background: #d9e2ec;
+  transition: background-color var(--transition);
+}
+
+.profile-switch span {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 7px rgb(15 31 54 / 20%);
+  transition: transform var(--transition);
+}
+
+.profile-menu-switch[aria-checked="true"] .profile-switch {
+  background: var(--dash-green);
+}
+
+.profile-menu-switch[aria-checked="true"] .profile-switch span {
+  transform: translateX(16px);
+}
+
+.profile-menu-logout {
+  color: #b4232a;
+}
+
+.profile-menu-logout > i {
+  color: #d2343b;
+}
+
+.profile-menu-logout:hover,
+.profile-menu-logout:focus-visible {
+  color: #9f1f25;
+  background: #fff4f4;
+}
+
+.dashboard-toolbar.has-profile-dropdown-open {
+  overflow: visible;
 }
 
 .metric-grid {
@@ -3185,6 +3462,10 @@ body.dashboard-open {
     padding-bottom: 4px;
   }
 
+  .dashboard-toolbar.has-profile-dropdown-open {
+    overflow: visible;
+  }
+
   .metric-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -3265,6 +3546,10 @@ body.dashboard-open {
   .profile-button span {
     width: 34px;
     height: 34px;
+  }
+
+  .profile-dropdown {
+    top: calc(100% + 10px);
   }
 
   .metric-grid,
@@ -3366,8 +3651,13 @@ body.dashboard-open {
   }
 
   .icon-button,
+  .profile-menu-wrapper,
   .profile-button {
     justify-self: center;
+  }
+
+  .profile-dropdown::before {
+    display: none;
   }
 
   .metric-main {
@@ -4968,4 +5258,434 @@ body.dashboard-open {
   color: #fff;
   border: 0;
   background: #e03131;
+}
+
+/* =========================================================
+   DASHBOARD DARK THEME
+   ========================================================= */
+
+html[data-theme="dark"] body.dashboard-open {
+  color: var(--dash-ink);
+}
+
+html[data-theme="dark"] body.dashboard-open .dashboard-page,
+html[data-theme="dark"] body.dashboard-open .dashboard-main {
+  color: var(--dash-ink);
+  background: var(--dash-bg);
+}
+
+html[data-theme="dark"] body.dashboard-open .dashboard-sidebar {
+  color: #fff;
+}
+
+html[data-theme="dark"] body.dashboard-open .dashboard-title h1,
+html[data-theme="dark"] body.dashboard-open .dashboard-page .dashboard-main :is(h1, h2, h3, h4, h5, h6, strong, b, label, th, td) {
+  color: var(--dash-ink);
+}
+
+html[data-theme="dark"] body.dashboard-open .dashboard-title p,
+html[data-theme="dark"] body.dashboard-open .dashboard-page .dashboard-main :is(p, small, dt, dd, figcaption),
+html[data-theme="dark"] body.dashboard-open .dashboard-page .dashboard-main :is(.panel-heading span, .map-metrics span, .drivers-chart-card li, .company-chart-empty, .companies-empty, .companies-loading, .drivers-list-loading, .drivers-list-empty) {
+  color: var(--dash-muted);
+}
+
+html[data-theme="dark"] body.dashboard-open .dashboard-page .dashboard-main :is(
+  .metric-card,
+  .dashboard-panel,
+  [class$="-card"],
+  [class*="-card "],
+  [class$="-panel"],
+  [class*="-panel "]
+) {
+  color: var(--dash-ink);
+  border-color: var(--dash-line);
+  background-color: var(--dash-card);
+  box-shadow: var(--dash-shadow);
+}
+
+html[data-theme="dark"] body.dashboard-open .dashboard-page .dashboard-main :is(
+  .locations-search,
+  .drivers-search,
+  .customers-search,
+  .customer-bookings-search,
+  .customer-activity-search,
+  .company-search,
+  .companies-search,
+  .driver-vehicle-search,
+  .booking-success-id-box,
+  .details-grid div,
+  .quick-grid button,
+  .activity-list li,
+  .alert-list li,
+  .map-location-list span,
+  .health-row,
+  .detail-grid div,
+  .detail-row,
+  .driver-draft-success-reference,
+  .driver-new-vehicle-plate-preview,
+  .customer-top-overview-panel .customer-overview-grid > div
+) {
+  color: var(--dash-ink);
+  border-color: var(--dash-line);
+  background-color: var(--dash-panel);
+}
+
+html[data-theme="dark"] body.dashboard-open .dashboard-page .dashboard-main :is(
+  .clean-metrics .metric-footer,
+  .clean-metrics .capacity-box,
+  .metric-footer,
+  .panel-heading,
+  .health-row,
+  .activity-list li,
+  .alert-list li,
+  .locations-table-title,
+  .companies-table-head,
+  .drivers-panel-heading,
+  .customers-table-heading,
+  .company-drawer-header,
+  .company-drawer-footer,
+  .driver-new-vehicle-header,
+  .driver-new-vehicle-footer
+) {
+  border-color: var(--dash-soft-line);
+}
+
+html[data-theme="dark"] body.dashboard-open .dashboard-page :is(
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea
+) {
+  color: var(--dash-ink);
+  border-color: var(--dash-input-border);
+  background-color: var(--dash-input);
+}
+
+html[data-theme="dark"] body.dashboard-open .dashboard-page :is(input, textarea)::placeholder {
+  color: var(--dash-subtle);
+}
+
+html[data-theme="dark"] body.dashboard-open .dashboard-page :is(
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea,
+  button
+):focus-visible {
+  outline: 2px solid rgb(10 155 85 / 58%);
+  outline-offset: 2px;
+}
+
+html[data-theme="dark"] body.dashboard-open .filter-button {
+  color: var(--dash-ink);
+  border-color: var(--dash-line);
+  background: var(--dash-elevated);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 16%);
+}
+
+html[data-theme="dark"] body.dashboard-open .icon-button,
+html[data-theme="dark"] body.dashboard-open .profile-button {
+  color: var(--dash-ink);
+}
+
+html[data-theme="dark"] body.dashboard-open .filter-button:hover,
+html[data-theme="dark"] body.dashboard-open .icon-button:hover,
+html[data-theme="dark"] body.dashboard-open .profile-button:hover,
+html[data-theme="dark"] body.dashboard-open .profile-button.is-open {
+  color: var(--dash-green-dark);
+}
+
+html[data-theme="dark"] body.dashboard-open .notification span {
+  border-color: var(--dash-bg);
+}
+
+html[data-theme="dark"] body.dashboard-open .profile-dropdown {
+  color: var(--dash-ink);
+  border-color: var(--dash-line);
+  background: var(--dash-elevated);
+  box-shadow: 0 24px 54px rgb(0 0 0 / 32%);
+}
+
+html[data-theme="dark"] body.dashboard-open .profile-dropdown::before {
+  border-color: var(--dash-line);
+  background: var(--dash-elevated);
+}
+
+html[data-theme="dark"] body.dashboard-open .profile-dropdown-header strong,
+html[data-theme="dark"] body.dashboard-open .profile-menu-item {
+  color: var(--dash-ink);
+}
+
+html[data-theme="dark"] body.dashboard-open .profile-dropdown-header small,
+html[data-theme="dark"] body.dashboard-open .profile-menu-item > i {
+  color: var(--dash-muted);
+}
+
+html[data-theme="dark"] body.dashboard-open .profile-status,
+html[data-theme="dark"] body.dashboard-open .profile-menu-item:hover,
+html[data-theme="dark"] body.dashboard-open .profile-menu-item:focus-visible,
+html[data-theme="dark"] body.dashboard-open .profile-menu-item:hover > i,
+html[data-theme="dark"] body.dashboard-open .profile-menu-item:focus-visible > i {
+  color: var(--dash-green-dark);
+}
+
+html[data-theme="dark"] body.dashboard-open .profile-dropdown-group {
+  border-color: var(--dash-soft-line);
+}
+
+html[data-theme="dark"] body.dashboard-open .profile-menu-item:hover,
+html[data-theme="dark"] body.dashboard-open .profile-menu-item:focus-visible {
+  background: rgb(255 255 255 / 6%);
+}
+
+html[data-theme="dark"] body.dashboard-open .profile-switch {
+  background: rgb(255 255 255 / 16%);
+}
+
+html[data-theme="dark"] body.dashboard-open .profile-switch span {
+  background: #f3f6f8;
+}
+
+html[data-theme="dark"] body.dashboard-open .profile-menu-switch[aria-checked="true"] .profile-switch {
+  background: var(--dash-green);
+}
+
+html[data-theme="dark"] body.dashboard-open .profile-menu-logout,
+html[data-theme="dark"] body.dashboard-open .profile-menu-logout > i {
+  color: #ff8a8f;
+}
+
+html[data-theme="dark"] body.dashboard-open .profile-menu-logout:hover,
+html[data-theme="dark"] body.dashboard-open .profile-menu-logout:focus-visible {
+  color: #ffb4b8;
+  background: rgb(255 91 99 / 11%);
+}
+
+html[data-theme="dark"] body.dashboard-open .dashboard-page .dashboard-main :is(
+  table,
+  thead,
+  tbody,
+  tr,
+  th,
+  td,
+  .health-table,
+  .locations-table,
+  .drivers-table,
+  .customers-table,
+  .companies-table,
+  .valet-ops-table,
+  .queue-table,
+  .activity-table,
+  .incidents-table,
+  .customer-bookings-table,
+  .customer-payment-table,
+  .customer-activity-table
+) {
+  border-color: var(--dash-soft-line);
+}
+
+html[data-theme="dark"] body.dashboard-open .dashboard-page .dashboard-main :is(
+  thead,
+  th,
+  .health-head,
+  .locations-table thead,
+  .companies-table-head,
+  .drivers-table thead,
+  .customers-table thead,
+  .customer-bookings-table thead,
+  .customer-payment-table thead,
+  .customer-activity-table thead
+) {
+  color: var(--dash-muted);
+  background-color: var(--dash-table-head);
+}
+
+html[data-theme="dark"] body.dashboard-open .dashboard-page .dashboard-main :is(
+  tr:hover,
+  .health-row:hover,
+  .locations-table tbody tr:hover,
+  .drivers-table tbody tr:hover,
+  .customers-table tbody tr:hover,
+  .companies-table tbody tr:hover,
+  .customer-bookings-table tbody tr:hover,
+  .customer-payment-table tbody tr:hover,
+  .customer-activity-table tbody tr:hover
+) {
+  background-color: var(--dash-row-hover);
+}
+
+html[data-theme="dark"] body.dashboard-open .dashboard-page .dashboard-main :is(
+  .locations-table-card,
+  .drivers-panel,
+  .customers-table-card,
+  .companies-directory-card,
+  .company-directory-card,
+  .customer-bookings-list-card,
+  .customer-payment-methods-card,
+  .customer-activity-card
+) :is(.table-scroll, .locations-table, .drivers-table, .customers-table-scroll, .companies-table-scroll, .customer-bookings-table-scroll, .customer-payment-table-scroll, .customer-activity-table-scroll) {
+  background-color: var(--dash-card);
+}
+
+html[data-theme="dark"] body.dashboard-open .dashboard-page .dashboard-main :is(
+  .dashboard-panel a,
+  .locations-table-title a,
+  .drivers-panel-heading a,
+  .valet-panel-heading a,
+  .company-panel-link,
+  .customer-panel-link,
+  .companies-empty a
+) {
+  color: var(--dash-green-dark);
+}
+
+html[data-theme="dark"] body.dashboard-open .dashboard-page .dashboard-main :is(
+  .up,
+  .positive,
+  .success,
+  .driver-status.on,
+  .customer-summary-status.active,
+  .customer-details-status.active,
+  .payment-method-status.active
+) {
+  color: var(--dash-green-dark) !important;
+}
+
+html[data-theme="dark"] body.dashboard-open .dashboard-page .dashboard-main :is(
+  .down,
+  .danger,
+  .negative,
+  .error,
+  .driver-status.off,
+  .customer-summary-status.blocked,
+  .payment-method-status.expired
+) {
+  color: var(--dash-red) !important;
+}
+
+html[data-theme="dark"] body.dashboard-open .dashboard-page .dashboard-main :is(
+  .add-location-btn,
+  .save-location,
+  .sign-in-button,
+  .dashboard-alert-primary,
+  .driver-draft-success-button,
+  .driver-new-vehicle-save,
+  .booking-success-primary
+) {
+  color: #fff;
+}
+
+html[data-theme="dark"] body.dashboard-open .dashboard-page .dashboard-main :is(
+  .cancel-location,
+  .cancel-delete-location,
+  .customer-toolbar-btn,
+  .drivers-filter-btn,
+  .activity-filters button,
+  .dashboard-alert-secondary
+) {
+  color: var(--dash-ink);
+  border-color: var(--dash-line);
+  background-color: var(--dash-elevated);
+}
+
+html[data-theme="dark"] body.dashboard-open .dashboard-page .dashboard-main :is(
+  .booking-type-card.active,
+  .company-option-card:has(input:checked),
+  .activity-filters button.active
+) {
+  color: var(--dash-green-dark);
+  border-color: rgb(50 213 131 / 42%);
+  background-color: rgb(10 155 85 / 14%);
+}
+
+html[data-theme="dark"] body.dashboard-open .dashboard-page .dashboard-main .driver-donut::after,
+html[data-theme="dark"] body.dashboard-open .dashboard-page .dashboard-main .mini-donut::after,
+html[data-theme="dark"] body.dashboard-open .dashboard-page .dashboard-main .queue-donut-card::before,
+html[data-theme="dark"] body.dashboard-open .dashboard-page .dashboard-main .activity-overview-panel .activity-donut::before {
+  background: var(--dash-card);
+}
+
+html[data-theme="dark"] :is(
+  .dashboard-alert-card,
+  .session-expired-card,
+  .location-details-card,
+  .location-delete-card,
+  .driver-draft-success-card,
+  .driver-draft-toast-card,
+  .driver-new-vehicle-card,
+  .driver-vehicle-modal-card,
+  .driver-confirm-dialog,
+  .edit-driver-modal-dialog,
+  .edit-driver-confirm-dialog,
+  .booking-success-dialog,
+  .customer-vehicle-result-card
+) {
+  color: var(--dash-ink);
+  border-color: var(--dash-line);
+  background: var(--dash-elevated);
+  box-shadow: 0 30px 80px rgb(0 0 0 / 34%);
+}
+
+html[data-theme="dark"] :is(
+  .dashboard-alert-card,
+  .session-expired-card,
+  .location-details-card,
+  .location-delete-card,
+  .driver-draft-success-card,
+  .driver-draft-toast-card,
+  .driver-new-vehicle-card,
+  .driver-vehicle-modal-card,
+  .driver-confirm-dialog,
+  .edit-driver-modal-dialog,
+  .edit-driver-confirm-dialog,
+  .booking-success-dialog,
+  .customer-vehicle-result-card
+) :is(h2, h3, h4, strong, b, label) {
+  color: var(--dash-ink);
+}
+
+html[data-theme="dark"] :is(
+  .dashboard-alert-card,
+  .session-expired-card,
+  .location-details-card,
+  .location-delete-card,
+  .driver-draft-success-card,
+  .driver-draft-toast-card,
+  .driver-new-vehicle-card,
+  .driver-vehicle-modal-card,
+  .driver-confirm-dialog,
+  .edit-driver-modal-dialog,
+  .edit-driver-confirm-dialog,
+  .booking-success-dialog,
+  .customer-vehicle-result-card
+) :is(p, small, li) {
+  color: var(--dash-muted);
+}
+
+html[data-theme="dark"] .dashboard-alert-message {
+  color: var(--dash-muted);
+}
+
+html[data-theme="dark"] :is(.dashboard-alert-backdrop, .location-details-modal, .location-delete-modal) {
+  background: rgb(5 12 20 / 70%);
+}
+
+html[data-theme="dark"] :is(.dashboard-alert-close, .close-location-details, .driver-new-vehicle-close, .driver-vehicle-modal-close) {
+  color: var(--dash-muted);
+  background: var(--dash-panel);
+}
+
+html[data-theme="dark"] :is(.dashboard-alert-close, .close-location-details, .driver-new-vehicle-close, .driver-vehicle-modal-close):hover {
+  color: var(--dash-ink);
+  background: var(--dash-row-hover);
+}
+
+html[data-theme="dark"] .dashboard-alert-secondary {
+  color: var(--dash-ink);
+  border-color: var(--dash-line);
+  background: var(--dash-panel);
+}
+
+html[data-theme="dark"] .dashboard-alert-secondary:hover {
+  color: var(--dash-ink);
+  border-color: rgb(255 255 255 / 16%);
+  background: var(--dash-row-hover);
 }

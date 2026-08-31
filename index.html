@@ -7,6 +7,16 @@
       content="width=device-width, initial-scale=1, viewport-fit=cover"
     />
     <meta name="theme-color" content="#086b32" />
+    <script>
+      (() => {
+        try {
+          const isDark = localStorage.getItem("parkin_dark_mode") === "true";
+          document.documentElement.dataset.theme = isDark ? "dark" : "light";
+        } catch {
+          document.documentElement.dataset.theme = "light";
+        }
+      })();
+    </script>
     <meta
       name="description"
       content="Sign in to the Parkin dashboard to manage valet, rental, and event parking operations."
@@ -534,12 +544,96 @@
               </svg>
               <span>6</span>
             </button>
-            <button class="profile-button" type="button">
-              <span>JM</span>
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="m7 10 5 5 5-5" />
-              </svg>
-            </button>
+            <div class="profile-menu-wrapper">
+              <button
+                class="profile-button"
+                id="profile-menu-toggle"
+                type="button"
+                aria-label="Open profile menu"
+                aria-haspopup="menu"
+                aria-expanded="false"
+                aria-controls="profile-dropdown"
+                data-profile-menu-toggle
+              >
+                <span>JM</span>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="m7 10 5 5 5-5" />
+                </svg>
+              </button>
+
+              <div
+                class="profile-dropdown hidden"
+                id="profile-dropdown"
+                role="menu"
+                aria-labelledby="profile-menu-toggle"
+                data-profile-menu
+              >
+                <div class="profile-dropdown-header">
+                  <span class="profile-dropdown-avatar" aria-hidden="true"
+                    >JM</span
+                  >
+                  <div>
+                    <strong>John Manager</strong>
+                    <small>Operations Manager</small>
+                    <span class="profile-status">
+                      <i aria-hidden="true"></i>
+                      Online
+                    </span>
+                  </div>
+                </div>
+
+                <div class="profile-dropdown-group">
+                  <button class="profile-menu-item" type="button" role="menuitem">
+                    <i class="fa-regular fa-user" aria-hidden="true"></i>
+                    <span>My Profile</span>
+                  </button>
+                  <button class="profile-menu-item" type="button" role="menuitem">
+                    <i class="fa-solid fa-gear" aria-hidden="true"></i>
+                    <span>Account Settings</span>
+                  </button>
+                  <button class="profile-menu-item" type="button" role="menuitem">
+                    <i class="fa-regular fa-bell" aria-hidden="true"></i>
+                    <span>Notifications</span>
+                  </button>
+                  <button class="profile-menu-item" type="button" role="menuitem">
+                    <i class="fa-solid fa-lock" aria-hidden="true"></i>
+                    <span>Change Password</span>
+                  </button>
+                </div>
+
+                <div class="profile-dropdown-group">
+                  <button
+                    class="profile-menu-item profile-menu-switch"
+                    type="button"
+                    role="menuitemcheckbox"
+                    aria-checked="false"
+                    data-profile-dark-toggle
+                  >
+                    <i class="fa-regular fa-moon" aria-hidden="true"></i>
+                    <span>Dark Mode</span>
+                    <span class="profile-switch" aria-hidden="true">
+                      <span></span>
+                    </span>
+                  </button>
+                </div>
+
+                <div class="profile-dropdown-group">
+                  <button class="profile-menu-item" type="button" role="menuitem">
+                    <i class="fa-regular fa-circle-question" aria-hidden="true"></i>
+                    <span>Help &amp; Support</span>
+                  </button>
+                  <button
+                    class="profile-menu-item profile-menu-logout"
+                    type="button"
+                    role="menuitem"
+                    data-profile-logout
+                  >
+                    <i class="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i>
+                    <span>Logout</span>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </header>
 
