@@ -1,0 +1,255 @@
+<div class="profile-page">
+  <nav class="profile-breadcrumb" aria-label="Breadcrumb">
+    <a href="#dashboard">Home</a>
+    <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+    <span>My Profile</span>
+    <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+    <strong>Personal Information</strong>
+  </nav>
+
+  <div class="profile-edit-page-heading" data-profile-edit-heading hidden></div>
+
+  <nav class="profile-tabs" aria-label="Profile sections">
+    <button class="profile-tab is-active" type="button" aria-selected="true">
+      <i class="fa-regular fa-user" aria-hidden="true"></i>
+      <span>Personal Information</span>
+    </button>
+    <button class="profile-tab" type="button" aria-selected="false">
+      <i class="fa-solid fa-sliders" aria-hidden="true"></i>
+      <span>Dashboard Preferences</span>
+    </button>
+    <button class="profile-tab" type="button" aria-selected="false">
+      <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+      <span>Security &amp; Sessions</span>
+      <b>3</b>
+    </button>
+    <button class="profile-tab" type="button" aria-selected="false">
+      <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
+      <span>Activity Log</span>
+      <b>24</b>
+    </button>
+  </nav>
+
+  <div class="profile-layout">
+    <section
+      class="profile-credential-card"
+      aria-labelledby="profile-credential-title"
+    >
+      <div class="profile-credential-hero">
+        <header class="profile-credential-heading">
+          <h2 id="profile-credential-title">Operator Credential</h2>
+          <span class="profile-duty-badge"
+            ><i aria-hidden="true"></i> On Duty</span
+          >
+        </header>
+
+        <div class="profile-credential-person">
+          <div class="profile-photo-wrap">
+            <div class="profile-photo" aria-label="Profile initials">
+              --
+            </div>
+            <button
+              class="profile-camera-button"
+              type="button"
+              data-profile-photo-trigger
+              aria-label="Change profile photo"
+            >
+              <i class="fa-solid fa-camera" aria-hidden="true"></i>
+            </button>
+            <input
+              id="profile-photo-input"
+              class="profile-photo-input"
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              hidden
+            />
+          </div>
+          <div class="profile-credential-copy">
+            <h3>Dashboard User</h3>
+            <p>Account User</p>
+            <p>Central Region</p>
+            <span
+              ><i class="fa-regular fa-clock" aria-hidden="true"></i>
+              07:00–19:00 · GMT+3</span
+            >
+          </div>
+        </div>
+      </div>
+
+      <div class="profile-credential-meta">
+        <div class="profile-employee-id">
+          <div class="profile-meta-icon">
+            <i class="fa-regular fa-id-card" aria-hidden="true"></i>
+          </div>
+          <div>
+            <span>Employee ID</span>
+            <strong>EMP-0001</strong>
+          </div>
+          <span class="profile-barcode" aria-hidden="true"></span>
+        </div>
+
+        <dl class="profile-credential-rows">
+          <div>
+            <dt>
+              <i class="fa-solid fa-building" aria-hidden="true"></i> Department
+            </dt>
+            <dd>Operations</dd>
+          </div>
+          <div>
+            <dt>
+              <i class="fa-regular fa-calendar" aria-hidden="true"></i> Joined
+            </dt>
+            <dd>10 May 2023</dd>
+          </div>
+          <div>
+            <dt>
+              <i
+                class="fa-solid fa-arrow-right-to-bracket"
+                aria-hidden="true"
+              ></i>
+              Last Sign-in
+            </dt>
+            <dd>24 May, 10:35 AM</dd>
+          </div>
+          <div>
+            <dt>
+              <i class="fa-solid fa-location-dot" aria-hidden="true"></i> From
+            </dt>
+            <dd>Riyadh · Chrome 124</dd>
+          </div>
+        </dl>
+
+        <aside class="profile-secure-notice">
+          <i class="fa-solid fa-lock" aria-hidden="true"></i>
+          <div>
+            <strong>Your information is secure</strong>
+            <span
+              >We use industry-standard encryption<br />to protect your
+              data.</span
+            >
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section
+      class="profile-identity-panel"
+      aria-labelledby="profile-identity-heading"
+    >
+      <header class="profile-identity-heading">
+        <div>
+          <h2 id="profile-identity-heading">Identity</h2>
+        </div>
+        <button
+          class="profile-edit-button"
+          type="button"
+          data-profile-edit
+          aria-pressed="false"
+        >
+          <i class="fa-solid fa-pencil" aria-hidden="true"></i>
+          <span>Edit</span>
+        </button>
+      </header>
+
+      <form class="profile-identity-form" data-profile-form>
+        <div class="profile-identity-matrix">
+          <div class="profile-field">
+            <label for="profile-full-name">Full Name</label>
+            <input id="profile-full-name" value="Dashboard User" readonly />
+          </div>
+          <div class="profile-field">
+            <label for="profile-email">Email Address</label>
+            <div class="profile-field-control profile-verified-control">
+              <input
+                id="profile-email"
+                value="john.manager@parkin.com.sa"
+                readonly
+                data-profile-editable
+              />
+              <span class="profile-verified">✓ Verified</span>
+            </div>
+          </div>
+          <div class="profile-field">
+            <label for="profile-phone">Phone Number</label>
+            <div class="profile-field-control profile-verified-control">
+              <input
+                id="profile-phone"
+                value="+966 50 123 4567"
+                readonly
+                data-profile-editable
+              />
+              <span class="profile-verified">✓ Verified</span>
+            </div>
+          </div>
+
+          <div class="profile-field">
+            <label for="profile-nationality">Nationality</label>
+            <input id="profile-nationality" value="Saudi Arabia" readonly />
+          </div>
+          <div class="profile-field">
+            <label for="profile-dob">Date of Birth</label>
+            <input id="profile-dob" value="15 January 1985" readonly />
+          </div>
+          <div class="profile-field">
+            <label for="profile-gender">Gender</label>
+            <input id="profile-gender" value="Male" readonly />
+          </div>
+
+          <div class="profile-field">
+            <label for="profile-id-type">ID Type</label>
+            <input id="profile-id-type" value="Iqama" readonly />
+          </div>
+          <div class="profile-field">
+            <label for="profile-iqama-number">Iqama Number</label>
+            <input id="profile-iqama-number" value="2547896541" readonly />
+          </div>
+          <div class="profile-field profile-expiry-field">
+            <label for="profile-iqama-expiry">Iqama Expiry Date</label>
+            <div class="profile-field-control">
+              <input
+                id="profile-iqama-expiry"
+                value="30 December 2026"
+                readonly
+              />
+              <i class="fa-regular fa-calendar" aria-hidden="true"></i>
+            </div>
+          </div>
+
+          <div class="profile-field">
+            <label for="profile-language">Preferred Language</label>
+            <select id="profile-language" disabled data-profile-editable>
+              <option selected>English</option>
+              <option>العربية</option>
+            </select>
+          </div>
+          <div class="profile-field">
+            <label for="profile-timezone">Time Zone</label>
+            <select id="profile-timezone" disabled data-profile-editable>
+              <option selected>Riyadh · GMT+03:00</option>
+              <option>Dubai · GMT+04:00</option>
+              <option>Kuwait · GMT+03:00</option>
+              <option>Doha · GMT+03:00</option>
+              <option>Bahrain · GMT+03:00</option>
+            </select>
+          </div>
+          <div class="profile-field">
+            <label for="profile-date-format">Date Format</label>
+            <select id="profile-date-format" disabled data-profile-editable>
+              <option selected>DD/MM/YYYY</option>
+              <option>MM/DD/YYYY</option>
+              <option>YYYY-MM-DD</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="profile-identity-notice">
+          <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+          <p>
+            Name, date of birth and ID details come from HR records.<br />To
+            correct them, raise a request with your Administrator.
+          </p>
+        </div>
+      </form>
+    </section>
+  </div>
+</div>

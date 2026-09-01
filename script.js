@@ -214,6 +214,10 @@ async function loadRevenueFeatureScripts() {
   await loadDashboardScript("/js/revenue.js");
 }
 
+async function loadProfileFeatureScripts() {
+  await loadDashboardScript("/js/profile.js");
+}
+
 function getCurrentCustomerId() {
   const queryString = window.location.hash.split("?")[1] || "";
 
@@ -405,6 +409,8 @@ function showDashboard({ preserveRoute = false } = {}) {
   document.title = "Parkin Dashboard | Operations";
 
   applyRoleNavigationVisibility();
+  syncDashboardProfile(getAuthenticatedDashboardUser());
+  hydrateDashboardProfile();
 
   if (!preserveRoute) {
     window.history.replaceState(null, "", "/#dashboard");
@@ -465,6 +471,138 @@ function getAuthenticatedDashboardUser() {
 
   return user;
 }
+
+function getProfileInitials(name) {
+  const parts = String(name || "")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+
+  if (!parts.length) return "--";
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+
+  return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
+}
+
+function formatProfileRole(role) {
+  return String(role || "")
+    .toLowerCase()
+    .split("_")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+function setProfileAvatar(element, initials, photoUrl, altText) {
+  if (!element) return;
+
+  if (photoUrl) {
+    const image = document.createElement("img");
+    image.src = photoUrl;
+    image.alt = altText || "Profile photo";
+    image.loading = "eager";
+    element.replaceChildren(image);
+    return;
+  }
+
+  element.replaceChildren(initials);
+}
+
+function syncDashboardProfile(user) {
+  if (!user) return;
+
+  const name = user.name || "Dashboard User";
+  const initials = getProfileInitials(name);
+  const role = formatProfileRole(user.role) || "Operations Manager";
+  const photoUrl = user.profile?.profilePhotoUrl || "";
+
+  setProfileAvatar(
+    document.querySelector(".manager-card .avatar"),
+    initials,
+    photoUrl,
+    `${name} profile photo`,
+  );
+  document.querySelector(".manager-card strong")?.replaceChildren(name);
+  document
+    .querySelector(".manager-card small:not(.online)")
+    ?.replaceChildren(role);
+  setProfileAvatar(
+    document.querySelector("[data-profile-menu-toggle] > span"),
+    initials,
+    photoUrl,
+    `${name} profile photo`,
+  );
+  setProfileAvatar(
+    document.querySelector(".profile-dropdown-avatar"),
+    initials,
+    photoUrl,
+    `${name} profile photo`,
+  );
+  document
+    .querySelector(".profile-dropdown-header strong")
+    ?.replaceChildren(name);
+  document
+    .querySelector(".profile-dropdown-header small")
+    ?.replaceChildren(role);
+
+  const credential = document.querySelector(".profile-credential-card");
+  setProfileAvatar(
+    credential?.querySelector(".profile-photo"),
+    initials,
+    photoUrl,
+    `${name} profile photo`,
+  );
+  credential
+    ?.querySelector(".profile-photo")
+    ?.setAttribute("aria-label", photoUrl ? `${name} profile photo` : `${name} initials`);
+  credential?.querySelector(".profile-credential-copy h3")?.replaceChildren(name);
+  credential
+    ?.querySelector(".profile-credential-copy p:first-of-type")
+    ?.replaceChildren(role);
+
+  try {
+    const storedUser = JSON.parse(localStorage.getItem("parkin_user") || "{}");
+    localStorage.setItem(
+      "parkin_user",
+      JSON.stringify({
+        ...storedUser,
+        id: user.id,
+        name,
+        email: user.email,
+        role: user.role,
+        companyId: user.companyId,
+      }),
+    );
+  } catch {
+    // Profile synchronization must not interrupt the dashboard when storage is unavailable.
+  }
+
+  window.dispatchEvent(
+    new CustomEvent("parkin:profilechange", { detail: { user } }),
+  );
+}
+
+async function hydrateDashboardProfile() {
+  const token = localStorage.getItem("parkin_access_token");
+
+  if (!token) return;
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/auth/me`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const result = await response.json();
+
+    if (!response.ok) return;
+
+    const user = result.data?.user || result.user;
+
+    if (user) syncDashboardProfile(user);
+  } catch (error) {
+    console.warn("Profile hydration failed:", error);
+  }
+}
+
+window.syncDashboardProfile = syncDashboardProfile;
 
 function canManageValetCompanies() {
   return getAuthenticatedDashboardUser()?.role === "SUPER_ADMIN";
@@ -642,6 +780,7 @@ form.addEventListener("submit", async (event) => {
 
     localStorage.setItem("parkin_access_token", loginData.accessToken);
     localStorage.setItem("parkin_user", JSON.stringify(loginData.user));
+    syncDashboardProfile(loginData.user);
 
     console.log(
       "Current login session:",
@@ -788,7 +927,15 @@ profileMenu
     ".profile-menu-item:not([data-profile-dark-toggle]):not([data-profile-logout])",
   )
   .forEach((item) => {
-    item.addEventListener("click", () => closeProfileMenu());
+    item.addEventListener("click", () => {
+      const route = item.dataset.profileRoute;
+
+      closeProfileMenu();
+
+      if (route) {
+        window.location.hash = route;
+      }
+    });
   });
 
 profileDarkToggle?.addEventListener("click", () => {
@@ -892,6 +1039,7 @@ const driverDetailsView = document.querySelector("#driver-details-view");
 const customersView = document.querySelector("#customers-view");
 const companiesView = document.querySelector("#companies-view");
 const revenueView = document.querySelector("#revenue-view");
+const profileView = document.querySelector("#profile-view");
 const addCustomerView = document.querySelector("#add-customer-view");
 const customerDetailsView = document.querySelector("#customer-details-view");
 const editCustomerView = document.querySelector("#edit-customer-view");
@@ -917,6 +1065,7 @@ const dashboardSections = document.querySelectorAll(
     ":not(#customers-view)",
     ":not(#companies-view)",
     ":not(#revenue-view)",
+    ":not(#profile-view)",
     ":not(#add-customer-view)",
     ":not(#customer-details-view)",
     ":not(#edit-customer-view)",
@@ -951,6 +1100,7 @@ function hideAllFeatureViews() {
   customersView?.classList.add("hidden");
   companiesView?.classList.add("hidden");
   revenueView?.classList.add("hidden");
+  profileView?.classList.add("hidden");
   addCustomerView?.classList.add("hidden");
   customerDetailsView?.classList.add("hidden");
   editCustomerView?.classList.add("hidden");
@@ -1321,6 +1471,30 @@ async function showRevenueView() {
   await loadRevenuePage();
 }
 
+async function showProfileView() {
+  dashboardSections.forEach((section) => section.classList.add("hidden"));
+  hideAllFeatureViews();
+
+  profileView?.classList.remove("hidden");
+
+  const title = document.querySelector(".dashboard-title h1");
+  const subtitle = document.querySelector(".dashboard-title p");
+
+  if (title) {
+    title.textContent = "My Profile";
+  }
+
+  if (subtitle) {
+    subtitle.textContent =
+      "Manage your personal information, security and account preferences";
+  }
+
+  setActiveNav("");
+
+  await loadProfileFeatureScripts();
+  await loadProfilePage();
+}
+
 async function showAddCustomerView() {
   dashboardSections.forEach((section) => {
     section.classList.add("hidden");
@@ -1483,6 +1657,11 @@ function handleDashboardRoute() {
 
   if (window.location.hash === "#revenue") {
     showRevenueView();
+    return;
+  }
+
+  if (window.location.hash === "#profile") {
+    showProfileView();
     return;
   }
 
