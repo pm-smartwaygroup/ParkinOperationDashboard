@@ -1,0 +1,168 @@
+<section class="user-management-page" aria-labelledby="user-management-heading">
+  <div class="user-management-heading-row">
+    <div>
+      <p class="user-management-eyebrow">Administration</p>
+      <h2 id="user-management-heading">Dashboard users</h2>
+      <p class="user-management-description">
+        Review account access, status and organization details.
+      </p>
+    </div>
+    <button class="user-management-button primary" type="button" data-add-user>
+      <i class="fa-solid fa-plus" aria-hidden="true"></i>
+      <span>Add User</span>
+    </button>
+  </div>
+
+  <section class="user-management-directory" aria-label="User directory">
+    <div class="user-management-toolbar">
+      <label class="user-management-search">
+        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+        <span class="sr-only">Search users</span>
+        <input
+          type="search"
+          data-user-search
+          placeholder="Search name, email or employee ID..."
+          autocomplete="off"
+        />
+      </label>
+      <label class="user-management-filter">
+        <span class="sr-only">Filter by role</span>
+        <select data-user-role-filter>
+          <option value="">All Roles</option>
+          <option value="COMPANY_ADMIN">Company Admin</option>
+          <option value="OPERATIONS_MANAGER">Operations Manager</option>
+          <option value="VALET_OPERATIONS">Valet Operations</option>
+          <option value="SUPPORT">Support</option>
+          <option value="DRIVER">Driver</option>
+        </select>
+      </label>
+      <label class="user-management-filter">
+        <span class="sr-only">Filter by status</span>
+        <select data-user-status-filter>
+          <option value="">All Statuses</option>
+          <option value="ACTIVE">Active</option>
+          <option value="DISABLED">Disabled</option>
+        </select>
+      </label>
+      <label
+        class="user-management-filter user-management-company-filter"
+        hidden
+      >
+        <span class="sr-only">Filter by company</span>
+        <select data-user-company-filter>
+          <option value="">All Companies</option>
+        </select>
+      </label>
+      <button
+        class="user-management-icon-button"
+        type="button"
+        data-user-refresh
+        aria-label="Refresh users"
+        title="Refresh users"
+      >
+        <i class="fa-solid fa-rotate-right" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <div class="user-management-list-heading">
+      <div>
+        <h3>Users</h3>
+        <span data-user-result-summary aria-live="polite"></span>
+      </div>
+      <span class="user-management-sync-state" data-user-sync-state></span>
+    </div>
+
+    <div class="user-management-loading" data-user-loading aria-live="polite">
+      <span class="user-management-skeleton wide"></span>
+      <span class="user-management-skeleton"></span>
+      <span class="user-management-skeleton"></span>
+      <span class="user-management-skeleton short"></span>
+      <span class="user-management-skeleton short"></span>
+    </div>
+
+    <div class="user-management-table-wrap" data-user-table-wrap>
+      <table class="user-management-table">
+        <thead>
+          <tr>
+            <th scope="col">User</th>
+            <th scope="col">Role</th>
+            <th scope="col">Company</th>
+            <th scope="col">Access Scope</th>
+            <th scope="col">Status</th>
+            <th scope="col">Employee ID</th>
+            <th scope="col"><span class="sr-only">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody data-user-list></tbody>
+      </table>
+    </div>
+
+    <div class="user-management-empty hidden" data-user-empty>
+      <span class="user-management-state-icon"
+        ><i class="fa-solid fa-users-slash" aria-hidden="true"></i
+      ></span>
+      <h3>No users found</h3>
+      <p data-user-empty-copy>No users match your current filters.</p>
+      <button
+        class="user-management-button secondary"
+        type="button"
+        data-clear-user-filters
+      >
+        Clear Filters
+      </button>
+    </div>
+
+    <div class="user-management-error hidden" data-user-error role="alert">
+      <span class="user-management-state-icon"
+        ><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i
+      ></span>
+      <div>
+        <h3>Unable to load users</h3>
+        <p data-user-error-copy>Please try again.</p>
+      </div>
+      <button
+        class="user-management-button secondary"
+        type="button"
+        data-user-retry
+      >
+        Retry
+      </button>
+    </div>
+
+    <div
+      class="user-management-pagination"
+      data-user-pagination
+      aria-label="User list pages"
+    ></div>
+  </section>
+
+  <aside
+    class="user-management-drawer hidden"
+    data-user-drawer
+    aria-labelledby="user-drawer-heading"
+    aria-hidden="true"
+  >
+    <div class="user-management-drawer-header">
+      <div>
+        <p class="user-management-eyebrow">User profile</p>
+        <h2 id="user-drawer-heading">User details</h2>
+      </div>
+      <button
+        class="user-management-icon-button"
+        type="button"
+        data-close-user-drawer
+        aria-label="Close user details"
+        title="Close user details"
+      >
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+      </button>
+    </div>
+    <div class="user-management-drawer-body" data-user-drawer-body></div>
+  </aside>
+  <button
+    class="user-management-drawer-backdrop hidden"
+    type="button"
+    data-close-user-drawer
+    aria-label="Close user details"
+  ></button>
+</section>

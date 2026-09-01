@@ -218,6 +218,10 @@ async function loadProfileFeatureScripts() {
   await loadDashboardScript("/js/profile.js");
 }
 
+async function loadUserManagementFeatureScripts() {
+  await loadDashboardScript("/js/user-management.js");
+}
+
 function getCurrentCustomerId() {
   const queryString = window.location.hash.split("?")[1] || "";
 
@@ -438,6 +442,25 @@ function showDashboard({ preserveRoute = false } = {}) {
 }
 
 function applyRoleNavigationVisibility() {
+  const userManagementLink = document.querySelector(
+    '.dashboard-nav a[href="#user-management"]',
+  );
+  const currentRole = getAuthenticatedDashboardUser()?.role;
+  const canManageUsers =
+    currentRole === "SUPER_ADMIN" || currentRole === "COMPANY_ADMIN";
+
+  if (userManagementLink) {
+    userManagementLink.hidden = !canManageUsers;
+    userManagementLink.classList.toggle("hidden", !canManageUsers);
+    userManagementLink.setAttribute("aria-hidden", String(!canManageUsers));
+
+    if (canManageUsers) {
+      userManagementLink.removeAttribute("tabindex");
+    } else {
+      userManagementLink.setAttribute("tabindex", "-1");
+    }
+  }
+
   const companiesLink = document.querySelector(
     '.dashboard-nav a[href="#companies"]',
   );
@@ -1040,6 +1063,7 @@ const customersView = document.querySelector("#customers-view");
 const companiesView = document.querySelector("#companies-view");
 const revenueView = document.querySelector("#revenue-view");
 const profileView = document.querySelector("#profile-view");
+const userManagementView = document.querySelector("#user-management-view");
 const addCustomerView = document.querySelector("#add-customer-view");
 const customerDetailsView = document.querySelector("#customer-details-view");
 const editCustomerView = document.querySelector("#edit-customer-view");
@@ -1084,6 +1108,8 @@ const locationItems = document.querySelectorAll(".location-item");
 const locationsResultCount = document.querySelector("#locations-result-count");
 
 function hideAllFeatureViews() {
+  window.cancelUserManagementRequests?.();
+
   if (typeof window.closeCompanyDrawer === "function") {
     window.closeCompanyDrawer();
   }
@@ -1101,6 +1127,7 @@ function hideAllFeatureViews() {
   companiesView?.classList.add("hidden");
   revenueView?.classList.add("hidden");
   profileView?.classList.add("hidden");
+  userManagementView?.classList.add("hidden");
   addCustomerView?.classList.add("hidden");
   customerDetailsView?.classList.add("hidden");
   editCustomerView?.classList.add("hidden");
@@ -1495,6 +1522,27 @@ async function showProfileView() {
   await loadProfilePage();
 }
 
+async function showUserManagementView() {
+  dashboardSections.forEach((section) => section.classList.add("hidden"));
+  hideAllFeatureViews();
+
+  userManagementView?.classList.remove("hidden");
+
+  const title = document.querySelector(".dashboard-title h1");
+  const subtitle = document.querySelector(".dashboard-title p");
+
+  if (title) title.textContent = "User Management";
+  if (subtitle) {
+    subtitle.textContent =
+      "Manage dashboard users, roles, access scopes and account status";
+  }
+
+  setActiveNav("#user-management");
+
+  await loadUserManagementFeatureScripts();
+  await loadUserManagementPage();
+}
+
 async function showAddCustomerView() {
   dashboardSections.forEach((section) => {
     section.classList.add("hidden");
@@ -1662,6 +1710,11 @@ function handleDashboardRoute() {
 
   if (window.location.hash === "#profile") {
     showProfileView();
+    return;
+  }
+
+  if (window.location.hash === "#user-management") {
+    showUserManagementView();
     return;
   }
 
@@ -2524,6 +2577,8 @@ function escapeDashboardAlertHtml(value) {
 
   return element.innerHTML;
 }
+
+window.showDashboardAlert = showDashboardAlert;
 
 window.nativeAlert = window.alert.bind(window);
 
