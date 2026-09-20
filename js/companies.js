@@ -569,6 +569,15 @@ async function openCompanyDrawer(companyId = null) {
   if (eyebrow) eyebrow.textContent = companyId ? "Tenant settings" : "New tenant";
   if (saveLabel) saveLabel.textContent = companyId ? "Update Company" : "Save Company";
 
+  const codeInput = document.querySelector("#company-code");
+  if (codeInput) {
+    codeInput.readOnly = Boolean(companyId);
+    codeInput.setAttribute("aria-readonly", String(Boolean(companyId)));
+    codeInput.title = companyId
+      ? "Company code cannot be changed after creation."
+      : "";
+  }
+
   document.querySelector("#company-account-options").innerHTML = `<p class="company-options-empty">Loading accounts...</p>`;
   document.querySelector("#company-location-options").innerHTML = `<p class="company-options-empty">Loading locations...</p>`;
 
@@ -635,7 +644,10 @@ function validateCompanyForm(form, payload) {
     valid = valid && fieldValid;
   });
 
-  if (!/^COMP-[A-Z0-9-]{2,24}$/.test(payload.code)) {
+  if (
+    !document.querySelector("#company-record-id")?.value &&
+    !/^COMP-[A-Z0-9-]{2,24}$/.test(payload.code)
+  ) {
     document.querySelector("#company-code")?.setAttribute("aria-invalid", "true");
     showCompanyFormAlert("Company code must use the format COMP-XXXX.");
     valid = false;
@@ -664,11 +676,17 @@ async function saveCompanyForm(event) {
   event.preventDefault();
 
   const form = event.currentTarget;
+  const companyId = document.querySelector("#company-record-id")?.value;
   const payload = collectCompanyFormPayload();
 
   if (!validateCompanyForm(form, payload)) return;
 
-  const companyId = document.querySelector("#company-record-id")?.value;
+  // Company code is a stable identifier. Existing legacy codes such as
+  // PARKIN remain unchanged and are intentionally excluded from PATCH.
+  if (companyId) {
+    delete payload.code;
+  }
+
   const saveButton = document.querySelector("#save-company");
   const originalContent = saveButton.innerHTML;
 
