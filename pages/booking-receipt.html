@@ -1,0 +1,120 @@
+<section class="booking-receipt-page" data-booking-receipt-page>
+  <div class="booking-receipt-toolbar" data-receipt-screen-actions>
+    <button type="button" class="booking-receipt-back" data-receipt-back>
+      <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+      <span>Back to Booking Details</span>
+    </button>
+    <button type="button" class="booking-receipt-print" data-receipt-print>
+      <i class="fa-solid fa-print" aria-hidden="true"></i>
+      <span>Print Receipt</span>
+    </button>
+  </div>
+
+  <article class="booking-receipt-document" data-receipt-document>
+    <header class="booking-receipt-header">
+      <div class="booking-receipt-brand">
+        <img src="/public/assets/parkin-logo.png" alt="ParkIn" />
+        <p>PARK SMARTER LIVE EASIER</p>
+      </div>
+      <div class="booking-receipt-company">
+        <strong>Smart Parking Solutions</strong>
+        <span>Riyadh, Kingdom of Saudi Arabia</span>
+        <span>www.parkin.com.sa</span>
+      </div>
+      <div class="booking-receipt-corner" aria-hidden="true"></div>
+    </header>
+
+    <div class="booking-receipt-title-row">
+      <div>
+        <h1>PARKING RECEIPT</h1>
+        <p>Thank you for choosing ParkIn</p>
+      </div>
+      <div class="booking-receipt-number">
+        <span>Receipt No.</span>
+        <strong data-receipt-number></strong>
+        <small>Booking ID: <b data-receipt-booking-id></b></small>
+      </div>
+    </div>
+
+    <section class="booking-receipt-summary" aria-label="Booking summary">
+      <div><i class="fa-regular fa-calendar-days" aria-hidden="true"></i><span>Booking Date</span><strong data-receipt-booking-date></strong><small data-receipt-booking-time></small></div>
+      <div><i class="fa-regular fa-clock" aria-hidden="true"></i><span>Entry Time</span><strong data-receipt-entry-date></strong><small data-receipt-entry-time></small></div>
+      <div><i class="fa-regular fa-clock" aria-hidden="true"></i><span>Exit Time</span><strong data-receipt-exit-date></strong><small data-receipt-exit-time></small></div>
+      <div><i class="fa-solid fa-hourglass-half" aria-hidden="true"></i><span>Parking Duration</span><strong data-receipt-duration></strong><small>&nbsp;</small></div>
+    </section>
+
+    <section class="booking-receipt-two-column booking-receipt-people">
+      <div class="booking-receipt-section">
+        <h2><i class="fa-solid fa-user" aria-hidden="true"></i>Customer Information</h2>
+        <div class="booking-receipt-person">
+          <span class="booking-receipt-avatar"><i class="fa-solid fa-user" aria-hidden="true"></i></span>
+          <div><strong data-receipt-customer></strong><span data-receipt-phone></span><span>ahmed.q@example.com</span></div>
+        </div>
+      </div>
+      <div class="booking-receipt-section">
+        <h2><i class="fa-solid fa-car-side" aria-hidden="true"></i>Vehicle Information</h2>
+        <div class="booking-receipt-vehicle">
+          <span class="booking-receipt-vehicle-image"><img data-receipt-vehicle-image alt="Vehicle" /></span>
+          <div><strong data-receipt-vehicle></strong><span data-receipt-vehicle-meta></span><b data-receipt-plate></b></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="booking-receipt-two-column booking-receipt-zone-row">
+      <div class="booking-receipt-section">
+        <h2><i class="fa-solid fa-location-dot" aria-hidden="true"></i>Parking Zone</h2>
+        <div class="booking-receipt-location"><span class="booking-receipt-zone-icon"><i class="fa-solid fa-square-parking" aria-hidden="true"></i></span><div><strong data-receipt-zone></strong><span data-receipt-location></span></div></div>
+      </div>
+      <div class="booking-receipt-section">
+        <h2><i class="fa-solid fa-user-tie" aria-hidden="true"></i>Valet Driver</h2>
+        <div class="booking-receipt-driver"><span class="booking-receipt-avatar"><i class="fa-solid fa-user" aria-hidden="true"></i></span><div><strong data-receipt-driver>—</strong><span data-receipt-driver-phone>—</span></div></div>
+      </div>
+    </section>
+
+    <section class="booking-receipt-charges booking-receipt-section">
+      <h2><i class="fa-solid fa-receipt" aria-hidden="true"></i>Charges Breakdown</h2>
+      <div class="booking-receipt-charge-head"><span>Description</span><span>Amount (SAR)</span></div>
+      <div class="booking-receipt-charge-row"><span>Parking Fee (4 hours @ SAR 10/hour)</span><strong data-receipt-parking-fee>40.00</strong></div>
+      <div class="booking-receipt-charge-row"><span>Service Fee</span><strong>0.00</strong></div>
+      <div class="booking-receipt-charge-row"><span>VAT (15%)</span><strong>6.00</strong></div>
+    </section>
+
+    <div class="booking-receipt-total"><strong>Total Amount Paid</strong><b>SAR <span data-receipt-total>46.00</span></b></div>
+
+    <section class="booking-receipt-payment booking-receipt-two-column">
+      <div class="booking-receipt-section">
+        <h2><i class="fa-solid fa-credit-card" aria-hidden="true"></i>Payment Information</h2>
+        <dl>
+          <div><dt>Payment Method</dt><dd><img src="/public/assets/creditcards/master.png" alt="Mastercard" /> •••• 4242</dd></div>
+          <div><dt>Payment Status</dt><dd><b class="booking-receipt-paid"><i class="fa-solid fa-check" aria-hidden="true"></i>Paid</b></dd></div>
+          <div><dt>Transaction ID</dt><dd data-receipt-transaction></dd></div>
+          <div><dt>Payment Date</dt><dd data-receipt-payment-date></dd></div>
+        </dl>
+      </div>
+      <div class="booking-receipt-qr-section">
+        <h2>QR CODE</h2>
+        <div class="booking-receipt-qr" data-booking-receipt-qr role="img" aria-label="Booking details QR code"></div>
+        <p>Scan to view booking details<br />on ParkIn App</p>
+      </div>
+    </section>
+
+    <div class="booking-receipt-signoff">
+      <img
+        class="booking-receipt-signoff-art"
+        src="/public/assets/receipt/receipt-signoff.png"
+        alt="Thank you. Park Smart. Live Easier."
+      />
+    </div>
+    <footer class="booking-receipt-contact">
+      <span><i class="fa-solid fa-phone" aria-hidden="true"></i>+966 11 123 4567</span>
+      <span><i class="fa-solid fa-envelope" aria-hidden="true"></i>support@parkin.com.sa</span>
+      <span><i class="fa-solid fa-globe" aria-hidden="true"></i>www.parkin.com.sa</span>
+      <span class="booking-receipt-powered">Powered by <img src="/public/assets/parkin-logo.png" alt="ParkIn" /></span>
+    </footer>
+  </article>
+
+  <section class="booking-receipt-not-found hidden" data-receipt-not-found>
+    <h1>Receipt not found</h1>
+    <button type="button" data-receipt-back>Back to Bookings</button>
+  </section>
+</section>

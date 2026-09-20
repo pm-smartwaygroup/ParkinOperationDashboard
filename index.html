@@ -57,8 +57,15 @@
     <link rel="stylesheet" href="/css/components/edit-driver.css" />
     <link rel="stylesheet" href="/css/valet-companies.css" />
     <link rel="stylesheet" href="/css/revenue.css" />
+    <link rel="stylesheet" href="/css/vehicles.css" />
+    <link rel="stylesheet" href="/css/bookings.css" />
+    <link rel="stylesheet" href="/css/booking-details.css" />
+    <link rel="stylesheet" href="/css/booking-receipt.css" />
+    <link rel="stylesheet" href="/css/parking-zones.css" />
+    <link rel="stylesheet" href="/css/add-parking-zone.css" />
     <link rel="stylesheet" href="/css/profile.css" />
     <link rel="stylesheet" href="/css/user-management.css" />
+    <link rel="stylesheet" href="/css/user-management-add.css" />
 
     <title>Parkin Dashboard | Sign in</title>
   </head>
@@ -1221,7 +1228,7 @@
               <span>⌕</span>
             </label>
 
-            <button class="add-location-btn" type="button">
+            <button class="add-location-btn" type="button" data-required-permission="locations.create">
               + Add New Location
             </button>
 
@@ -1382,11 +1389,32 @@
         <section id="revenue-view" class="hidden">
           <div id="revenue-container"></div>
         </section>
+        <section id="vehicles-view" class="hidden">
+          <div id="vehicles-container"></div>
+        </section>
+        <section id="bookings-view" class="hidden">
+          <div id="bookings-container"></div>
+        </section>
+        <section id="booking-details-view" class="hidden">
+          <div id="booking-details-container"></div>
+        </section>
+        <section id="booking-receipt-view" class="hidden">
+          <div id="booking-receipt-container"></div>
+        </section>
+        <section id="zones-view" class="hidden">
+          <div id="parking-zones-container"></div>
+        </section>
+        <section id="add-zone-view" class="hidden">
+          <div id="add-zone-container"></div>
+        </section>
         <section id="profile-view" class="hidden">
           <div id="profile-container"></div>
         </section>
         <section id="user-management-view" class="hidden">
           <div id="user-management-container"></div>
+        </section>
+        <section id="user-management-add-view" class="hidden">
+          <div id="user-management-add-container"></div>
         </section>
         <section id="add-customer-view" class="hidden">
           <div id="add-customer-container"></div>
@@ -1668,6 +1696,7 @@
     </section>
 
     <script src="/js/runtime-config.js" defer></script>
+    <script src="/public/assets/qr/qrcode.js" defer></script>
 
     <script
       src="https://cdn.socket.io/4.8.3/socket.io.min.js"

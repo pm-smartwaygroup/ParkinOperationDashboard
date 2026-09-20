@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" fill="none" role="img" aria-labelledby="title description">
+  <title id="title">Mercedes-Benz metallic three-pointed star</title>
+  <desc id="description">Scalable vector recreation of the supplied metallic emblem, with a white interior and transparent outer corners.</desc>
+  <defs>
+    <linearGradient id="outerEdge" x1="69" y1="71" x2="443" y2="442" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#53565B"/>
+      <stop offset=".3" stop-color="#86898C"/>
+      <stop offset=".55" stop-color="#45484E"/>
+      <stop offset="1" stop-color="#8C8E91"/>
+    </linearGradient>
+    <linearGradient id="outerMetal" x1="151" y1="12" x2="360" y2="497" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FEFEFC"/>
+      <stop offset=".15" stop-color="#E5E5E2"/>
+      <stop offset=".32" stop-color="#B2B4B4"/>
+      <stop offset=".49" stop-color="#34383E"/>
+      <stop offset=".67" stop-color="#777A7E"/>
+      <stop offset=".88" stop-color="#5A5D62"/>
+      <stop offset="1" stop-color="#30333A"/>
+    </linearGradient>
+    <linearGradient id="leftReflection" x1="8" y1="211" x2="19" y2="261" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FAFAF7"/>
+      <stop offset=".43" stop-color="#F7F7F4"/>
+      <stop offset=".64" stop-color="#D6E0DE"/>
+      <stop offset=".82" stop-color="#586B74"/>
+      <stop offset="1" stop-color="#2F3238"/>
+    </linearGradient>
+    <linearGradient id="innerMetal" x1="170" y1="36" x2="335" y2="483" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#36393F"/>
+      <stop offset=".3" stop-color="#3E4249"/>
+      <stop offset=".53" stop-color="#545960"/>
+      <stop offset=".71" stop-color="#7D8185"/>
+      <stop offset=".89" stop-color="#BFC0BD"/>
+      <stop offset="1" stop-color="#E5E4DE"/>
+    </linearGradient>
+    <linearGradient id="innerLip" x1="180" y1="36" x2="331" y2="480" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#85888B"/>
+      <stop offset=".5" stop-color="#454951"/>
+      <stop offset="1" stop-color="#44474E"/>
+    </linearGradient>
+    <linearGradient id="starOutline" x1="114" y1="225" x2="374" y2="319" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4C5259"/>
+      <stop offset=".5" stop-color="#454A51"/>
+      <stop offset="1" stop-color="#7A7E82"/>
+    </linearGradient>
+    <linearGradient id="upperLight" x1="224" y1="142" x2="254" y2="146" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F1F1EE"/>
+      <stop offset=".45" stop-color="#E3E3E1"/>
+      <stop offset="1" stop-color="#CDCDCB"/>
+    </linearGradient>
+    <linearGradient id="upperBevel" x1="236" y1="127" x2="248" y2="128" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#A3A8A9"/>
+      <stop offset="1" stop-color="#E5E5E1"/>
+    </linearGradient>
+    <linearGradient id="upperDark" x1="257" y1="130" x2="287" y2="130" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#63666C"/>
+      <stop offset=".3" stop-color="#696C72"/>
+      <stop offset=".65" stop-color="#474B52"/>
+      <stop offset="1" stop-color="#343940"/>
+    </linearGradient>
+    <linearGradient id="upperDarkBevel" x1="274" y1="235" x2="291" y2="240" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#343940"/>
+      <stop offset="1" stop-color="#5A6066"/>
+    </linearGradient>
+    <linearGradient id="leftLight" x1="150" y1="288" x2="167" y2="315" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#E5E5E1"/>
+      <stop offset=".47" stop-color="#D9D9D5"/>
+      <stop offset="1" stop-color="#C2C4C2"/>
+    </linearGradient>
+    <linearGradient id="leftLightBevel" x1="148" y1="287" x2="152" y2="294" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#B0B4B3"/>
+      <stop offset="1" stop-color="#E8E8E4"/>
+    </linearGradient>
+    <linearGradient id="leftDark" x1="158" y1="313" x2="173" y2="341" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#555A60"/>
+      <stop offset=".35" stop-color="#3E4249"/>
+      <stop offset=".8" stop-color="#292C33"/>
+      <stop offset="1" stop-color="#3B3F47"/>
+    </linearGradient>
+    <linearGradient id="rightLight" x1="361" y1="291" x2="344" y2="318" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#E6E6E2"/>
+      <stop offset=".5" stop-color="#D6D7D3"/>
+      <stop offset="1" stop-color="#C4C5C3"/>
+    </linearGradient>
+    <linearGradient id="rightDark" x1="351" y1="311" x2="336" y2="339" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#555A60"/>
+      <stop offset=".37" stop-color="#3F434A"/>
+      <stop offset=".83" stop-color="#292C33"/>
+      <stop offset="1" stop-color="#3A3F46"/>
+    </linearGradient>
+    <linearGradient id="centerRidge" x1="256" y1="26" x2="256" y2="301" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#D5D5D3"/>
+      <stop offset=".25" stop-color="#FFFFFF"/>
+      <stop offset=".86" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#72767C"/>
+    </linearGradient>
+  </defs>
+  <g id="circular-frame">
+    <circle cx="256" cy="256.5" r="255" fill="url(#outerEdge)" stroke="#FFFFFF" stroke-width="1"/>
+    <circle cx="256" cy="256.5" r="252.8" fill="url(#outerMetal)"/>
+    <path d="M3.2 256.5A252.8 252.8 0 0 1 85.2 70.2L94.4 80.2A239.5 239.5 0 0 0 16.5 256.5Z" fill="url(#leftReflection)"/>
+    <circle cx="256" cy="256.5" r="240.9" fill="#34373D"/>
+    <circle cx="256" cy="256.5" r="239.4" fill="url(#innerMetal)" stroke="#FFFFFF" stroke-width="2.8"/>
+    <circle cx="256" cy="256.5" r="225.1" fill="#FEFEFE" stroke="url(#innerLip)" stroke-width="1.8"/>
+    <path d="M31.4 256.5A224.6 224.6 0 0 1 248.5 32" stroke="#FFFFFF" stroke-opacity=".84" stroke-width="1.1"/>
+    <path d="M479.9 269.7A224.6 224.6 0 0 1 458.7 353.3" stroke="#FFFFFF" stroke-width="1"/>
+  </g>
+  <g id="three-pointed-star" stroke-linejoin="round">
+    <path d="M256 23.5 264.4 29.1 294.1 233.6 459.1 361.4 456.8 375.8 255.7 301 53.1 375.8 54.8 361.4 217.6 233.6 247.6 29.6Z" fill="url(#starOutline)"/>
+    <path d="M255.5 25.3 248.9 32 221.4 232.9 253.7 252.1Z" fill="url(#upperLight)"/>
+    <path d="M248.9 32 221.4 232.9 225.9 235.7Z" fill="url(#upperBevel)"/>
+    <path d="M256.3 25.3 262.8 31.1 290.4 233.5 258 252.3Z" fill="url(#upperDark)"/>
+    <path d="M263.2 37.6 290.4 233.5 258 252.3 273.1 231.8Z" fill="url(#upperDarkBevel)" opacity=".5"/>
+    <path d="M220 237 57.3 361.8 56.2 371.1 254.2 254.8Z" fill="url(#leftLight)"/>
+    <path d="M220 237 57.3 361.8 58.7 366 225.1 240.1Z" fill="url(#leftLightBevel)"/>
+    <path d="M254.4 258.4 55.9 373.8 253.9 298.5Z" fill="url(#leftDark)"/>
+    <path d="M253.8 295.6 55.9 373.8 253.9 298.5Z" fill="#5D6269" opacity=".7"/>
+    <path d="M292.5 237.1 456.3 364.6 455.6 371.8 257.1 254.8Z" fill="url(#rightLight)"/>
+    <path d="M292.5 237.1 456.3 364.6 452.8 365.6 287.7 239.9Z" fill="#EBEBE7" opacity=".85"/>
+    <path d="M257.2 258.4 455.9 374.1 257.3 298.6Z" fill="url(#rightDark)"/>
+    <path d="M257.5 295.5 455.9 374.1 257.3 298.6Z" fill="#535A62" opacity=".55"/>
+    <path d="M252.4 30.8 252.7 251.4 254.3 253Z" fill="#3C4148" opacity=".8"/>
+    <path d="M254.9 25.6 257 26.1 257 254.3 456 372.8 455.3 374 257 258.1 256.4 299.8 254.7 299.8 254.4 258.2 55.4 373.6 54.8 372.1 254.5 254.3Z" fill="url(#centerRidge)"/>
+    <path d="M222 235.8 251.5 253.6M260.3 253.6 291.2 236" stroke="#F6F6F3" stroke-width="1.3"/>
+  </g>
+</svg>

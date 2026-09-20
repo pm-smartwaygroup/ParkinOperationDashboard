@@ -191,31 +191,94 @@
   min-width: 210px;
 }
 .user-management-avatar {
-  display: grid;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 38px;
   height: 38px;
+  min-width: 38px;
+  min-height: 38px;
   flex: 0 0 38px;
-  place-items: center;
   border-radius: 50%;
+  overflow: hidden;
   color: var(--um-green);
   background: color-mix(in srgb, var(--um-green) 13%, transparent);
   font-size: 12px;
   font-weight: 800;
+  line-height: 1;
+  text-align: center;
 }
-.user-management-user strong,
-.user-management-user span {
+
+.user-management-avatar-initials {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+}
+
+.user-management-avatar-image {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 50%;
+}
+
+.user-management-user-info {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.user-management-avatar-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  line-height: 1;
+  text-align: center;
+}
+.user-management-avatar img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.user-management-user-info {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.user-management-user-info > strong,
+.user-management-user-info > span {
   display: block;
 }
-.user-management-user strong {
+
+.user-management-user-info > strong {
   margin-bottom: 3px;
   color: var(--um-ink);
   font-size: 13px;
 }
-.user-management-user span,
+
+.user-management-user-info > span,
 .user-management-muted {
   color: var(--um-muted);
   font-size: 12px;
 }
+
 .user-management-role,
 .user-management-scope {
   color: var(--um-ink);
@@ -245,6 +308,10 @@
 .user-management-badge.disabled {
   color: var(--dash-red);
   background: color-mix(in srgb, var(--dash-red) 11%, transparent);
+}
+.user-management-badge.setup-pending {
+  color: #b7791f;
+  background: color-mix(in srgb, #d69e2e 16%, transparent);
 }
 .user-management-row-action {
   display: inline-grid;
@@ -420,6 +487,260 @@
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
+.user-management-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+.user-management-section-heading h3 {
+  margin: 0;
+}
+.user-management-section-heading span {
+  color: var(--um-green);
+  font-size: 11px;
+  font-weight: 700;
+}
+.user-management-access-actions {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-left: auto;
+}
+.user-management-access-actions .user-management-button {
+  min-height: 30px;
+  padding: 0 10px;
+  font-size: 11px;
+}
+.user-management-access-summary {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid color-mix(in srgb, var(--um-green) 22%, var(--um-line));
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--um-green) 7%, transparent);
+}
+.user-management-access-summary > i {
+  margin-top: 2px;
+  color: var(--um-green);
+}
+.user-management-access-summary strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 13px;
+}
+.user-management-access-summary p {
+  margin: 0;
+  color: var(--um-muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+.user-management-permission-group + .user-management-permission-group {
+  margin-top: 16px;
+}
+.user-management-permission-group h4 {
+  margin: 0 0 7px;
+  color: var(--um-muted);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.user-management-permission-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 31px;
+  color: var(--um-ink);
+  font-size: 12px;
+}
+.user-management-permission-row > i {
+  color: var(--um-green);
+  font-size: 11px;
+}
+.user-management-permission-row > span {
+  flex: 1;
+}
+.user-management-permission-row small {
+  color: var(--um-muted);
+  font-size: 10px;
+  white-space: nowrap;
+}
+.user-management-permission-skeleton {
+  display: grid;
+  gap: 8px;
+}
+.user-management-permission-skeleton span {
+  display: block;
+  height: 30px;
+  border-radius: 5px;
+  background: var(--um-soft-line);
+}
+.user-management-access-error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.user-management-access-error p {
+  margin: 0;
+  color: var(--um-muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+.user-management-permission-table {
+  overflow: hidden;
+  border: 1px solid var(--um-soft-line);
+  border-radius: 8px;
+}
+.user-management-permission-grid {
+  display: grid;
+  grid-template-columns: minmax(120px, 1.4fr) repeat(
+      4,
+      minmax(46px, 0.55fr)
+    ) minmax(120px, 1.4fr);
+  align-items: center;
+}
+.user-management-permission-header {
+  padding: 9px 10px;
+  color: var(--um-muted);
+  background: var(--dash-table-head);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.user-management-permission-header span:not(:first-child),
+.user-management-permission-data-row > .user-management-permission-cell {
+  text-align: center;
+}
+.user-management-permission-data-row {
+  min-height: 50px;
+  padding: 7px 10px;
+  border-top: 1px solid var(--um-soft-line);
+  font-size: 12px;
+}
+.user-management-permission-data-row > strong {
+  font-size: 12px;
+}
+.user-management-permission-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 30px;
+  color: var(--um-muted);
+  font-size: 14px;
+}
+.user-management-permission-cell.is-editing {
+  position: relative;
+  overflow: visible;
+}
+.user-management-permission-control {
+  min-width: 67px;
+  min-height: 28px;
+  padding: 3px 7px;
+  border: 1px solid var(--um-soft-line);
+  border-radius: 5px;
+  background: var(--um-panel);
+  color: var(--um-muted);
+  font: inherit;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.user-management-permission-control:hover,
+.user-management-permission-control:focus-visible {
+  border-color: var(--um-green);
+  outline: none;
+}
+.permission-state-allow .user-management-permission-control {
+  border-color: color-mix(in srgb, var(--um-green) 45%, var(--um-line));
+  color: var(--um-green);
+}
+.permission-state-deny .user-management-permission-control {
+  border-color: color-mix(in srgb, #d85b5b 42%, var(--um-line));
+  color: #d85b5b;
+}
+.user-management-permission-menu {
+  position: absolute;
+  z-index: 5;
+  top: calc(100% + 4px);
+  left: 50%;
+  display: grid;
+  min-width: 106px;
+  padding: 4px;
+  transform: translateX(-50%);
+  border: 1px solid var(--um-soft-line);
+  border-radius: 6px;
+  background: var(--um-panel);
+  box-shadow: 0 8px 22px rgb(0 0 0 / 18%);
+}
+.user-management-permission-menu.hidden {
+  display: none;
+}
+.user-management-permission-option {
+  padding: 7px 8px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--um-ink);
+  font: inherit;
+  font-size: 10px;
+  text-align: left;
+  cursor: pointer;
+}
+.user-management-permission-option:hover,
+.user-management-permission-option:focus-visible {
+  background: var(--um-soft-line);
+  outline: none;
+}
+.user-management-permission-cell.is-granted {
+  color: var(--um-green);
+  font-weight: 800;
+}
+.user-management-permission-cell.is-denied,
+.user-management-permission-cell.is-empty {
+  color: var(--um-muted);
+}
+.user-management-permission-other {
+  flex-wrap: wrap;
+  gap: 5px;
+  justify-content: flex-start !important;
+  font-size: 11px;
+}
+.user-management-permission-other .user-management-permission-cell {
+  min-height: 24px;
+  padding: 2px 6px;
+  border: 1px solid var(--um-soft-line);
+  border-radius: 5px;
+  font-size: 11px;
+}
+.user-management-permission-cards {
+  display: none;
+}
+.user-management-permission-card {
+  padding: 14px 0;
+  border-top: 1px solid var(--um-soft-line);
+}
+.user-management-permission-card:first-child {
+  border-top: 0;
+}
+.user-management-permission-card h4 {
+  margin: 0 0 8px;
+  color: var(--um-ink);
+  font-size: 13px;
+}
+.user-management-permission-card-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 30px;
+  color: var(--um-muted);
+  font-size: 12px;
+}
+  .user-management-permission-card-row .user-management-permission-cell {
+    justify-content: flex-end;
+  }
 .user-management-detail-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -530,4 +851,692 @@
   .user-management-detail-grid {
     grid-template-columns: 1fr;
   }
+  .user-management-permission-table {
+    display: none;
+  }
+  .user-management-permission-cards {
+    display: block;
+  }
+  .user-management-access-error {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+/* Responsive access editor */
+.user-management-drawer {
+  box-sizing: border-box;
+  width: min(820px, 92vw);
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+.user-management-drawer-header {
+  min-width: 0;
+}
+.user-management-drawer-header > div {
+  min-width: 0;
+}
+.user-management-section-heading > div {
+  min-width: 0;
+}
+.user-management-access-section .user-management-section-heading {
+  flex-wrap: wrap;
+}
+.user-management-access-section .user-management-section-heading > div {
+  flex: 1 1 auto;
+}
+.user-management-permission-table {
+  overflow: visible;
+}
+.user-management-permission-control {
+  display: inline-grid;
+  width: 38px;
+  min-width: 38px;
+  height: 36px;
+  min-height: 36px;
+  padding: 0;
+  place-items: center;
+  border-radius: 7px;
+  font-size: 15px;
+  line-height: 1;
+}
+.user-management-permission-edit-row {
+  justify-content: space-between !important;
+  width: 100%;
+  min-height: 36px !important;
+  padding: 3px 5px !important;
+  gap: 8px;
+}
+.user-management-permission-edit-label {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  text-align: left;
+}
+.user-management-permission-edit-row .user-management-permission-control {
+  flex: 0 0 38px;
+}
+.user-management-permission-menu {
+  min-width: 124px;
+}
+.user-management-permission-other {
+  align-content: center;
+}
+.user-management-permission-other
+  .user-management-permission-edit-row
+  + .user-management-permission-edit-row {
+  margin-top: 4px;
+}
+
+@media (min-width: 1101px) {
+  .user-management-access-section .user-management-section-heading {
+    position: sticky;
+    z-index: 3;
+    top: 0;
+    padding: 6px 0 10px;
+    background: color-mix(in srgb, var(--um-panel) 72%, var(--um-card));
+  }
+}
+
+@media (max-width: 1100px) {
+  .user-management-drawer {
+    width: 94vw;
+  }
+  .user-management-permission-table {
+    display: none;
+  }
+  .user-management-permission-cards {
+    display: block;
+  }
+  .user-management-permission-card {
+    padding: 16px 2px;
+  }
+  .user-management-permission-card-row {
+    min-height: 42px;
+    gap: 12px;
+  }
+  .user-management-permission-card-row > span:first-child {
+    flex: 1;
+    min-width: 0;
+  }
+  .user-management-permission-card-row .user-management-permission-cell {
+    flex: 0 0 auto;
+    min-width: 86px;
+  }
+  .user-management-permission-card-row
+    .user-management-permission-edit-row {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .user-management-permission-card-row
+    .user-management-permission-edit-row
+    .user-management-permission-edit-label {
+    display: none;
+  }
+  .user-management-permission-card-row
+    .user-management-permission-edit-row
+    .user-management-permission-control {
+    margin-left: auto;
+  }
+  .user-management-permission-card-row
+    .user-management-permission-edit-row
+    .user-management-permission-menu {
+    right: 0;
+    left: auto;
+    transform: none;
+  }
+  .user-management-permission-card-row
+    .user-management-permission-cell:not(.user-management-permission-edit-row) {
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 600px) {
+  .user-management-drawer {
+    width: 100vw;
+    padding: 18px 16px;
+  }
+  .user-management-drawer-header {
+    gap: 10px;
+  }
+  .user-management-drawer-header h2 {
+    max-width: 240px;
+    overflow-wrap: anywhere;
+    font-size: 22px;
+  }
+  .user-management-detail-hero {
+    gap: 10px;
+  }
+  .user-management-detail-hero .user-management-avatar {
+    width: 50px;
+    height: 50px;
+    flex-basis: 50px;
+  }
+  .user-management-detail-hero h3 {
+    overflow-wrap: anywhere;
+    font-size: 16px;
+  }
+  .user-management-section-heading {
+    align-items: flex-start;
+    row-gap: 10px;
+  }
+  .user-management-section-heading > span {
+    order: 2;
+  }
+  .user-management-access-actions {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+  .user-management-access-actions .user-management-button {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+  .user-management-permission-card-row
+    .user-management-permission-cell:not(.user-management-permission-edit-row) {
+    min-width: 86px;
+  }
+  .user-management-permission-edit-row {
+    min-width: 48px !important;
+    width: 48px !important;
+    padding: 2px !important;
+  }
+  .user-management-permission-card-row
+    .user-management-permission-edit-row
+    .user-management-permission-control {
+    width: 40px;
+    min-width: 40px;
+  }
+  .user-management-permission-legend {
+    gap: 8px 12px;
+    line-height: 1.5;
+  }
+}
+
+.user-initial-password-dialog {
+  --um-card: var(--dash-card, #ffffff);
+  --um-panel: var(--dash-panel, #ffffff);
+  --um-line: var(--dash-line, #e4eaf0);
+  --um-soft-line: var(--dash-soft-line, #eef3f7);
+  --um-ink: var(--dash-ink, #071322);
+  --um-muted: var(--dash-muted, #65748b);
+  --um-green: var(--dash-green, #0a9b55);
+  box-sizing: border-box;
+  width: min(480px, calc(100vw - 40px));
+  max-width: calc(100vw - 24px);
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+  margin: auto;
+  padding: 24px;
+  border: 1px solid var(--um-line);
+  border-radius: 12px;
+  color: var(--um-ink);
+  background: var(--um-card);
+  box-shadow: 0 20px 60px rgb(0 0 0 / 24%);
+}
+.user-initial-password-dialog::backdrop {
+  background: rgb(7 19 34 / 52%);
+}
+.user-management-password-dialog-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+.user-management-password-dialog-header h2 {
+  margin: 0;
+  font-size: 20px;
+}
+.user-management-password-dialog-identity {
+  margin: 16px 0 20px;
+  color: var(--um-muted);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.user-management-password-form {
+  display: grid;
+  gap: 16px;
+}
+.user-management-password-field {
+  display: grid;
+  gap: 7px;
+  color: var(--um-ink);
+  font-size: 12px;
+  font-weight: 700;
+}
+.user-management-password-input-wrap {
+  position: relative;
+  display: block;
+}
+.user-management-password-input-wrap input {
+  box-sizing: border-box;
+  width: 100%;
+  height: 44px;
+  padding: 0 46px 0 12px;
+  border: 1px solid var(--um-line);
+  border-radius: 7px;
+  color: var(--um-ink);
+  background: var(--dash-input);
+  font: inherit;
+  outline: none;
+}
+.user-management-password-input-wrap input:focus {
+  border-color: var(--um-green);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--um-green) 16%, transparent);
+}
+.user-management-password-toggle {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 6px;
+  color: var(--um-muted);
+  background: transparent;
+  cursor: pointer;
+}
+.user-management-password-toggle:hover,
+.user-management-password-toggle:focus-visible {
+  color: var(--um-green);
+  background: var(--um-soft-line);
+  outline: none;
+}
+.user-management-password-error {
+  min-height: 15px;
+  color: var(--dash-red);
+  font-size: 11px;
+  font-weight: 500;
+}
+.user-management-password-requirements {
+  margin: -4px 0 0;
+  color: var(--um-muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+.user-management-password-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 4px;
+}
+.user-management-password-actions .user-management-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+@media (max-width: 480px) {
+  .user-initial-password-dialog {
+    width: calc(100vw - 24px);
+    max-width: calc(100vw - 24px);
+    padding: 20px;
+  }
+  .user-management-password-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .user-management-password-actions .user-management-button {
+    width: 100%;
+  }
+}
+
+/* Detail drawer presentation */
+.user-management-drawer-body {
+  padding-top: 22px;
+}
+.user-management-detail-hero {
+  align-items: flex-start;
+  padding: 4px 0 24px;
+}
+.user-management-detail-hero .user-management-avatar {
+  width: 58px;
+  height: 58px;
+  flex-basis: 58px;
+  border: 4px solid color-mix(in srgb, var(--um-green) 10%, var(--um-card));
+  background: color-mix(in srgb, var(--um-green) 15%, var(--um-panel));
+  font-size: 16px;
+}
+.user-management-detail-identity {
+  min-width: 0;
+  padding-top: 3px;
+}
+.user-management-detail-hero h3 {
+  font-size: 18px;
+  line-height: 1.25;
+}
+.user-management-detail-role {
+  display: inline-flex;
+  margin-top: 9px;
+  padding: 4px 9px;
+  border: 1px solid color-mix(in srgb, var(--um-green) 25%, var(--um-line));
+  border-radius: 999px;
+  color: var(--um-green);
+  background: color-mix(in srgb, var(--um-green) 8%, transparent);
+  font-size: 10px;
+  font-weight: 700;
+}
+.user-management-detail-section {
+  margin: 16px 0;
+  padding: 18px;
+  border: 1px solid var(--um-soft-line);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--um-panel) 72%, var(--um-card));
+}
+.user-management-detail-section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.user-management-section-kicker {
+  margin: 0 0 4px;
+  color: var(--um-green);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.user-management-detail-section-title h3,
+.user-management-section-heading h3 {
+  font-size: 14px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.user-management-access-section .user-management-section-heading h3 {
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.user-management-detail-grid {
+  gap: 18px 16px;
+}
+.user-management-detail-grid dt {
+  margin-bottom: 5px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.user-management-detail-grid dd {
+  font-size: 12px;
+  font-weight: 600;
+}
+.user-management-lifecycle-setup-pending {
+  color: #b7791f !important;
+}
+.user-management-lifecycle-active {
+  color: var(--um-green) !important;
+}
+.user-management-lifecycle-disabled {
+  color: var(--dash-red) !important;
+}
+.user-management-lifecycle-helper {
+  display: block;
+  margin: 5px 0 0;
+  color: var(--um-muted);
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.45;
+}
+.user-management-lifecycle-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.user-management-lifecycle-actions .user-management-button {
+  min-height: 36px;
+}
+.user-management-lifecycle-actions .user-management-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+.user-management-account-actions {
+  background: color-mix(in srgb, var(--um-panel) 48%, transparent);
+}
+.user-management-account-actions .user-management-detail-section-title {
+  margin-bottom: 12px;
+}
+.user-management-account-actions .user-management-detail-section-title h3 {
+  margin-bottom: 0;
+}
+.user-management-access-section {
+  padding: 18px 14px 14px;
+}
+.user-management-section-heading {
+  align-items: flex-end;
+  margin: 0 4px 16px;
+}
+.user-management-section-heading > span {
+  align-self: center;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--um-green) 10%, transparent);
+}
+.user-management-access-actions {
+  flex-wrap: wrap;
+}
+.user-management-permission-table {
+  border-color: var(--um-line);
+  border-radius: 8px;
+  background: var(--um-card);
+}
+.user-management-permission-grid {
+  grid-template-columns: minmax(104px, 1.45fr) repeat(4, minmax(42px, 0.58fr)) minmax(92px, 1.3fr);
+}
+.user-management-permission-header {
+  padding: 10px 8px;
+  font-size: 9px;
+  letter-spacing: 0.06em;
+}
+.user-management-permission-data-row {
+  min-height: 48px;
+  padding: 6px 8px;
+  font-size: 11px;
+}
+.user-management-permission-module {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.user-management-permission-module i,
+.user-management-permission-card h4 i {
+  display: grid;
+  width: 25px;
+  height: 25px;
+  flex: 0 0 25px;
+  place-items: center;
+  border-radius: 6px;
+  color: var(--um-green);
+  background: color-mix(in srgb, var(--um-green) 10%, transparent);
+  font-size: 11px;
+}
+.user-management-permission-module strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.user-management-permission-cell {
+  min-height: 28px;
+  font-size: 13px;
+}
+.user-management-permission-cell.is-granted {
+  color: var(--um-green);
+}
+.user-management-permission-cell.is-denied,
+.user-management-permission-cell.is-empty {
+  color: color-mix(in srgb, var(--um-muted) 70%, transparent);
+}
+.user-management-permission-other .user-management-permission-cell {
+  border-color: color-mix(in srgb, var(--um-line) 80%, transparent);
+  background: color-mix(in srgb, var(--um-panel) 65%, transparent);
+  font-size: 10px;
+}
+.user-management-permission-other .user-management-permission-cell.is-granted {
+  border-color: color-mix(in srgb, var(--um-green) 27%, var(--um-line));
+  color: var(--um-green);
+  background: color-mix(in srgb, var(--um-green) 7%, transparent);
+}
+.user-management-permission-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px 14px;
+  margin: 14px 4px 2px;
+  color: var(--um-muted);
+  font-size: 10px;
+}
+.user-management-permission-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.user-management-permission-legend i {
+  color: var(--um-green);
+  font-size: 9px;
+}
+.user-management-permission-legend span:nth-child(2) i {
+  color: var(--um-muted);
+}
+.user-management-permission-legend span:nth-child(3) i {
+  color: var(--um-green);
+}
+.user-management-permission-card h4 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.user-management-permission-card h4 i {
+  width: 26px;
+  height: 26px;
+}
+.user-management-permission-card-row {
+  min-height: 35px;
+}
+.user-management-permission-card-row .user-management-permission-cell {
+  min-width: 85px;
+}
+
+@media (max-width: 620px) {
+  .user-management-detail-section {
+    padding: 16px;
+  }
+  .user-management-access-section {
+    padding-inline: 12px;
+  }
+  .user-management-section-heading {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  .user-management-section-heading > div {
+    flex: 1 1 100%;
+  }
+  .user-management-access-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+  .user-management-access-actions .user-management-button {
+    flex: 1;
+  }
+  .user-management-permission-control {
+    min-width: 86px;
+  }
+}
+
+/* Keep the final editor dimensions ahead of legacy drawer rules above. */
+@media (max-width: 1100px) {
+  .user-management-drawer {
+    width: 94vw;
+  }
+  .user-management-permission-table {
+    display: none;
+  }
+  .user-management-permission-cards {
+    display: block;
+  }
+  .user-management-permission-card-row
+    .user-management-permission-cell:not(.user-management-permission-edit-row) {
+    min-width: 86px;
+  }
+  .user-management-permission-card-row
+    .user-management-permission-edit-row
+    .user-management-permission-menu {
+    top: auto;
+    right: 0;
+    bottom: calc(100% + 4px);
+    left: auto;
+    transform: none;
+  }
+  .user-management-permission-card-row
+    .user-management-permission-cell
+    .user-management-permission-menu {
+    top: auto;
+    right: 0;
+    bottom: calc(100% + 4px);
+    left: auto;
+    transform: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .user-management-drawer {
+    width: 100vw;
+  }
+  .user-management-permission-control {
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
+    min-height: 40px;
+  }
+  .user-management-permission-card-row
+    .user-management-permission-edit-row {
+    width: 48px !important;
+    min-width: 48px !important;
+    padding: 2px !important;
+  }
+  .user-management-permission-card-row
+    .user-management-permission-edit-row
+    .user-management-permission-control {
+    width: 40px;
+    min-width: 40px;
+  }
+}
+.user-management-user .user-management-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  min-height: 38px;
+  flex: 0 0 38px;
+
+  border-radius: 50%;
+  overflow: hidden;
+
+  color: var(--um-green);
+  background: color-mix(in srgb, var(--um-green) 13%, transparent);
+
+  line-height: 1;
+  text-align: center;
+}
+
+.user-management-user .user-management-avatar-initials {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  height: 100%;
+
+  color: var(--um-green);
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1;
+  text-align: center;
+}
+
+.user-management-user .user-management-avatar-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 50%;
 }

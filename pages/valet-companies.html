@@ -7,11 +7,11 @@
     </div>
 
     <div class="companies-action-buttons">
-      <button class="companies-button secondary" id="export-companies" type="button">
+      <button class="companies-button secondary" id="export-companies" type="button" data-required-permission="valet_companies.view">
         <i class="fa-solid fa-download" aria-hidden="true"></i>
         <span>Export</span>
       </button>
-      <button class="companies-button primary" id="add-company" type="button">
+      <button class="companies-button primary" id="add-company" type="button" data-required-permission="valet_companies.create">
         <i class="fa-solid fa-plus" aria-hidden="true"></i>
         <span>Add Company</span>
       </button>
@@ -169,12 +169,20 @@
       </section>
 
       <section class="company-form-section">
-        <div class="company-form-section-title"><span>3</span><div><h3>Account Assignment</h3><p>Link available tenant accounts now or assign them later</p></div></div>
+        <div class="company-form-section-title"><span>3</span><div><h3>Management Accounts</h3><p>Assign existing unassigned dashboard accounts to this company.</p></div></div>
+        <div class="company-assignment-toolbar">
+          <label class="company-assignment-search"><span class="sr-only">Search management accounts</span><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><input id="company-account-search" type="search" placeholder="Search name or email" autocomplete="off" /></label>
+          <strong id="company-account-selected">0 selected</strong>
+        </div>
         <div class="company-option-list" id="company-account-options" aria-live="polite"></div>
       </section>
 
       <section class="company-form-section">
-        <div class="company-form-section-title"><span>4</span><div><h3>Location Assignment</h3><p>Assign currently available locations</p></div></div>
+        <div class="company-form-section-title"><span>4</span><div><h3>Location Assignment</h3><p>Assign existing unassigned parking locations to this company.</p></div></div>
+        <div class="company-assignment-toolbar">
+          <label class="company-assignment-search"><span class="sr-only">Search locations</span><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><input id="company-location-search" type="search" placeholder="Search name or city" autocomplete="off" /></label>
+          <strong id="company-location-selected">0 selected</strong>
+        </div>
         <div class="company-option-list" id="company-location-options" aria-live="polite"></div>
       </section>
 

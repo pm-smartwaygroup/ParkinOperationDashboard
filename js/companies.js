@@ -11,6 +11,15 @@ const companyPageState = {
   searchTimer: null,
 };
 
+const companyAssignmentState = {
+  accounts: [],
+  locations: [],
+  accountSearch: "",
+  locationSearch: "",
+  selectedAccountIds: new Set(),
+  selectedLocationIds: new Set(),
+};
+
 function getCompanyApiBaseUrl() {
   return window.PARKIN_CONFIG?.apiBaseUrl || "https://api.parkin.com.sa";
 }
@@ -432,6 +441,14 @@ function resetCompanyForm() {
   document.querySelector("#company-record-id").value = "";
   document.querySelector("#company-status").value = "ACTIVE";
   document.querySelector("#company-notes-count").textContent = "0";
+  companyAssignmentState.accounts = [];
+  companyAssignmentState.locations = [];
+  companyAssignmentState.accountSearch = "";
+  companyAssignmentState.locationSearch = "";
+  companyAssignmentState.selectedAccountIds = new Set();
+  companyAssignmentState.selectedLocationIds = new Set();
+  document.querySelector("#company-account-search").value = "";
+  document.querySelector("#company-location-search").value = "";
   clearCompanyFormAlert();
 }
 
@@ -461,41 +478,78 @@ function populateCompanyForm(company) {
   );
 }
 
-function renderCompanyAssignmentOptions(options, selectedAccounts = [], selectedLocations = []) {
+function getSelectedAssignmentIds(name) {
+  return new Set(
+    Array.from(document.querySelectorAll(`input[name="${name}"]:checked`)).map(
+      (input) => input.value,
+    ),
+  );
+}
+
+function renderCompanyAssignmentOptions(options = companyAssignmentState, selectedAccounts, selectedLocations) {
   const accountContainer = document.querySelector("#company-account-options");
   const locationContainer = document.querySelector("#company-location-options");
-  const selectedAccountIds = new Set(selectedAccounts.map((account) => account.id));
-  const selectedLocationIds = new Set(selectedLocations.map((location) => location.id));
+
+  if (options.accounts) {
+    companyAssignmentState.accounts = options.accounts;
+    companyAssignmentState.locations = options.locations || [];
+  }
+  if (selectedAccounts) {
+    companyAssignmentState.selectedAccountIds = new Set(selectedAccounts.map((account) => account.id));
+  } else {
+    getSelectedAssignmentIds("accountIds").forEach((id) => companyAssignmentState.selectedAccountIds.add(id));
+  }
+  if (selectedLocations) {
+    companyAssignmentState.selectedLocationIds = new Set(selectedLocations.map((location) => location.id));
+  } else {
+    getSelectedAssignmentIds("locationIds").forEach((id) => companyAssignmentState.selectedLocationIds.add(id));
+  }
+
+  const accountSearch = companyAssignmentState.accountSearch.toLowerCase();
+  const locationSearch = companyAssignmentState.locationSearch.toLowerCase();
+  const accounts = companyAssignmentState.accounts.filter((account) =>
+    `${account.name} ${account.email}`.toLowerCase().includes(accountSearch),
+  );
+  const locations = companyAssignmentState.locations.filter((location) =>
+    `${location.name} ${location.city}`.toLowerCase().includes(locationSearch),
+  );
 
   if (accountContainer) {
-    accountContainer.innerHTML = options.accounts?.length
-      ? options.accounts
+    accountContainer.innerHTML = accounts.length
+      ? accounts
           .map(
             (account) => `
               <label class="company-option-card">
-                <input type="checkbox" name="accountIds" value="${escapeCompanyHtml(account.id)}" ${selectedAccountIds.has(account.id) ? "checked" : ""} />
+                <input type="checkbox" name="accountIds" value="${escapeCompanyHtml(account.id)}" ${companyAssignmentState.selectedAccountIds.has(account.id) ? "checked" : ""} />
                 <span><strong>${escapeCompanyHtml(account.name)}</strong><small>${escapeCompanyHtml(account.email)} · ${escapeCompanyHtml(formatCompanyStatus(account.role))}</small></span>
               </label>
             `,
           )
           .join("")
-      : `<p class="company-options-empty">No unassigned management accounts are available.</p>`;
+      : companyAssignmentState.accounts.length
+        ? `<p class="company-options-empty">No accounts match this search.</p>`
+        : `<p class="company-options-empty"><strong>No accounts available for assignment</strong><br />All eligible management accounts currently belong to a valet company. You can create this company now and assign accounts later.</p>`;
   }
 
   if (locationContainer) {
-    locationContainer.innerHTML = options.locations?.length
-      ? options.locations
+    locationContainer.innerHTML = locations.length
+      ? locations
           .map(
             (location) => `
               <label class="company-option-card">
-                <input type="checkbox" name="locationIds" value="${escapeCompanyHtml(location.id)}" ${selectedLocationIds.has(location.id) ? "checked" : ""} />
+                <input type="checkbox" name="locationIds" value="${escapeCompanyHtml(location.id)}" ${companyAssignmentState.selectedLocationIds.has(location.id) ? "checked" : ""} />
                 <span><strong>${escapeCompanyHtml(location.name)}</strong><small>${escapeCompanyHtml(`${location.city} · ${location.code}`)}</small></span>
               </label>
             `,
           )
           .join("")
-      : `<p class="company-options-empty">No unassigned locations are available. You can assign locations later.</p>`;
+      : companyAssignmentState.locations.length
+        ? `<p class="company-options-empty">No locations match this search.</p>`
+        : `<p class="company-options-empty"><strong>No locations available for assignment</strong><br />All locations currently belong to a valet company. You can create this company now and assign or transfer locations later.</p>`;
   }
+
+  document.querySelector("#company-account-selected").textContent = `${companyAssignmentState.selectedAccountIds.size} selected`;
+  document.querySelector("#company-location-selected").textContent = `${companyAssignmentState.selectedLocationIds.size} selected`;
 }
 
 async function openCompanyDrawer(companyId = null) {
@@ -550,10 +604,6 @@ async function openCompanyDrawer(companyId = null) {
 
 function collectCompanyFormPayload() {
   const value = (id) => document.querySelector(`#${id}`)?.value?.trim() || "";
-  const checkedValues = (name) =>
-    Array.from(document.querySelectorAll(`input[name="${name}"]:checked`)).map(
-      (input) => input.value,
-    );
 
   return {
     code: value("company-code").toUpperCase(),
@@ -570,8 +620,8 @@ function collectCompanyFormPayload() {
     phone: value("company-phone").replace(/\s+/g, ""),
     website: value("company-website") || undefined,
     notes: value("company-notes") || undefined,
-    accountIds: checkedValues("accountIds"),
-    locationIds: checkedValues("locationIds"),
+    accountIds: [...companyAssignmentState.selectedAccountIds],
+    locationIds: [...companyAssignmentState.selectedLocationIds],
   };
 }
 
@@ -807,6 +857,34 @@ function bindCompanyPageEvents(container) {
     document.querySelector("#company-notes-count").textContent = String(
       event.target.value.length,
     );
+  });
+
+  container.addEventListener("change", (event) => {
+    const accountInput = event.target.closest('input[name="accountIds"]');
+    const locationInput = event.target.closest('input[name="locationIds"]');
+
+    if (accountInput) {
+      if (accountInput.checked) companyAssignmentState.selectedAccountIds.add(accountInput.value);
+      else companyAssignmentState.selectedAccountIds.delete(accountInput.value);
+      renderCompanyAssignmentOptions();
+      return;
+    }
+
+    if (locationInput) {
+      if (locationInput.checked) companyAssignmentState.selectedLocationIds.add(locationInput.value);
+      else companyAssignmentState.selectedLocationIds.delete(locationInput.value);
+      renderCompanyAssignmentOptions();
+    }
+  });
+
+  document.querySelector("#company-account-search")?.addEventListener("input", (event) => {
+    companyAssignmentState.accountSearch = event.target.value.trim();
+    renderCompanyAssignmentOptions();
+  });
+
+  document.querySelector("#company-location-search")?.addEventListener("input", (event) => {
+    companyAssignmentState.locationSearch = event.target.value.trim();
+    renderCompanyAssignmentOptions();
   });
 
   document.addEventListener("keydown", (event) => {

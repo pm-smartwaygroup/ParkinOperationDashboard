@@ -1,9 +1,204 @@
 let customerTrendCharts = [];
+let customerDetailsAbortController = null;
+let customerDetailsRequestId = 0;
+let customerListAbortController = null;
+let customerListRequestId = 0;
+let customerEditReturnRoute = null;
+let customerEditAbortController = null;
+let customerEditRequestId = 0;
+const customerListState = {
+  page: 1,
+  limit: 20,
+  search: "",
+  status: "",
+  customerType: "",
+  sort: "createdAt_desc",
+  controlsBound: false,
+};
+
+const DEMO_CUSTOMER_RECORDS = Object.freeze([
+  Object.freeze({
+    displayId: "CUS-1001",
+    databaseId: "11111111-1111-4111-8111-111111111001",
+  }),
+  Object.freeze({
+    displayId: "CUS-1002",
+    databaseId: "11111111-1111-4111-8111-111111111002",
+  }),
+  Object.freeze({
+    displayId: "CUS-1003",
+    databaseId: "11111111-1111-4111-8111-111111111003",
+  }),
+]);
+
+function resolveCustomerRecord(routeIdentifier) {
+  const identifier = String(routeIdentifier || "").trim();
+  const demoRecord = DEMO_CUSTOMER_RECORDS.find(
+    (record) => record.displayId === identifier,
+  );
+  if (demoRecord) return demoRecord;
+  if (isCustomerDatabaseId(identifier)) {
+    return { displayId: identifier, databaseId: identifier };
+  }
+  return null;
+}
+
+function resolveCustomerDatabaseId(routeIdentifier) {
+  return resolveCustomerRecord(routeIdentifier)?.databaseId || null;
+}
+
+window.resolveCustomerRecord = resolveCustomerRecord;
+window.resolveCustomerDatabaseId = resolveCustomerDatabaseId;
+
+function getCustomerDetailsRouteHash(tab = "") {
+  const customerId = getCurrentCustomerId();
+  if (!customerId) return "#customers";
+  const query = new URLSearchParams({ id: customerId });
+  if (tab) query.set("tab", tab);
+  return `#customer-details?${query.toString()}`;
+}
+
+function navigateToCustomerEdit(customerId, returnRoute) {
+  if (!customerId) return;
+
+  const encodedId = encodeURIComponent(customerId);
+  const editHash = `#edit-customer?id=${encodedId}`;
+  customerEditReturnRoute =
+    returnRoute || `#customer-details?id=${encodedId}`;
+
+  window.location.hash = editHash;
+}
+
+function getCustomerEditReturnRoute(customerId) {
+  if (customerEditReturnRoute) return customerEditReturnRoute;
+  return "#customers";
+}
 
 function getCustomerVehicleApiBaseUrl() {
+  return window.PARKIN_CONFIG?.apiBaseUrl || "https://api.parkin.com.sa";
+}
+
+function getCustomerManagementApiBaseUrl() {
   return (
-    window.PARKIN_CONFIG?.apiBaseUrl ||
+    window.PARKIN_CONFIG?.userManagementApiBaseUrl ||
     "https://api.parkin.com.sa"
+  );
+}
+
+function getCustomerManagementAuthHeaders() {
+  const accessToken = localStorage.getItem("parkin_access_token");
+  if (!accessToken) {
+    throw new Error("Your login session has expired. Please sign in again.");
+  }
+  return {
+    Authorization: `Bearer ${accessToken}`,
+    "Content-Type": "application/json",
+  };
+}
+
+async function fetchCustomerRecord(customerId, signal) {
+  const response = await fetch(
+    `${getCustomerManagementApiBaseUrl()}/customers/${encodeURIComponent(customerId)}`,
+    { headers: getCustomerManagementAuthHeaders(), signal },
+  );
+  const body = await response.json().catch(() => null);
+  if (!response.ok) {
+    const error = new Error("Unable to load customer.");
+    error.status = response.status;
+    throw error;
+  }
+  return body?.data?.customer || body?.customer || body?.data || body;
+}
+
+async function hydrateDemoCustomerRows(container) {
+  const rows = [...container.querySelectorAll(".customers-row")].filter(
+    (row) => !row.classList.contains("customers-head"),
+  );
+  const displayIds = DEMO_CUSTOMER_RECORDS.map((record) => record.displayId);
+
+  rows.forEach((row, index) => {
+    const displayId = displayIds[index];
+    if (!displayId) return;
+    row.dataset.customerId = displayId;
+    row.querySelectorAll("[data-customer-action]").forEach((action) => {
+      const permissionByAction = {
+        view: "customers.view",
+        edit: "customers.edit",
+        vehicle: "vehicles.create",
+        bookings: "bookings.view",
+      };
+      const permission = permissionByAction[action.dataset.customerAction];
+      if (permission) action.dataset.requiredPermission = permission;
+      action.dataset.customerId = displayId;
+    });
+    row.querySelector(".customer-more-btn")?.setAttribute(
+      "data-customer-id",
+      displayId,
+    );
+  });
+
+  const records = await Promise.all(
+    displayIds.map(async (displayId) => {
+      try {
+        return [
+          displayId,
+          await fetchCustomerRecord(resolveCustomerRecord(displayId).databaseId),
+        ];
+      } catch (error) {
+        return [displayId, null];
+      }
+    }),
+  );
+
+  records.forEach(([displayId, customer]) => {
+    if (!customer) return;
+    const row = rows[displayIds.indexOf(displayId)];
+    if (!row) return;
+    const setText = (selector, value) => {
+      const element = row.querySelector(selector);
+      if (element && value !== undefined && value !== null) element.textContent = value;
+    };
+    setText(".customer-profile b", customer.fullName || "Customer");
+    setText(".customer-profile small", displayId);
+    setText(".customer-contact-line:nth-child(1) span", customer.phoneNumber ? `${customer.phoneCountryCode || "+966"} ${customer.phoneNumber}` : "-");
+    setText(".customer-contact-line:nth-child(2) span", customer.email || "-");
+    setText(".customer-status", formatCustomerStatus(customer.status));
+  });
+}
+
+function filterDemoCustomerRows(container) {
+  const searchInput = container.querySelector(
+    "#customers-search, .customers-search input",
+  );
+  const statusFilter = container.querySelector(
+    "#customers-status-filter, .customers-table-controls select[aria-label*='status' i]",
+  );
+  const typeFilter = container.querySelector(
+    "#customers-type-filter, .customers-table-controls select[aria-label*='type' i]",
+  );
+  const search = searchInput?.value.trim().toLowerCase() || "";
+  const statusValue = statusFilter?.value.trim().toLowerCase() || "";
+  const typeValue = typeFilter?.value.trim().toLowerCase() || "";
+  const status = statusValue.startsWith("all") ? "" : statusValue;
+  const type = typeValue.startsWith("all") ? "" : typeValue;
+  const rows = [...container.querySelectorAll(".customers-row")].filter(
+    (row) => !row.classList.contains("customers-head"),
+  );
+
+  rows.forEach((row) => {
+    const matchesSearch = !search || row.textContent.toLowerCase().includes(search);
+    const rowStatus = row.querySelector(".customer-status")?.textContent.toLowerCase() || "";
+    const rowType = row.querySelector(".customer-type")?.textContent.toLowerCase() || "";
+    row.hidden =
+      !matchesSearch ||
+      (status && !rowStatus.includes(status)) ||
+      (type && !rowType.includes(type));
+  });
+}
+
+function isCustomerDatabaseId(customerId) {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+    customerId || "",
   );
 }
 
@@ -36,7 +231,7 @@ async function parseCustomerVehicleResponse(response) {
   return result?.data ?? result;
 }
 
-async function loadCustomersPage() {
+async function loadCustomersPage(page = customerListState.page) {
   const view = document.querySelector("#customers-view");
 
   const container = document.querySelector("#customers-container");
@@ -46,32 +241,117 @@ async function loadCustomersPage() {
     return;
   }
 
+  if (getDashboardRoute().name !== "customers") return;
+
+  customerListState.page = page;
+
+  customerListAbortController?.abort();
+  const listController = new AbortController();
+  customerListAbortController = listController;
+  const listRequestId = ++customerListRequestId;
+
   hideAllCustomerViews();
+  customerDetailsAbortController?.abort();
+  customerDetailsRequestId += 1;
 
   view.classList.remove("hidden");
+  const tableBody = container.querySelector("#customers-table-body");
+  tableBody?.replaceChildren(createCustomerListMessage("Loading customers..."));
 
   try {
     if (container.dataset.loaded !== "true" || !container.innerHTML.trim()) {
-      const response = await fetch("/pages/customers.html");
+      const response = await fetch("/pages/customers.html", {
+        signal: listController.signal,
+      });
 
       if (!response.ok) {
         throw new Error(`Unable to load Customers page: ${response.status}`);
       }
 
-      container.innerHTML = await response.text();
+      const markup = await response.text();
+      if (
+        listController.signal.aborted ||
+        listRequestId !== customerListRequestId ||
+        getDashboardRoute().name !== "customers"
+      ) {
+        return;
+      }
+      container.innerHTML = markup;
 
       container.dataset.loaded = "true";
     }
 
+    bindCustomerListControls(container);
+
+    if (window.PARKIN_CONFIG?.customerDataMode === "demo") {
+      await hydrateDemoCustomerRows(container);
+      if (
+        listController.signal.aborted ||
+        listRequestId !== customerListRequestId ||
+        getDashboardRoute().name !== "customers"
+      ) {
+        return;
+      }
+      bindCustomerActions();
+      bindCustomerTableSelection();
+      bindCustomerActionMenus();
+      window.applyDashboardPermissionVisibility?.(container);
+      initCustomerTrendCharts();
+      return;
+    }
+
+    const query = new URLSearchParams({
+      page: String(customerListState.page),
+      limit: String(customerListState.limit),
+      sort: customerListState.sort,
+    });
+    if (customerListState.search) query.set("search", customerListState.search);
+    if (customerListState.status) query.set("status", customerListState.status);
+    if (customerListState.customerType) {
+      query.set("customerType", customerListState.customerType);
+    }
+
+    const response = await fetch(
+      `${getCustomerManagementApiBaseUrl()}/customers?${query.toString()}`,
+      {
+        headers: getCustomerManagementAuthHeaders(),
+        signal: listController.signal,
+      },
+    );
+    const body = await response.json().catch(() => null);
+    if (!response.ok) {
+      const error = new Error("Unable to load customers.");
+      error.status = response.status;
+      throw error;
+    }
+    const result = body?.data || body;
+    if (
+      listController.signal.aborted ||
+      listRequestId !== customerListRequestId ||
+      getDashboardRoute().name !== "customers"
+    ) {
+      return;
+    }
+
+    renderCustomerList(container, result?.customers || [], result?.pagination);
     bindCustomerActions();
     bindCustomerTableSelection();
     bindCustomerActionMenus();
+    window.applyDashboardPermissionVisibility?.(container);
 
     setTimeout(() => {
       initCustomerTrendCharts();
     }, 100);
   } catch (error) {
+    if (
+      error?.name === "AbortError" ||
+      listRequestId !== customerListRequestId ||
+      getDashboardRoute().name !== "customers"
+    ) {
+      return;
+    }
     console.error("Unable to load Customers page:", error);
+    customerListState.controlsBound = false;
 
     container.innerHTML = `
       <section class="page-load-error">
@@ -98,8 +378,263 @@ async function loadCustomersPage() {
   }
 }
 
+function createCustomerListMessage(message) {
+  const state = document.createElement("div");
+  state.className = "customers-loading-state";
+  state.textContent = message;
+  return state;
+}
+
+function createCustomerText(tagName, value, className = "") {
+  const element = document.createElement(tagName);
+  if (className) element.className = className;
+  element.textContent = value || "-";
+  return element;
+}
+
+function formatCustomerType(value) {
+  return String(value || "-")
+    .toLowerCase()
+    .replaceAll("_", " ")
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function formatCustomerStatus(value) {
+  return String(value || "-")
+    .toLowerCase()
+    .replaceAll("_", " ")
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function createCustomerRow(customer) {
+  const row = document.createElement("div");
+  row.className = "customers-row";
+  row.dataset.customerId = customer.id;
+
+  const checkboxCell = document.createElement("span");
+  checkboxCell.className = "customer-checkbox";
+  const checkbox = document.createElement("input");
+  checkbox.type = "checkbox";
+  checkbox.className = "customer-row-checkbox";
+  checkbox.setAttribute(
+    "aria-label",
+    `Select ${customer.fullName || "customer"}`,
+  );
+  checkboxCell.append(checkbox);
+
+  const profile = document.createElement("span");
+  profile.className = "customer-profile";
+  const initials = createCustomerText(
+    "span",
+    String(customer.fullName || "C")
+      .split(/\s+/)
+      .map((part) => part[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase(),
+    "customer-profile-placeholder",
+  );
+  const name = document.createElement("b");
+  name.append(createCustomerText("span", customer.fullName, "customer-name"));
+  profile.append(initials, name);
+
+  const contact = document.createElement("span");
+  contact.className = "customer-contact";
+  contact.append(
+    createCustomerText(
+      "span",
+      customer.phoneNumber
+        ? `${customer.phoneCountryCode || "+966"} ${customer.phoneNumber}`
+        : "-",
+      "customer-contact-line",
+    ),
+    createCustomerText("span", customer.email || "-", "customer-contact-line"),
+  );
+
+  const type = document.createElement("span");
+  type.append(
+    createCustomerText(
+      "em",
+      formatCustomerType(customer.customerType),
+      "customer-type",
+    ),
+  );
+  const location = createCustomerText("span", "-");
+  const vehicles = createCustomerText("span", "-", "customer-vehicles");
+  const bookings = createCustomerText("span", "-");
+  const spent = createCustomerText("span", "-");
+  const activity = createCustomerText("span", "-");
+  const status = document.createElement("span");
+  const statusBadge = createCustomerText(
+    "strong",
+    formatCustomerStatus(customer.status),
+    "customer-status",
+  );
+  statusBadge.classList.add(String(customer.status || "").toLowerCase());
+  status.append(statusBadge);
+
+  const actions = document.createElement("span");
+  actions.className = "customer-actions-cell";
+  const toggle = document.createElement("button");
+  toggle.type = "button";
+  toggle.className = "customer-more-btn";
+  toggle.dataset.customerId = customer.id;
+  toggle.setAttribute(
+    "aria-label",
+    `Open actions for ${customer.fullName || "customer"}`,
+  );
+  toggle.setAttribute("aria-expanded", "false");
+  toggle.textContent = "...";
+  const menu = document.createElement("div");
+  menu.className = "customer-actions-menu hidden";
+  [
+    ["view", "View Customer", ""],
+    ["edit", "Edit Customer", "customers.edit"],
+    ["vehicle", "Add Vehicle", "vehicles.create"],
+  ].forEach(([action, label, permission]) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.dataset.customerAction = action;
+    if (permission) button.dataset.requiredPermission = permission;
+    button.textContent = label;
+    menu.append(button);
+  });
+  actions.append(toggle, menu);
+
+  row.append(
+    checkboxCell,
+    profile,
+    contact,
+    type,
+    location,
+    vehicles,
+    bookings,
+    spent,
+    activity,
+    status,
+    actions,
+  );
+  return row;
+}
+
+function renderCustomerPagination(container, page, totalPages) {
+  const controls = container.querySelector("#customers-pagination-controls");
+  if (!controls) return;
+  controls.replaceChildren();
+  if (totalPages <= 1) return;
+
+  const addButton = (label, targetPage, disabled, active = false) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.textContent = label;
+    button.disabled = disabled;
+    button.classList.toggle("active", active);
+    button.addEventListener("click", () => loadCustomersPage(targetPage));
+    controls.append(button);
+  };
+  addButton("Previous", page - 1, page <= 1);
+  for (let current = 1; current <= totalPages; current += 1) {
+    if (
+      current <= 3 ||
+      current === totalPages ||
+      Math.abs(current - page) <= 1
+    ) {
+      addButton(String(current), current, false, current === page);
+    }
+  }
+  addButton("Next", page + 1, page >= totalPages);
+}
+
+function renderCustomerList(container, customers, pagination) {
+  const tableBody = container.querySelector("#customers-table-body");
+  if (!tableBody) return;
+  tableBody.replaceChildren();
+  if (customers.length) {
+    customers.forEach((customer) =>
+      tableBody.append(createCustomerRow(customer)),
+    );
+  } else {
+    tableBody.append(createCustomerListMessage("No customers found."));
+  }
+
+  const total = Number(pagination?.total || 0);
+  const page = Number(pagination?.page || customerListState.page);
+  const limit = Number(pagination?.limit || customerListState.limit);
+  const totalPages = Number(pagination?.totalPages || 0);
+  const start = total ? (page - 1) * limit + 1 : 0;
+  const end = total ? Math.min(page * limit, total) : 0;
+  container
+    .querySelector("#customers-total-count")
+    ?.replaceChildren(String(total));
+  container
+    .querySelector("#customers-result-count")
+    ?.replaceChildren(`${total} customer${total === 1 ? "" : "s"} found`);
+  container
+    .querySelector("#customers-pagination-label")
+    ?.replaceChildren(
+      total
+        ? `Showing ${start}-${end} of ${total} customers`
+        : "No customers found",
+    );
+  renderCustomerPagination(container, page, totalPages);
+}
+
+function bindCustomerListControls(container) {
+  if (customerListState.controlsBound) return;
+  customerListState.controlsBound = true;
+  let searchTimer;
+  const searchInput = container.querySelector(
+    "#customers-search, .customers-search input",
+  );
+  const statusFilter = container.querySelector(
+    "#customers-status-filter, .customers-table-controls select[aria-label*='status' i]",
+  );
+  const typeFilter = container.querySelector(
+    "#customers-type-filter, .customers-table-controls select[aria-label*='type' i]",
+  );
+  const sortFilter = container.querySelector(
+    "#customers-sort, .customers-table-controls select[aria-label*='sort' i]",
+  );
+  searchInput?.addEventListener("input", (event) => {
+      customerListState.search = event.target.value.trim();
+      customerListState.page = 1;
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => {
+        if (window.PARKIN_CONFIG?.customerDataMode === "demo") {
+          filterDemoCustomerRows(container);
+        } else {
+          loadCustomersPage(1);
+        }
+      }, 350);
+    });
+  statusFilter?.addEventListener("change", (event) => {
+      customerListState.status = event.target.value;
+      if (window.PARKIN_CONFIG?.customerDataMode === "demo") {
+        filterDemoCustomerRows(container);
+      } else {
+        loadCustomersPage(1);
+      }
+    });
+  typeFilter?.addEventListener("change", (event) => {
+      customerListState.customerType = event.target.value;
+      if (window.PARKIN_CONFIG?.customerDataMode === "demo") {
+        filterDemoCustomerRows(container);
+      } else {
+        loadCustomersPage(1);
+      }
+    });
+  sortFilter?.addEventListener("change", (event) => {
+      customerListState.sort = event.target.value;
+      loadCustomersPage(1);
+    });
+}
+
 function bindCustomerActions() {
-  document.querySelector(".customer-add-btn")?.addEventListener("click", () => {
+  const addButton = document.querySelector(".customer-add-btn");
+  if (!addButton || addButton.dataset.bound === "true") return;
+  addButton.dataset.bound = "true";
+  addButton.addEventListener("click", () => {
+    if (!window.hasDashboardPermission?.("customers.create")) return;
     window.location.hash = "add-customer";
   });
 }
@@ -138,113 +673,94 @@ function bindCustomerTableSelection() {
 }
 
 function bindCustomerActionMenus() {
-  const buttons = document.querySelectorAll(".customer-more-btn");
+  const page = document.querySelector(".customers-page");
+  if (!page || page.dataset.actionMenusBound === "true") return;
+  page.dataset.actionMenusBound = "true";
 
-  buttons.forEach((button) => {
-    if (button.dataset.bound === "true") return;
+  page.addEventListener("click", (event) => {
+    const target =
+      event.target instanceof Element
+        ? event.target
+        : event.target.parentElement;
+    const toggle = target?.closest(".customer-more-btn");
+    const actionButton = target?.closest("[data-customer-action]");
 
-    button.dataset.bound = "true";
-
-    button.addEventListener("click", (event) => {
+    if (toggle) {
       event.preventDefault();
       event.stopPropagation();
-
-      const cell = button.closest(".customer-actions-cell");
+      const cell = toggle.closest(".customer-actions-cell");
       const menu = cell?.querySelector(".customer-actions-menu");
-
-      if (!menu) {
-        console.warn("Customer actions menu not found for button:", button);
-        return;
-      }
-
-      document.querySelectorAll(".customer-actions-menu").forEach((item) => {
-        if (item !== menu) {
-          item.classList.add("hidden");
-        }
-      });
-
-      document.querySelectorAll(".customer-more-btn").forEach((item) => {
-        if (item !== button) {
-          item.setAttribute("aria-expanded", "false");
-        }
-      });
+      if (!menu) return;
 
       const shouldOpen = menu.classList.contains("hidden");
-
+      closeCustomerActionMenus();
       if (shouldOpen) {
-        const rect = button.getBoundingClientRect();
+        const rect = toggle.getBoundingClientRect();
         const menuWidth = 230;
         const pagePadding = 12;
-
-        let left = rect.right - menuWidth;
-
-        if (left < pagePadding) {
-          left = pagePadding;
-        }
-
-        if (left + menuWidth > window.innerWidth - pagePadding) {
-          left = window.innerWidth - menuWidth - pagePadding;
-        }
-
+        const left = Math.max(
+          pagePadding,
+          Math.min(
+            rect.right - menuWidth,
+            window.innerWidth - menuWidth - pagePadding,
+          ),
+        );
         menu.style.top = `${rect.bottom + 8}px`;
         menu.style.left = `${left}px`;
       }
-
       menu.classList.toggle("hidden", !shouldOpen);
-      button.setAttribute("aria-expanded", String(shouldOpen));
-    });
+      toggle.setAttribute("aria-expanded", String(shouldOpen));
+      return;
+    }
+
+    if (!actionButton) return;
+    event.preventDefault();
+    event.stopPropagation();
+
+    const customerId =
+      actionButton.closest(".customers-row")?.dataset.customerId;
+    const action = actionButton.dataset.customerAction;
+    closeCustomerActionMenus();
+    if (!customerId) {
+      window.showDashboardAlert?.(
+        "Customer ID is unavailable for this action.",
+        {
+          title: "Customer action unavailable",
+          type: "error",
+        },
+      );
+      return;
+    }
+
+    if (
+      action === "view" &&
+      window.hasDashboardPermission?.("customers.view")
+    ) {
+      window.location.hash = `customer-details?id=${encodeURIComponent(customerId)}`;
+    } else if (
+      action === "edit" &&
+      window.hasDashboardPermission?.("customers.edit")
+    ) {
+      navigateToCustomerEdit(customerId, "#customers");
+    } else if (
+      action === "vehicle" &&
+      window.hasDashboardPermission?.("vehicles.create")
+    ) {
+      window.location.hash = `customer-add-vehicle?id=${encodeURIComponent(customerId)}`;
+    } else if (
+      action === "bookings" &&
+      window.hasDashboardPermission?.("bookings.view")
+    ) {
+      window.location.hash = `customer-details?id=${encodeURIComponent(customerId)}&tab=bookings`;
+    }
   });
-
-  document
-    .querySelectorAll(".customer-actions-menu [data-customer-action]")
-    .forEach((actionButton) => {
-      if (actionButton.dataset.actionBound === "true") return;
-
-      actionButton.dataset.actionBound = "true";
-
-      actionButton.addEventListener("click", (event) => {
-        event.stopPropagation();
-
-        const action = actionButton.dataset.customerAction;
-
-        document.querySelectorAll(".customer-actions-menu").forEach((menu) => {
-          menu.classList.add("hidden");
-        });
-
-        document.querySelectorAll(".customer-more-btn").forEach((button) => {
-          button.setAttribute("aria-expanded", "false");
-        });
-
-        if (action === "view") {
-          window.location.hash = "customer-details";
-
-          loadCustomerDetailsPage("overview");
-
-          return;
-        }
-
-        if (action === "edit") {
-          window.location.hash = "edit-customer";
-          return;
-        }
-
-        console.log("Customer action:", action);
-      });
-    });
 
   if (document.body.dataset.customerMenuBound !== "true") {
     document.body.dataset.customerMenuBound = "true";
-
-    document.addEventListener("click", () => {
-      document.querySelectorAll(".customer-actions-menu").forEach((menu) => {
-        menu.classList.add("hidden");
-      });
-
-      document.querySelectorAll(".customer-more-btn").forEach((button) => {
-        button.setAttribute("aria-expanded", "false");
-      });
+    document.addEventListener("click", (event) => {
+      if (event.target.closest(".customers-page")) return;
+      closeCustomerActionMenus();
     });
-
     window.addEventListener("resize", closeCustomerActionMenus);
     window.addEventListener("scroll", closeCustomerActionMenus, true);
   }
@@ -460,7 +976,10 @@ function bindAddCustomerForm() {
   updateSummary();
 }
 
-async function loadCustomerDetailsPage(initialTab = "overview") {
+async function loadCustomerDetailsPage(
+  initialTab = "overview",
+  customerId = getCurrentCustomerId(),
+) {
   const view = document.querySelector("#customer-details-view");
 
   const container = document.querySelector("#customer-details-container");
@@ -470,23 +989,50 @@ async function loadCustomerDetailsPage(initialTab = "overview") {
     return;
   }
 
+  if (
+    getDashboardRoute().name !== "customer-details" ||
+    !customerId ||
+    getCurrentCustomerId() !== customerId
+  ) {
+    if (getDashboardRoute().name === "customer-details" && !customerId) {
+      window.location.hash = "customers";
+    }
+    return;
+  }
+
+  customerDetailsAbortController?.abort();
+  const controller = new AbortController();
+  customerDetailsAbortController = controller;
+  const requestId = ++customerDetailsRequestId;
+
   hideAllCustomerViews();
 
   view.classList.remove("hidden");
 
   try {
     if (container.dataset.loaded !== "true" || !container.innerHTML.trim()) {
-      const response = await fetch("/pages/customer-details.html");
+      const response = await fetch("/pages/customer-details.html", {
+        signal: controller.signal,
+      });
 
       if (!response.ok) {
-        throw new Error(
-          `Unable to load Customer Details page: ${response.status}`,
-        );
+        const error = new Error("Unable to load Customer Details.");
+        error.status = response.status;
+        throw error;
       }
 
       container.innerHTML = await response.text();
 
       container.dataset.loaded = "true";
+    }
+
+    if (
+      controller.signal.aborted ||
+      requestId !== customerDetailsRequestId ||
+      getDashboardRoute().name !== "customer-details" ||
+      getCurrentCustomerId() !== customerId
+    ) {
+      return;
     }
 
     bindCustomerDetailsActions();
@@ -496,19 +1042,52 @@ async function loadCustomerDetailsPage(initialTab = "overview") {
     bindCustomerBookingsList();
     bindCustomerPaymentMethodActions();
     bindCustomerActivityLog();
+    const databaseId = resolveCustomerDatabaseId(customerId);
+    const customer = databaseId
+      ? await fetchCustomerRecord(databaseId, controller.signal)
+      : null;
+    if (
+      controller.signal.aborted ||
+      requestId !== customerDetailsRequestId ||
+      getDashboardRoute().name !== "customer-details" ||
+      getCurrentCustomerId() !== customerId
+    ) {
+      return;
+    }
+    if (customer) populateCustomerDetails(customer);
+    window.applyDashboardPermissionVisibility?.(container);
 
     activateCustomerDetailsTab(initialTab);
   } catch (error) {
+    if (
+      error?.name === "AbortError" ||
+      requestId !== customerDetailsRequestId ||
+      getDashboardRoute().name !== "customer-details"
+    ) {
+      return;
+    }
+
     console.error("Unable to load Customer Details:", error);
 
     container.innerHTML = `
       <section class="page-load-error">
-        <h2>Unable to load Customer Details</h2>
-        <p>Please refresh the page and try again.</p>
+        <h2>${error?.status === 404 ? "Customer not found" : "Unable to load Customer Details"}</h2>
+        <p>${error?.status === 403 ? "You do not have permission to view this customer." : "Please refresh the page and try again."}</p>
       </section>
     `;
   }
 }
+
+function cancelCustomerRequests() {
+  customerDetailsAbortController?.abort();
+  customerListAbortController?.abort();
+  customerEditAbortController?.abort();
+  customerDetailsRequestId += 1;
+  customerListRequestId += 1;
+  customerEditRequestId += 1;
+}
+
+window.cancelCustomerRequests = cancelCustomerRequests;
 
 function bindCustomerVehicleActions() {
   const buttons = [
@@ -522,7 +1101,10 @@ function bindCustomerVehicleActions() {
     button.dataset.bound = "true";
 
     button.addEventListener("click", () => {
-      window.location.hash = "customer-add-vehicle";
+      if (!window.hasDashboardPermission?.("vehicles.create")) return;
+      const customerId = getCurrentCustomerId();
+      if (!customerId) return;
+      window.location.hash = `customer-add-vehicle?id=${encodeURIComponent(customerId)}`;
     });
   });
 }
@@ -530,6 +1112,29 @@ function bindCustomerVehicleActions() {
 async function loadEditCustomerPage() {
   const container = document.querySelector("#edit-customer-container");
   if (!container) return;
+
+  const customerId = getCurrentCustomerId();
+  if (getDashboardRoute().name !== "edit-customer" || !customerId) {
+    if (getDashboardRoute().name === "edit-customer") {
+      window.location.hash = "customers";
+    }
+    return;
+  }
+
+  if (
+    !customerEditReturnRoute ||
+    (customerEditReturnRoute !== "#customers" &&
+      !customerEditReturnRoute.endsWith(
+        `id=${encodeURIComponent(customerId)}`,
+      ))
+  ) {
+    customerEditReturnRoute = "#customers";
+  }
+
+  customerEditAbortController?.abort();
+  const controller = new AbortController();
+  customerEditAbortController = controller;
+  const requestId = ++customerEditRequestId;
 
   if (container.dataset.loaded !== "true") {
     const response = await fetch("/pages/edit-customer.html");
@@ -543,36 +1148,311 @@ async function loadEditCustomerPage() {
   }
 
   bindEditCustomerActions();
+  window.applyDashboardPermissionVisibility?.(container);
+
+  const databaseId = resolveCustomerDatabaseId(customerId);
+  let customer;
+  try {
+    customer = databaseId
+      ? await fetchCustomerRecord(databaseId, controller.signal)
+      : null;
+  } catch (error) {
+    if (error?.name === "AbortError") return;
+    window.showDashboardAlert?.(
+      error?.status === 404
+        ? "Customer not found."
+        : "Unable to load customer information. Please try again.",
+      { title: "Unable to load customer", type: "error" },
+    );
+    return;
+  }
+  if (
+    controller.signal.aborted ||
+    requestId !== customerEditRequestId ||
+    getDashboardRoute().name !== "edit-customer" ||
+    getCurrentCustomerId() !== customerId
+  ) {
+    return;
+  }
+
+  if (customer) populateEditCustomerForm(customer);
+  bindEditCustomerActions();
+  window.applyDashboardPermissionVisibility?.(container);
+}
+
+function populateEditCustomerForm(customer) {
+  const setValue = (selector, value) => {
+    const element = document.querySelector(selector);
+    if (element && value !== undefined && value !== null) {
+      const normalizedValue = String(value);
+      const option = [...(element.options || [])].find(
+        (item) => item.value.toUpperCase() === normalizedValue.toUpperCase(),
+      );
+      element.value = option?.value || normalizedValue;
+    }
+  };
+
+  setValue("#edit-full-name", customer.fullName);
+  setValue("#edit-email", customer.email || "");
+  setValue("#edit-phone", customer.phoneNumber || "");
+  setValue("#edit-customer-id", getCurrentCustomerId() || customer.id);
+  setValue("#edit-customer-type", customer.customerType);
+  setValue("#edit-status", customer.status);
+  setValue(
+    "#edit-member-since",
+    customer.memberSince ? String(customer.memberSince).slice(0, 10) : "",
+  );
+  setValue("#edit-language", customer.preferredLanguage || "");
+  setValue("#edit-communication", customer.communicationPreference || "");
+  setValue("#edit-notes", customer.notes || "");
+}
+
+function populateCustomerDetails(customer) {
+  const page = document.querySelector(".customer-details-page");
+  if (!page) return;
+
+  const name = String(customer.fullName || "Customer");
+  const phone = customer.phoneNumber
+    ? `${customer.phoneCountryCode || "+966"} ${customer.phoneNumber}`
+    : "-";
+  const email = customer.email || "-";
+  const status = String(customer.status || "ACTIVE");
+  const type = formatCustomerType(customer.customerType);
+  const memberSince = customer.memberSince
+    ? new Intl.DateTimeFormat("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      }).format(new Date(customer.memberSince))
+    : "-";
+  const setText = (selector, value) => {
+    const element = page.querySelector(selector);
+    if (element) element.textContent = value;
+  };
+  const infoItems = [...page.querySelectorAll(".customer-profile-info-item")];
+  const setInfoValue = (index, value) =>
+    infoItems[index]?.querySelector("b")?.replaceChildren(value);
+  setInfoValue(0, phone);
+  setInfoValue(1, email);
+  setInfoValue(3, memberSince);
+  setInfoValue(5, customer.communicationPreference || "-");
+  setInfoValue(6, customer.preferredLanguage || "-");
+  page.querySelector(".customer-profile-identity h2")?.replaceChildren(name);
+  page.querySelector(".customer-profile-identity p")?.replaceChildren(
+    getCurrentCustomerId() || customer.id,
+  );
+  page.querySelector(".customer-profile-identity .customer-app-badge")?.replaceChildren(
+    type.toUpperCase(),
+  );
+  page.querySelector(".customer-details-status")?.replaceChildren(
+    status.toLowerCase().replace(/\b\w/g, (letter) => letter.toUpperCase()),
+  );
+  const contactValues = page.querySelectorAll(
+    ".customer-contact-details-list > p > b",
+  );
+  contactValues[0]?.replaceChildren(name);
+  contactValues[1]?.replaceChildren(phone);
+  contactValues[2]?.replaceChildren(email);
+}
+
+function getEditCustomerFormValues(form) {
+  const value = (selector) => form.querySelector(selector)?.value.trim() || "";
+  return {
+    fullName: value("#edit-full-name"),
+    email: value("#edit-email"),
+    phoneCountryCode: "+966",
+    phoneNumber: value("#edit-phone"),
+    customerType: value("#edit-customer-type").toUpperCase(),
+    status: value("#edit-status").toUpperCase(),
+    memberSince: value("#edit-member-since"),
+    preferredLanguage: value("#edit-language"),
+    communicationPreference: value("#edit-communication"),
+    notes: value("#edit-notes"),
+  };
+}
+
+function editCustomerValuesForComparison(values) {
+  return JSON.stringify(values);
+}
+
+function setEditCustomerSaveState(form, dirty, saving = false) {
+  const saveButton = form.querySelector("#save-customer-btn");
+  if (!saveButton) return;
+  saveButton.disabled = saving || !dirty;
+  saveButton.innerHTML = saving
+    ? '<i class="fa-solid fa-spinner fa-spin"></i> Saving...'
+    : '<i class="fa-solid fa-floppy-disk"></i> Save Changes';
+}
+
+function customerUpdateErrorMessage(status) {
+  if (status === 400)
+    return "Please review the customer information and try again.";
+  if (status === 401)
+    return "Your login session has expired. Please sign in again.";
+  if (status === 403)
+    return "You do not have permission to edit this customer.";
+  if (status === 404) return "Customer not found.";
+  if (status === 409) return "Customer contact information already exists.";
+  return "Unable to save customer changes. Please try again.";
+}
+
+async function handleEditCustomerSubmit(event) {
+  event.preventDefault();
+  const form = event.currentTarget;
+  if (form.dataset.saving === "true") return;
+
+  const displayId = getCurrentCustomerId();
+  if (!displayId || getDashboardRoute().name !== "edit-customer") return;
+  const customerRecord = resolveCustomerRecord(displayId);
+  const databaseId = customerRecord?.databaseId;
+  if (!customerRecord || !isCustomerDatabaseId(databaseId)) {
+    window.location.hash = "customers";
+    return;
+  }
+  if (!window.hasDashboardPermission?.("customers.edit")) return;
+  if (!form.reportValidity()) return;
+
+  const values = getEditCustomerFormValues(form);
+  const original = form.dataset.originalCustomerValues || "";
+  if (editCustomerValuesForComparison(values) === original) return;
+
+  form.dataset.saving = "true";
+  setEditCustomerSaveState(form, true, true);
+  const url = `${getCustomerManagementApiBaseUrl()}/customers/${encodeURIComponent(databaseId)}`;
+  const payload = {
+    ...values,
+    memberSince: values.memberSince || undefined,
+    preferredLanguage: values.preferredLanguage || undefined,
+    communicationPreference: values.communicationPreference || undefined,
+    notes: values.notes || undefined,
+  };
+  console.debug("[Customers] PATCH customer", {
+    displayId,
+    databaseId,
+    url,
+    payload,
+  });
+
+  try {
+    const response = await fetch(url, {
+      method: "PATCH",
+      headers: getCustomerManagementAuthHeaders(),
+      body: JSON.stringify(payload),
+    });
+    if (!response.ok) {
+      const error = new Error("Customer update failed.");
+      error.status = response.status;
+      throw error;
+    }
+
+    const body = await response.json().catch(() => null);
+    const updatedCustomer = body?.data?.customer || body?.customer || body?.data;
+    mergeUpdatedCustomerIntoList(displayId, updatedCustomer || values);
+
+    form.dataset.originalCustomerValues =
+      editCustomerValuesForComparison(values);
+    form.dataset.saving = "false";
+    setEditCustomerSaveState(form, false, false);
+    window.showDashboardAlert?.("Customer updated successfully.", {
+      title: "Customer updated",
+      type: "success",
+    });
+    window.location.hash = `customer-details?id=${encodeURIComponent(displayId)}`;
+  } catch (error) {
+    form.dataset.saving = "false";
+    setEditCustomerSaveState(form, true, false);
+    window.showDashboardAlert?.(customerUpdateErrorMessage(error?.status), {
+      title: "Unable to save customer",
+      type: "error",
+    });
+  }
+}
+
+function mergeUpdatedCustomerIntoList(displayId, customer) {
+  const row = [...document.querySelectorAll(".customers-row")].find(
+    (item) => item.dataset.customerId === displayId,
+  );
+  if (!row || !customer) return;
+
+  const setText = (selector, value) => {
+    const element = row.querySelector(selector);
+    if (element && value !== undefined && value !== null) {
+      element.textContent = value;
+    }
+  };
+  setText(".customer-profile b", customer.fullName || "Customer");
+  setText(
+    ".customer-contact-line:nth-child(1) span",
+    customer.phoneNumber
+      ? `${customer.phoneCountryCode || "+966"} ${customer.phoneNumber}`
+      : "-",
+  );
+  setText(".customer-contact-line:nth-child(2) span", customer.email || "-");
+  setText(".customer-status", formatCustomerStatus(customer.status));
 }
 
 function bindEditCustomerActions() {
-  document
-    .querySelector("#back-from-edit-customer")
-    ?.addEventListener("click", () => {
-      window.location.hash = "customer-details";
-    });
+  const page = document.querySelector(".edit-customer-page");
+  if (!page) return;
 
-  document
-    .querySelector("#cancel-edit-customer")
-    ?.addEventListener("click", () => {
-      window.location.hash = "customer-details";
-    });
+  const form = page.querySelector("#edit-customer-form");
+  if (!form) return;
+
+  if (page.dataset.bound !== "true") {
+    page.dataset.bound = "true";
+
+    page
+      .querySelector("#back-from-edit-customer")
+      ?.addEventListener("click", () => {
+        const displayId = getCurrentCustomerId();
+        window.location.hash = getCustomerEditReturnRoute(displayId);
+      });
+
+    page
+      .querySelector("#cancel-edit-customer")
+      ?.addEventListener("click", () => {
+        const displayId = getCurrentCustomerId();
+        window.location.hash = getCustomerEditReturnRoute(displayId);
+      });
+
+    const updateDirtyState = () => {
+      const values = getEditCustomerFormValues(form);
+      const dirty =
+        editCustomerValuesForComparison(values) !==
+        form.dataset.originalCustomerValues;
+      setEditCustomerSaveState(form, dirty, form.dataset.saving === "true");
+    };
+
+    form.addEventListener("input", updateDirtyState);
+    form.addEventListener("change", updateDirtyState);
+    form.addEventListener("submit", handleEditCustomerSubmit);
+  }
+
+  form.dataset.originalCustomerValues = editCustomerValuesForComparison(
+    getEditCustomerFormValues(form),
+  );
+  setEditCustomerSaveState(form, false);
 }
 
 function bindCustomerDetailsActions() {
-  document
-    .querySelector("#back-to-customers-list")
-    ?.addEventListener("click", async () => {
+  const backButton = document.querySelector("#back-to-customers-list");
+  if (backButton && backButton.dataset.bound !== "true") {
+    backButton.dataset.bound = "true";
+    backButton.addEventListener("click", () => {
       window.location.hash = "customers";
-
-      await loadCustomersPage();
     });
+  }
 
-  document
-    .querySelector("#open-edit-customer")
-    ?.addEventListener("click", () => {
-      window.location.hash = "edit-customer";
-    });
+  const editButton = document.querySelector("#open-edit-customer");
+  if (!editButton || editButton.dataset.bound === "true") return;
+  editButton.dataset.bound = "true";
+  editButton.addEventListener("click", () => {
+    if (!window.hasDashboardPermission?.("customers.edit")) return;
+    const customerId = getCurrentCustomerId();
+    if (customerId) {
+      navigateToCustomerEdit(customerId);
+    }
+  });
 }
 
 function bindCustomerDetailsTabs() {
@@ -914,7 +1794,7 @@ function bindCustomerCreateBookingForm() {
     ?.addEventListener("click", () => {
       closeBookingSuccessModal();
 
-      window.location.hash = "customer-details";
+      window.location.hash = getCustomerDetailsRouteHash("bookings");
 
       setTimeout(() => {
         document
@@ -958,7 +1838,9 @@ function bindCustomerCreateBookingForm() {
   });
 
   page.querySelector("#booking-add-vehicle")?.addEventListener("click", () => {
-    window.location.hash = "customer-add-vehicle";
+    const customerId = getCurrentCustomerId();
+    if (!customerId) return;
+    window.location.hash = `customer-add-vehicle?id=${encodeURIComponent(customerId)}`;
   });
 
   page
@@ -1018,7 +1900,7 @@ function bindCustomerCreateBookingForm() {
 }
 
 function openCustomerBookingsTab() {
-  window.location.hash = "customer-details";
+  window.location.hash = getCustomerDetailsRouteHash("bookings");
 
   setTimeout(() => {
     document
@@ -1377,13 +2259,13 @@ function bindCustomerAddVehicleForm() {
 
     vehicleVin?.setCustomValidity("");
 
-    const storedCustomerId = sessionStorage.getItem("selectedCustomerId");
+    const currentCustomerId = getCurrentCustomerId();
 
     const validCustomerId =
       /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
-        storedCustomerId || "",
+        currentCustomerId || "",
       )
-        ? storedCustomerId
+        ? currentCustomerId
         : undefined;
 
     const payload = {
@@ -1666,7 +2548,7 @@ function resetCustomerAddVehicleForm() {
 }
 
 function openCustomerVehiclesTab() {
-  window.location.hash = "customer-details";
+  window.location.hash = getCustomerDetailsRouteHash("vehicles");
 
   setTimeout(() => {
     document
@@ -1687,7 +2569,10 @@ function bindCustomerBookingActions() {
   createBookingButton.dataset.bound = "true";
 
   createBookingButton.addEventListener("click", () => {
-    window.location.hash = "customer-create-booking";
+    if (!window.hasDashboardPermission?.("bookings.create")) return;
+    const customerId = getCurrentCustomerId();
+    if (!customerId) return;
+    window.location.hash = `customer-create-booking?id=${encodeURIComponent(customerId)}`;
   });
 }
 
@@ -1779,7 +2664,9 @@ function bindCustomerBookingsList() {
   panel
     .querySelector("#add-new-customer-booking")
     ?.addEventListener("click", () => {
-      window.location.hash = "customer-create-booking";
+      const customerId = getCurrentCustomerId();
+      if (!customerId) return;
+      window.location.hash = `customer-create-booking?id=${encodeURIComponent(customerId)}`;
     });
 
   const actionButtons = panel.querySelectorAll(".customer-booking-more-btn");
@@ -1869,14 +2756,7 @@ function bindCustomerBookingsList() {
 }
 
 function applyBookingActionPermissions(scope = document) {
-  scope.querySelectorAll("[data-required-permission]").forEach((element) => {
-    const permission = element.dataset.requiredPermission;
-
-    const allowed = currentUserPermissions[permission] === true;
-
-    element.classList.toggle("hidden", !allowed);
-    element.disabled = !allowed;
-  });
+  window.applyDashboardPermissionVisibility?.(scope);
 }
 
 function bindCustomerPaymentMethodActions() {

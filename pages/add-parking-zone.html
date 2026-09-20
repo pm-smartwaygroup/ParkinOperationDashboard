@@ -1,0 +1,65 @@
+<div class="add-parking-zone-page" data-add-parking-zone-page>
+  <header class="add-zone-page-heading">
+    <div>
+      <h1>Add Parking Zone</h1>
+      <p>Create a new parking zone and set its location, capacity, pricing and operational details.</p>
+    </div>
+    <button type="button" class="add-zone-back-button" data-add-zone-back><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Back to Parking Zones</button>
+  </header>
+
+  <form class="add-zone-form" data-add-zone-form novalidate>
+    <div class="add-zone-column add-zone-column--primary">
+      <section class="add-zone-card" data-add-zone-section="information">
+        <header class="add-zone-card-heading"><span class="add-zone-section-icon"><i class="fa-solid fa-square-parking" aria-hidden="true"></i></span><div><h2>Zone Information</h2><p>Define the basic details for this parking zone.</p></div></header>
+        <div class="add-zone-fields">
+          <label class="add-zone-field add-zone-field--full"><span>Zone Name <b>*</b></span><input name="name" required aria-required="true" maxlength="100" placeholder="Enter zone name (e.g. Main Entrance)" /><small class="add-zone-error" data-error-for="name"></small></label>
+          <label class="add-zone-field add-zone-field--full"><span>Description</span><textarea name="description" maxlength="200" rows="3" placeholder="Enter a short description about this zone"></textarea><small class="add-zone-counter"><b data-counter-for="description">0</b>/200</small></label>
+          <label class="add-zone-field add-zone-field--full"><span>Location / Address <b>*</b></span><span class="add-zone-input-icon"><i class="fa-solid fa-location-dot" aria-hidden="true"></i><input name="address" required aria-required="true" placeholder="Search or enter location" /><button type="button" data-add-zone-current-location aria-label="Use current location" title="Use current location"><i class="fa-solid fa-location-crosshairs" aria-hidden="true"></i></button></span><small class="add-zone-error" data-error-for="address"></small></label>
+          <label class="add-zone-field"><span>Location Group</span><select name="locationGroup"><option value="">Select location group</option><option>Riyadh Business District</option><option>Riyadh Park</option><option>Granada Center</option><option>King Abdullah Road</option><option>Other</option></select></label>
+          <label class="add-zone-field"><span>Zone Type</span><select name="zoneType"><option value="">Select zone type</option><option>Standard</option><option>VIP</option><option>Customer</option><option>Valet</option><option>Staff</option><option>Event</option><option>Reserved</option></select></label>
+        </div>
+      </section>
+
+      <section class="add-zone-card" data-add-zone-section="capacity">
+        <header class="add-zone-card-heading"><span class="add-zone-section-icon"><i class="fa-solid fa-car-side" aria-hidden="true"></i></span><div><h2>Capacity &amp; Pricing</h2><p>Set space availability and parking rates.</p></div></header>
+        <div class="add-zone-fields">
+          <label class="add-zone-field"><span>Total Spaces <b>*</b></span><input name="totalSpaces" required aria-required="true" type="number" min="1" step="1" placeholder="Enter total spaces" /><small class="add-zone-error" data-error-for="totalSpaces"></small></label>
+          <label class="add-zone-field"><span>Available Spaces</span><input name="availableSpaces" type="number" min="0" step="1" placeholder="Enter available spaces" /><small class="add-zone-error" data-error-for="availableSpaces"></small></label>
+          <label class="add-zone-field"><span>Pricing (SAR) <b>*</b></span><span class="add-zone-suffix-input"><input name="pricing" required aria-required="true" type="number" min="0" step="0.01" placeholder="Enter hourly/daily rate" /><em>SAR / hour</em></span><small class="add-zone-error" data-error-for="pricing"></small></label>
+          <label class="add-zone-field"><span>Currency</span><select name="currency"><option>SAR (Saudi Riyal)</option></select></label>
+        </div>
+      </section>
+
+      <section class="add-zone-card" data-add-zone-section="operations">
+        <header class="add-zone-card-heading"><span class="add-zone-section-icon"><i class="fa-solid fa-gear" aria-hidden="true"></i></span><div><h2>Operational Settings</h2><p>Control availability and operating hours.</p></div></header>
+        <div class="add-zone-operational-grid">
+          <fieldset class="add-zone-choice-group"><legend>Status</legend><label class="add-zone-choice"><input type="radio" name="status" value="Active" checked /><span><b>Active</b><small>Zone is open for parking</small></span></label><label class="add-zone-choice"><input type="radio" name="status" value="Maintenance" /><span><b>Maintenance</b><small>Temporarily unavailable</small></span></label><label class="add-zone-choice"><input type="radio" name="status" value="Inactive" /><span><b>Inactive</b><small>Permanently closed</small></span></label></fieldset>
+          <fieldset class="add-zone-choice-group"><legend>Operating Hours</legend><label class="add-zone-choice"><input type="radio" name="operatingMode" value="24/7" checked /><span><b>24/7</b><small>Always open</small></span></label><label class="add-zone-choice"><input type="radio" name="operatingMode" value="custom" /><span><b>Custom hours</b><small>Set specific hours</small></span></label><div class="add-zone-time-row"><label><span>From</span><input name="openingTime" type="time" disabled /></label><label><span>To</span><input name="closingTime" type="time" disabled /></label></div><small class="add-zone-error" data-error-for="operatingHours"></small></fieldset>
+        </div>
+      </section>
+    </div>
+
+    <div class="add-zone-column add-zone-column--secondary">
+      <section class="add-zone-card add-zone-location-card" data-add-zone-section="location">
+        <header class="add-zone-card-heading"><span class="add-zone-section-icon"><i class="fa-solid fa-location-dot" aria-hidden="true"></i></span><div><h2>Zone Location</h2><p>Search for a location or draw the zone area on the map.</p></div></header>
+        <div class="add-zone-location-search-wrap"><label class="add-zone-map-search"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><input data-add-zone-map-search aria-label="Search for a parking zone location" aria-autocomplete="list" aria-controls="add-zone-location-suggestions" aria-expanded="false" autocomplete="off" placeholder="Search location (e.g. King Abdullah Road, Riyadh)" /><button type="submit" data-add-zone-map-search aria-label="Search location"><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></label><div id="add-zone-location-suggestions" class="add-zone-location-suggestions" data-add-zone-location-suggestions role="listbox"></div></div>
+        <div class="add-zone-map-wrap"><div id="add-parking-zone-map" class="add-zone-map" aria-label="Select parking zone location"></div><div class="add-zone-map-error hidden" data-add-zone-map-error>Map unavailable. Unable to load Google Maps.</div><div class="add-zone-map-actions"><button type="button" class="add-zone-map-button" data-add-zone-draw><i class="fa-solid fa-draw-polygon" aria-hidden="true"></i> Draw Zone</button><button type="button" class="add-zone-map-button add-zone-map-button--muted" data-add-zone-finish hidden>Finish Drawing</button><button type="button" class="add-zone-map-button add-zone-map-button--muted" data-add-zone-clear>Clear</button></div><p class="add-zone-draw-hint" data-add-zone-draw-hint>Click on the map to place the zone marker.</p></div>
+        <div class="add-zone-coordinates" aria-live="polite"><span>Selected coordinates</span><strong data-add-zone-coordinates>Not selected</strong></div>
+        <small class="add-zone-error" data-error-for="coordinates"></small>
+      </section>
+
+      <section class="add-zone-card" data-add-zone-section="additional">
+        <header class="add-zone-card-heading"><span class="add-zone-section-icon"><i class="fa-solid fa-file-lines" aria-hidden="true"></i></span><div><h2>Additional Settings</h2><p>Add optional operational context.</p></div></header>
+        <div class="add-zone-fields">
+          <label class="add-zone-field add-zone-field--full"><span>Maximum Vehicle Size</span><select name="maxVehicleSize"><option value="">Select vehicle size limit</option><option>No Limit</option><option>Compact</option><option>Sedan</option><option>SUV</option><option>Van</option><option>Large Vehicle</option></select></label>
+          <label class="add-zone-field add-zone-field--full"><span>Notes</span><textarea name="notes" maxlength="300" rows="3" placeholder="Enter any additional notes about this zone"></textarea><small class="add-zone-counter"><b data-counter-for="notes">0</b>/300</small></label>
+          <label class="add-zone-field"><span>Associated Facility <em>(Optional)</em></span><select name="facility"><option value="">Select facility</option><option>Riyadh Business District</option><option>Riyadh Park Mall</option><option>Granada Center</option></select></label>
+          <div class="add-zone-field add-zone-field--full"><span>Zone Image <em>(Optional)</em></span><label class="add-zone-upload"><input type="file" name="imageFile" accept="image/png,image/jpeg" data-add-zone-image /><i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i><b>Click to upload</b><small>PNG, JPG (Max 5MB)</small></label><div class="add-zone-image-preview hidden" data-add-zone-image-preview></div><small class="add-zone-error" data-error-for="imageFile"></small></div>
+        </div>
+      </section>
+
+      <div class="add-zone-actions"><button type="button" class="add-zone-cancel" data-add-zone-cancel>Cancel</button><button type="submit" class="add-zone-create"><i class="fa-solid fa-plus" aria-hidden="true"></i> Create Zone</button></div>
+    </div>
+  </form>
+  <div class="add-zone-toast" data-add-zone-toast role="status" aria-live="polite"></div>
+</div>

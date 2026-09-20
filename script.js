@@ -89,6 +89,128 @@ const DARK_MODE_STORAGE_KEY = "parkin_dark_mode";
 const API_BASE_URL =
   window.PARKIN_CONFIG?.apiBaseUrl || "https://api.parkin.com.sa";
 
+const dashboardAccessState = {
+  ready: false,
+  authFailed: false,
+  permissions: new Set(),
+  user: null,
+};
+
+const DASHBOARD_PERMISSION_BY_ROUTE = Object.freeze({
+  "#dashboard": "dashboard.view",
+  "#locations": "locations.view",
+  "#valet-operations": "valet_operations.view",
+  "#drivers": "drivers.view",
+  "#customers": "customers.view",
+  "#vehicles": "vehicles.view",
+  "#zones": null,
+  "#bookings": "bookings.view",
+  "#companies": "valet_companies.view",
+  "#revenue": "revenue.view",
+  "#reports": "reports.view",
+  "#alerts": "alerts.view",
+  "#user-management": "users.view",
+  "#settings": "settings.view",
+  "#audit-logs": "audit_logs.view",
+});
+
+function getDashboardAccessApiBaseUrl() {
+  return (
+    window.PARKIN_CONFIG?.userManagementApiBaseUrl ||
+    window.PARKIN_CONFIG?.apiBaseUrl ||
+    "https://api.parkin.com.sa"
+  );
+}
+
+function hasDashboardPermission(code) {
+  return dashboardAccessState.ready && dashboardAccessState.permissions.has(code);
+}
+
+function hasAnyDashboardPermission(...codes) {
+  return codes.some((code) => hasDashboardPermission(code));
+}
+
+function applyDashboardPermissionVisibility(root = document) {
+  if (!root?.querySelectorAll) return;
+
+  root.querySelectorAll("[data-required-permission]").forEach((element) => {
+    const visible = hasDashboardPermission(element.dataset.requiredPermission);
+    element.hidden = !visible;
+    element.classList.toggle("hidden", !visible);
+    element.setAttribute("aria-hidden", String(!visible));
+    if (visible) element.removeAttribute("tabindex");
+    else element.setAttribute("tabindex", "-1");
+  });
+}
+
+const dashboardPermissionVisibilityObserver =
+  typeof MutationObserver === "function"
+    ? new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          mutation.addedNodes.forEach((node) => {
+            if (node.nodeType === Node.ELEMENT_NODE) {
+              applyDashboardPermissionVisibility(node);
+            }
+          });
+        });
+      })
+    : null;
+
+dashboardPermissionVisibilityObserver?.observe(
+  document.querySelector(".dashboard-main") || document.body,
+  { childList: true, subtree: true },
+);
+
+async function loadDashboardAccess() {
+  const token = localStorage.getItem("parkin_access_token");
+  dashboardAccessState.ready = false;
+  dashboardAccessState.authFailed = false;
+  dashboardAccessState.permissions = new Set();
+  dashboardAccessState.user = null;
+  if (!token) return false;
+
+  try {
+    const response = await fetch(`${getDashboardAccessApiBaseUrl()}/auth/me/access`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const body = await response.json().catch(() => null);
+    if (response.status === 401) {
+      dashboardAccessState.authFailed = true;
+      showLogin();
+      return false;
+    }
+    if (!response.ok) throw new Error("Unable to load dashboard access.");
+    const data = body?.data ?? body;
+    dashboardAccessState.user = data?.user || null;
+    dashboardAccessState.permissions = new Set(
+      Array.isArray(data?.permissions)
+        ? data.permissions.filter((permission) => typeof permission === "string")
+        : [],
+    );
+    dashboardAccessState.ready = true;
+    return true;
+  } catch {
+    dashboardAccessState.ready = true;
+    return false;
+  }
+}
+
+window.hasDashboardPermission = hasDashboardPermission;
+window.hasAnyDashboardPermission = hasAnyDashboardPermission;
+window.applyDashboardPermissionVisibility = applyDashboardPermissionVisibility;
+window.getParkinCurrentPermissions = () =>
+  dashboardAccessState.ready ? [...dashboardAccessState.permissions] : [];
+window.getParkinCurrentUserId = () =>
+  dashboardAccessState.ready ? dashboardAccessState.user?.id || null : null;
+window.refreshParkinDashboardAccess = async () => {
+  const loaded = await loadDashboardAccess();
+  if (!dashboardAccessState.authFailed) {
+    applyPermissionNavigationVisibility();
+    handleDashboardRoute();
+  }
+  return loaded;
+};
+
 function getStoredDarkModePreference() {
   try {
     return localStorage.getItem(DARK_MODE_STORAGE_KEY) === "true";
@@ -214,24 +336,66 @@ async function loadRevenueFeatureScripts() {
   await loadDashboardScript("/js/revenue.js");
 }
 
+async function loadVehiclesFeatureScripts() {
+  await loadDashboardScript("/js/vehicles.js");
+}
+
+async function loadBookingsFeatureScripts() {
+  await loadDashboardScript("/js/bookings.js");
+}
+
+async function loadBookingDetailsFeatureScripts() {
+  await loadBookingsFeatureScripts();
+  await loadDashboardScript("/js/booking-details.js");
+}
+
+async function loadBookingReceiptFeatureScripts() {
+  await loadBookingsFeatureScripts();
+  await loadDashboardScript("/js/booking-receipt.js");
+}
+
+async function loadParkingZonesFeatureScripts() {
+  await loadDashboardScript("/js/parking-zones.js");
+}
+
+async function loadAddParkingZoneFeatureScripts() {
+  await loadDashboardScript("/js/add-parking-zone.js");
+}
+
 async function loadProfileFeatureScripts() {
   await loadDashboardScript("/js/profile.js");
 }
 
 async function loadUserManagementFeatureScripts() {
   await loadDashboardScript("/js/user-management.js");
+  await loadDashboardScript("/js/user-management-add.js");
+}
+
+function getDashboardRoute(hash = window.location.hash) {
+  const [path, queryString = ""] = String(hash || "").split("?");
+  return {
+    name: path.replace(/^#/, ""),
+    params: Object.fromEntries(new URLSearchParams(queryString)),
+  };
+}
+
+function restoreDashboardTitleMarkup() {
+  const title = document.querySelector(".dashboard-title");
+  if (!title || title.querySelector("h1")) return;
+  title.innerHTML =
+    '<h1>Dashboard</h1><p>Real-time overview of your valet parking operations</p>';
 }
 
 function getCurrentCustomerId() {
-  const queryString = window.location.hash.split("?")[1] || "";
-
-  const params = new URLSearchParams(queryString);
-
-  return (
-    params.get("id") ||
-    sessionStorage.getItem("selectedCustomerId") ||
-    "CUS-1001"
-  );
+  const route = getDashboardRoute();
+  return [
+    "customer-details",
+    "edit-customer",
+    "customer-add-vehicle",
+    "customer-create-booking",
+  ].includes(route.name)
+    ? route.params.id || null
+    : null;
 }
 
 function startSessionMonitor() {
@@ -402,7 +566,7 @@ function disconnectAuthSocket() {
   }
 }
 
-function showDashboard({ preserveRoute = false } = {}) {
+async function showDashboard({ preserveRoute = false } = {}) {
   clearSuccessState();
 
   loginPage.classList.add("hidden");
@@ -412,7 +576,9 @@ function showDashboard({ preserveRoute = false } = {}) {
 
   document.title = "Parkin Dashboard | Operations";
 
-  applyRoleNavigationVisibility();
+  await loadDashboardAccess();
+  if (dashboardAccessState.authFailed) return;
+  applyPermissionNavigationVisibility();
   syncDashboardProfile(getAuthenticatedDashboardUser());
   hydrateDashboardProfile();
 
@@ -424,7 +590,7 @@ function showDashboard({ preserveRoute = false } = {}) {
      * the hashchange event, so render
      * the Dashboard explicitly.
      */
-    showMainDashboardView();
+    handleDashboardRoute();
   }
 
   window.scrollTo({
@@ -441,42 +607,32 @@ function showDashboard({ preserveRoute = false } = {}) {
   connectAuthSocket();
 }
 
-function applyRoleNavigationVisibility() {
-  const userManagementLink = document.querySelector(
-    '.dashboard-nav a[href="#user-management"]',
-  );
-  const currentRole = getAuthenticatedDashboardUser()?.role;
-  const canManageUsers =
-    currentRole === "SUPER_ADMIN" || currentRole === "COMPANY_ADMIN";
+function applyPermissionNavigationVisibility() {
+  document.querySelectorAll(".dashboard-nav a[href]").forEach((link) => {
+    const route = link.getAttribute("href");
+    if (!Object.hasOwn(DASHBOARD_PERMISSION_BY_ROUTE, route)) return;
+    const permission = DASHBOARD_PERMISSION_BY_ROUTE[route];
+    const visible =
+      permission === null ||
+      (typeof permission === "string" && hasDashboardPermission(permission));
+    link.hidden = !visible;
+    link.classList.toggle("hidden", !visible);
+    link.setAttribute("aria-hidden", String(!visible));
+    if (visible) link.removeAttribute("tabindex");
+    else link.setAttribute("tabindex", "-1");
+  });
 
-  if (userManagementLink) {
-    userManagementLink.hidden = !canManageUsers;
-    userManagementLink.classList.toggle("hidden", !canManageUsers);
-    userManagementLink.setAttribute("aria-hidden", String(!canManageUsers));
-
-    if (canManageUsers) {
-      userManagementLink.removeAttribute("tabindex");
-    } else {
-      userManagementLink.setAttribute("tabindex", "-1");
+  document.querySelectorAll(".dashboard-nav > p").forEach((heading) => {
+    let hasVisibleItem = false;
+    let sibling = heading.nextElementSibling;
+    while (sibling && sibling.tagName !== "P") {
+      if (sibling.matches("a") && !sibling.hidden) hasVisibleItem = true;
+      sibling = sibling.nextElementSibling;
     }
-  }
+    heading.hidden = !hasVisibleItem;
+  });
 
-  const companiesLink = document.querySelector(
-    '.dashboard-nav a[href="#companies"]',
-  );
-  const canManageCompanies = canManageValetCompanies();
-
-  if (companiesLink) {
-    companiesLink.hidden = !canManageCompanies;
-    companiesLink.classList.toggle("hidden", !canManageCompanies);
-    companiesLink.setAttribute("aria-hidden", String(!canManageCompanies));
-
-    if (canManageCompanies) {
-      companiesLink.removeAttribute("tabindex");
-    } else {
-      companiesLink.setAttribute("tabindex", "-1");
-    }
-  }
+  const canManageCompanies = hasDashboardPermission("valet_companies.view");
 
   if (!canManageCompanies) {
     clearRestrictedCompaniesView();
@@ -628,7 +784,7 @@ async function hydrateDashboardProfile() {
 window.syncDashboardProfile = syncDashboardProfile;
 
 function canManageValetCompanies() {
-  return getAuthenticatedDashboardUser()?.role === "SUPER_ADMIN";
+  return hasDashboardPermission("valet_companies.view");
 }
 
 function clearRestrictedCompaniesView() {
@@ -1041,11 +1197,9 @@ async function restoreSession() {
       throw new Error();
     }
 
-    showDashboard({
+    await showDashboard({
       preserveRoute: true,
     });
-
-    handleDashboardRoute();
   } catch {
     console.warn("Session restore failed. Keeping login screen only.");
     showLogin();
@@ -1062,8 +1216,17 @@ const driverDetailsView = document.querySelector("#driver-details-view");
 const customersView = document.querySelector("#customers-view");
 const companiesView = document.querySelector("#companies-view");
 const revenueView = document.querySelector("#revenue-view");
+const vehiclesView = document.querySelector("#vehicles-view");
+const bookingsView = document.querySelector("#bookings-view");
+const bookingDetailsView = document.querySelector("#booking-details-view");
+const bookingReceiptView = document.querySelector("#booking-receipt-view");
+const zonesView = document.querySelector("#zones-view");
+const addZoneView = document.querySelector("#add-zone-view");
 const profileView = document.querySelector("#profile-view");
 const userManagementView = document.querySelector("#user-management-view");
+const userManagementAddView = document.querySelector(
+  "#user-management-add-view",
+);
 const addCustomerView = document.querySelector("#add-customer-view");
 const customerDetailsView = document.querySelector("#customer-details-view");
 const editCustomerView = document.querySelector("#edit-customer-view");
@@ -1089,6 +1252,12 @@ const dashboardSections = document.querySelectorAll(
     ":not(#customers-view)",
     ":not(#companies-view)",
     ":not(#revenue-view)",
+    ":not(#vehicles-view)",
+    ":not(#bookings-view)",
+    ":not(#booking-details-view)",
+    ":not(#booking-receipt-view)",
+    ":not(#zones-view)",
+    ":not(#add-zone-view)",
     ":not(#profile-view)",
     ":not(#add-customer-view)",
     ":not(#customer-details-view)",
@@ -1109,6 +1278,8 @@ const locationsResultCount = document.querySelector("#locations-result-count");
 
 function hideAllFeatureViews() {
   window.cancelUserManagementRequests?.();
+  window.cancelUserManagementAddRequests?.();
+  window.cancelCustomerRequests?.();
 
   if (typeof window.closeCompanyDrawer === "function") {
     window.closeCompanyDrawer();
@@ -1126,8 +1297,15 @@ function hideAllFeatureViews() {
   customersView?.classList.add("hidden");
   companiesView?.classList.add("hidden");
   revenueView?.classList.add("hidden");
+  vehiclesView?.classList.add("hidden");
+  bookingsView?.classList.add("hidden");
+  bookingDetailsView?.classList.add("hidden");
+  bookingReceiptView?.classList.add("hidden");
+  zonesView?.classList.add("hidden");
+  addZoneView?.classList.add("hidden");
   profileView?.classList.add("hidden");
   userManagementView?.classList.add("hidden");
+  userManagementAddView?.classList.add("hidden");
   addCustomerView?.classList.add("hidden");
   customerDetailsView?.classList.add("hidden");
   editCustomerView?.classList.add("hidden");
@@ -1196,6 +1374,7 @@ function showMainDashboardView() {
    * nested booking pages.
    */
   hideAllFeatureViews();
+  clearDashboardAccessDenied();
 
   const title = document.querySelector(".dashboard-title h1");
 
@@ -1211,6 +1390,33 @@ function showMainDashboardView() {
   }
 
   setActiveNav("#dashboard");
+}
+
+function clearDashboardAccessDenied() {
+  document.querySelector("[data-dashboard-access-denied]")?.remove();
+}
+
+function showDashboardAccessDenied() {
+  dashboardSections.forEach((section) => section.classList.add("hidden"));
+  hideAllFeatureViews();
+  let state = document.querySelector("[data-dashboard-access-denied]");
+  if (!state) {
+    state = document.createElement("section");
+    state.dataset.dashboardAccessDenied = "true";
+    state.className = "dashboard-access-denied";
+    const title = document.createElement("h2");
+    title.textContent = "Access Denied";
+    const message = document.createElement("p");
+    message.textContent = "You do not have permission to view this area.";
+    state.append(title, message);
+    dashboardMain.append(state);
+  }
+  state.classList.remove("hidden");
+  document.querySelector(".dashboard-title h1")?.replaceChildren("Access Denied");
+  document
+    .querySelector(".dashboard-title p")
+    ?.replaceChildren("Your current account permissions do not include this area.");
+  setActiveNav("");
 }
 
 function showLocationsView() {
@@ -1240,6 +1446,7 @@ function showLocationsView() {
 
 async function showValetOperationsView() {
   dashboardSections.forEach((section) => section.classList.add("hidden"));
+  hideAllFeatureViews();
 
   locationsView?.classList.add("hidden");
   addLocationView?.classList.add("hidden");
@@ -1268,6 +1475,7 @@ async function showDriversView() {
   dashboardSections.forEach((section) => {
     section.classList.add("hidden");
   });
+  hideAllFeatureViews();
 
   locationsView?.classList.add("hidden");
   addLocationView?.classList.add("hidden");
@@ -1313,6 +1521,7 @@ async function showDriverDetailsView() {
   dashboardSections.forEach((section) => {
     section.classList.add("hidden");
   });
+  hideAllFeatureViews();
 
   locationsView?.classList.add("hidden");
   addLocationView?.classList.add("hidden");
@@ -1363,6 +1572,7 @@ async function showEditDriverView() {
   dashboardSections.forEach((section) => {
     section.classList.add("hidden");
   });
+  hideAllFeatureViews();
 
   locationsView?.classList.add("hidden");
   addLocationView?.classList.add("hidden");
@@ -1411,6 +1621,7 @@ async function showEditDriverView() {
 
 async function showCustomersView() {
   dashboardSections.forEach((section) => section.classList.add("hidden"));
+  hideAllFeatureViews();
 
   locationsView?.classList.add("hidden");
   addLocationView?.classList.add("hidden");
@@ -1498,6 +1709,105 @@ async function showRevenueView() {
   await loadRevenuePage();
 }
 
+async function showVehiclesView() {
+  dashboardSections.forEach((section) => section.classList.add("hidden"));
+  hideAllFeatureViews();
+
+  vehiclesView?.classList.remove("hidden");
+
+  const title = document.querySelector(".dashboard-title");
+
+  if (title) {
+    title.innerHTML =
+      '<nav class="vehicles-shell-breadcrumb" aria-label="Breadcrumb"><a href="#dashboard">Home</a><span aria-hidden="true">/</span><span>Parking Management</span><span aria-hidden="true">/</span><strong>Vehicles</strong></nav>';
+  }
+  setActiveNav("#vehicles");
+
+  await loadVehiclesFeatureScripts();
+  await loadVehiclesPage();
+}
+
+async function showBookingsView() {
+  dashboardSections.forEach((section) => section.classList.add("hidden"));
+  hideAllFeatureViews();
+
+  bookingsView?.classList.remove("hidden");
+
+  const title = document.querySelector(".dashboard-title");
+  if (title) {
+    title.innerHTML =
+      '<nav class="bookings-shell-breadcrumb" aria-label="Breadcrumb"><a href="#dashboard">Home</a><span aria-hidden="true">/</span><strong>Bookings</strong></nav>';
+  }
+
+  setActiveNav("#bookings");
+  await loadBookingsFeatureScripts();
+  await loadBookingsPage();
+}
+
+async function showBookingDetailsView() {
+  dashboardSections.forEach((section) => section.classList.add("hidden"));
+  hideAllFeatureViews();
+
+  bookingDetailsView?.classList.remove("hidden");
+
+  const title = document.querySelector(".dashboard-title");
+  if (title) {
+    title.innerHTML =
+      '<nav class="booking-details-shell-breadcrumb" aria-label="Breadcrumb"><a href="#dashboard">Home</a><span aria-hidden="true">/</span><a href="#bookings">Bookings</a><span aria-hidden="true">/</span><strong></strong></nav>';
+    title.querySelector("strong").textContent =
+      getDashboardRoute().params.id || "Booking Details";
+  }
+  setActiveNav("#bookings");
+  await loadBookingDetailsFeatureScripts();
+  await loadBookingDetailsPage();
+}
+
+async function showBookingReceiptView() {
+  dashboardSections.forEach((section) => section.classList.add("hidden"));
+  hideAllFeatureViews();
+
+  bookingReceiptView?.classList.remove("hidden");
+
+  const title = document.querySelector(".dashboard-title");
+  if (title) {
+    title.innerHTML =
+      '<nav class="booking-receipt-shell-breadcrumb" aria-label="Breadcrumb"><a href="#dashboard">Home</a><span aria-hidden="true">/</span><a href="#bookings">Bookings</a><span aria-hidden="true">/</span><strong>Receipt</strong></nav>';
+  }
+  setActiveNav("#bookings");
+  await loadBookingReceiptFeatureScripts();
+  await loadBookingReceiptPage();
+}
+
+async function showParkingZonesView() {
+  dashboardSections.forEach((section) => section.classList.add("hidden"));
+  hideAllFeatureViews();
+  zonesView?.classList.remove("hidden");
+
+  const title = document.querySelector(".dashboard-title");
+  if (title) {
+    title.innerHTML =
+      '<nav class="parking-zones-shell-breadcrumb" aria-label="Breadcrumb"><a href="#dashboard">Home</a><span aria-hidden="true">/</span><span>Parking Management</span><span aria-hidden="true">/</span><strong>Parking Zones</strong></nav>';
+  }
+  setActiveNav("#zones");
+  await loadParkingZonesFeatureScripts();
+  await window.loadParkingZonesPage?.();
+}
+
+async function showAddParkingZoneView() {
+  dashboardSections.forEach((section) => section.classList.add("hidden"));
+  hideAllFeatureViews();
+  addZoneView?.classList.remove("hidden");
+
+  const title = document.querySelector(".dashboard-title");
+  if (title) {
+    title.innerHTML =
+      '<nav class="add-zone-shell-breadcrumb" aria-label="Breadcrumb"><a href="#dashboard">Home</a><span aria-hidden="true">/</span><span>Parking Management</span><span aria-hidden="true">/</span><a href="#zones">Parking Zones</a><span aria-hidden="true">/</span><strong>Add Zone</strong></nav>';
+  }
+  setActiveNav("#zones");
+  await loadAddParkingZoneFeatureScripts();
+  await window.loadAddParkingZonePage?.({ reset: true });
+}
+
 async function showProfileView() {
   dashboardSections.forEach((section) => section.classList.add("hidden"));
   hideAllFeatureViews();
@@ -1543,10 +1853,29 @@ async function showUserManagementView() {
   await loadUserManagementPage();
 }
 
+async function showUserManagementAddView() {
+  dashboardSections.forEach((section) => section.classList.add("hidden"));
+  hideAllFeatureViews();
+
+  userManagementAddView?.classList.remove("hidden");
+
+  const title = document.querySelector(".dashboard-title h1");
+  const subtitle = document.querySelector(".dashboard-title p");
+  if (title) title.textContent = "Add New User";
+  if (subtitle) {
+    subtitle.textContent = "Create a dashboard user and configure their access";
+  }
+  setActiveNav("#user-management");
+
+  await loadUserManagementFeatureScripts();
+  await loadUserManagementAddPage();
+}
+
 async function showAddCustomerView() {
   dashboardSections.forEach((section) => {
     section.classList.add("hidden");
   });
+  hideAllFeatureViews();
 
   locationsView?.classList.add("hidden");
   addLocationView?.classList.add("hidden");
@@ -1576,6 +1905,7 @@ async function showCustomerDetailsView() {
   dashboardSections.forEach((section) => {
     section.classList.add("hidden");
   });
+  hideAllFeatureViews();
 
   locationsView?.classList.add("hidden");
   addLocationView?.classList.add("hidden");
@@ -1603,11 +1933,15 @@ async function showCustomerDetailsView() {
 
   await loadCustomerFeatureScripts();
 
-  await loadCustomerDetailsPage("overview");
+  await loadCustomerDetailsPage(
+    getDashboardRoute().params.tab || "overview",
+    customerId,
+  );
 }
 
 async function showAddDriverView() {
   dashboardSections.forEach((section) => section.classList.add("hidden"));
+  hideAllFeatureViews();
 
   locationsView?.classList.add("hidden");
   addLocationView?.classList.add("hidden");
@@ -1631,94 +1965,172 @@ async function showAddDriverView() {
   await loadAddDriverPage();
 }
 
+function getDashboardRoutePermission(hash) {
+  const route = getDashboardRoute(hash);
+
+  if (route.name === "user-management/add") return "users.create";
+  if (route.name === "user-management") return "users.view";
+  if (route.name === "add-location") return "locations.create";
+  if (route.name === "add-driver") return "drivers.create";
+  if (route.name === "add-customer") return "customers.create";
+  if (route.name === "valet") return "valet_operations.view";
+  if (route.name === "edit-driver") return "drivers.edit";
+  if (route.name === "driver-details") return "drivers.view";
+  if (route.name === "customer-add-vehicle") return "vehicles.create";
+  if (route.name === "customer-create-booking") return "bookings.create";
+  if (route.name === "booking-details") return "bookings.view";
+  if (route.name === "booking-receipt") return "bookings.view";
+  if (route.name === "customer-details") return "customers.view";
+  if (route.name === "edit-customer") return "customers.edit";
+
+  const routeKey = route.name ? `#${route.name}` : hash;
+  if (Object.hasOwn(DASHBOARD_PERMISSION_BY_ROUTE, routeKey)) {
+    return DASHBOARD_PERMISSION_BY_ROUTE[routeKey];
+  }
+  return undefined;
+}
+
 function handleDashboardRoute() {
-  if (window.location.hash !== "#revenue") {
+  if (!dashboardAccessState.ready) return;
+  const routeName = getDashboardRoute().name;
+  if (routeName !== "vehicles") restoreDashboardTitleMarkup();
+  applyDashboardPermissionVisibility();
+  const requiredPermission = getDashboardRoutePermission(window.location.hash);
+  if (
+    requiredPermission !== undefined &&
+    requiredPermission !== null &&
+    (typeof requiredPermission !== "string" ||
+      !hasDashboardPermission(requiredPermission))
+  ) {
+    restoreDashboardTitleMarkup();
+    showDashboardAccessDenied();
+    return;
+  }
+
+  clearDashboardAccessDenied();
+
+  if (routeName !== "revenue") {
     revenueView?.classList.add("hidden");
   }
 
-  if (window.location.hash === "#add-location") {
+  if (routeName === "add-location") {
     showAddLocationView();
     return;
   }
 
-  if (window.location.hash === "#valet-operations") {
+  if (routeName === "valet-operations") {
     showValetOperationsView();
     return;
   }
-  if (window.location.hash === "#locations") {
+  if (routeName === "locations") {
     showLocationsView();
     return;
   }
 
-  if (window.location.hash === "#valet") {
+  if (routeName === "valet") {
     window.location.hash = "valet-operations";
     return;
   }
-  if (window.location.hash === "#add-driver") {
+  if (routeName === "add-driver") {
     showAddDriverView();
     return;
   }
-  if (window.location.hash.startsWith("#edit-driver")) {
+  if (routeName === "edit-driver") {
     showEditDriverView();
     return;
   }
 
-  if (window.location.hash.startsWith("#driver-details")) {
+  if (routeName === "driver-details") {
     showDriverDetailsView();
     return;
   }
 
-  if (window.location.hash === "#drivers") {
+  if (routeName === "drivers") {
     showDriversView();
     return;
   }
 
-  if (window.location.hash.startsWith("#customer-add-vehicle")) {
+  if (routeName === "customer-add-vehicle") {
     showCustomerAddVehicleView();
     return;
   }
 
-  if (window.location.hash.startsWith("#customer-create-booking")) {
+  if (routeName === "customer-create-booking") {
     showCustomerCreateBookingView();
     return;
   }
 
-  if (window.location.hash.startsWith("#customer-details")) {
+  if (routeName === "customer-details") {
     showCustomerDetailsView();
     return;
   }
 
-  if (window.location.hash.startsWith("#edit-customer")) {
+  if (routeName === "edit-customer") {
     showEditCustomerView();
     return;
   }
 
-  if (window.location.hash === "#customers") {
+  if (routeName === "customers") {
     showCustomersView();
     return;
   }
 
-  if (window.location.hash === "#companies") {
+  if (routeName === "companies") {
     showCompaniesView();
     return;
   }
 
-  if (window.location.hash === "#revenue") {
+  if (routeName === "revenue") {
     showRevenueView();
     return;
   }
 
-  if (window.location.hash === "#profile") {
+  if (routeName === "vehicles") {
+    showVehiclesView();
+    return;
+  }
+
+  if (routeName === "bookings") {
+    showBookingsView();
+    return;
+  }
+
+  if (routeName === "booking-details") {
+    showBookingDetailsView();
+    return;
+  }
+
+  if (routeName === "booking-receipt") {
+    showBookingReceiptView();
+    return;
+  }
+
+  if (routeName === "zones") {
+    showParkingZonesView();
+    return;
+  }
+
+  if (routeName === "add-zone") {
+    showAddParkingZoneView();
+    return;
+  }
+
+  if (routeName === "profile") {
     showProfileView();
     return;
   }
 
-  if (window.location.hash === "#user-management") {
+  if (routeName === "user-management") {
     showUserManagementView();
     return;
   }
 
-  if (window.location.hash === "#add-customer") {
+  if (routeName === "user-management/add") {
+    showUserManagementAddView();
+    return;
+  }
+
+  if (routeName === "add-customer") {
     showAddCustomerView();
     return;
   }
@@ -1727,6 +2139,7 @@ function handleDashboardRoute() {
 }
 
 window.addEventListener("hashchange", handleDashboardRoute);
+window.addEventListener("popstate", handleDashboardRoute);
 
 document
   .querySelector('a[href="#locations"]')
@@ -1766,6 +2179,7 @@ async function showEditCustomerView() {
   dashboardSections.forEach((section) => {
     section.classList.add("hidden");
   });
+  hideAllFeatureViews();
 
   locationsView?.classList.add("hidden");
   addLocationView?.classList.add("hidden");
@@ -1799,6 +2213,7 @@ async function showCustomerAddVehicleView() {
   dashboardSections.forEach((section) => {
     section.classList.add("hidden");
   });
+  hideAllFeatureViews();
 
   locationsView?.classList.add("hidden");
   addLocationView?.classList.add("hidden");
@@ -1832,6 +2247,7 @@ async function showCustomerCreateBookingView() {
   dashboardSections.forEach((section) => {
     section.classList.add("hidden");
   });
+  hideAllFeatureViews();
 
   locationsView?.classList.add("hidden");
   addLocationView?.classList.add("hidden");

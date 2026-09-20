@@ -1,0 +1,238 @@
+<div class="vehicles-page" data-dashboard-page="vehicles">
+  <section class="vehicles-heading">
+    <div>
+      <h2>Vehicles</h2>
+      <p>
+        View and manage all vehicles registered under valet companies, drivers
+        and customers.
+      </p>
+    </div>
+    <button
+      class="vehicles-primary-button"
+      type="button"
+      data-required-permission="vehicles.create"
+      data-vehicle-placeholder="add"
+    >
+      <i class="fa-solid fa-plus" aria-hidden="true"></i
+      ><span>Add Vehicle</span>
+    </button>
+  </section>
+
+  <section class="vehicles-stat-grid" aria-label="Vehicle statistics">
+    <article class="vehicles-stat-card vehicles-stat-featured">
+      <div class="vehicles-stat-icon">
+        <i class="fa-solid fa-car-side" aria-hidden="true"></i>
+      </div>
+      <div>
+        <span>TOTAL VEHICLES</span><strong>1,248</strong
+        ><small>All registered vehicles <b>↑ 12%</b></small>
+      </div>
+      <svg viewBox="0 0 100 32" aria-hidden="true">
+        <path d="M2 25C14 24 16 18 27 21s13-14 25-8 10 1 18 4 13-12 28-14" />
+      </svg>
+    </article>
+    <article class="vehicles-stat-card">
+      <div class="vehicles-stat-icon blue">
+        <i class="fa-solid fa-building" aria-hidden="true"></i>
+      </div>
+      <div>
+        <span>VALET COMPANIES</span><strong>436</strong><small>Vehicles</small>
+      </div>
+      <svg viewBox="0 0 100 32" aria-hidden="true">
+        <path d="M2 26c13-5 20-2 29-8 11-8 16 5 26-1s14-11 22-7 10-4 19-6" />
+      </svg>
+    </article>
+    <article class="vehicles-stat-card">
+      <div class="vehicles-stat-icon purple">
+        <i class="fa-solid fa-id-card" aria-hidden="true"></i>
+      </div>
+      <div><span>DRIVERS</span><strong>298</strong><small>Vehicles</small></div>
+      <svg viewBox="0 0 100 32" aria-hidden="true">
+        <path d="M2 23c13 4 18-12 29-7s13 2 21-3 14 10 24 3 12-9 22-8" />
+      </svg>
+    </article>
+    <article class="vehicles-stat-card">
+      <div class="vehicles-stat-icon orange">
+        <i class="fa-solid fa-user-group" aria-hidden="true"></i>
+      </div>
+      <div>
+        <span>CUSTOMERS</span><strong>514</strong><small>Vehicles</small>
+      </div>
+      <svg viewBox="0 0 100 32" aria-hidden="true">
+        <path d="M2 27c12-7 19-1 29-5s14-15 24-10 14 7 22 1 13-2 21-8" />
+      </svg>
+    </article>
+  </section>
+
+  <section class="vehicles-analytics-grid" aria-label="Vehicle analytics">
+    <article class="vehicles-panel vehicles-owner-panel">
+      <div class="vehicles-panel-heading">
+        <div>
+          <h3>Vehicles by Owner Type</h3>
+        </div>
+      </div>
+      <div class="vehicles-owner-content">
+        <div class="vehicles-donut">
+          <canvas
+            id="vehicles-owner-chart"
+            aria-label="Vehicles by owner type"
+          ></canvas>
+          <div><strong>1,248</strong><span>Vehicles</span></div>
+        </div>
+        <ul class="vehicles-legend">
+          <li>
+            <span
+              class="vehicles-owner-legend-dot vehicles-owner-legend-dot--customer"
+              aria-hidden="true"
+            ></span
+            ><span>Customers</span><b>514</b><small>41%</small>
+          </li>
+          <li>
+            <span
+              class="vehicles-owner-legend-dot vehicles-owner-legend-dot--valet"
+              aria-hidden="true"
+            ></span
+            ><span>Valet Companies</span><b>436</b><small>35%</small>
+          </li>
+          <li>
+            <span
+              class="vehicles-owner-legend-dot vehicles-owner-legend-dot--driver"
+              aria-hidden="true"
+            ></span
+            ><span>Drivers</span><b>298</b><small>24%</small>
+          </li>
+        </ul>
+      </div>
+    </article>
+    <article class="vehicles-panel">
+      <div class="vehicles-panel-heading">
+        <div>
+          <h3>Vehicle Types</h3>
+        </div>
+      </div>
+      <div class="vehicles-type-chart">
+        <canvas id="vehicles-type-chart" aria-label="Vehicle types"></canvas>
+      </div>
+    </article>
+    <article class="vehicles-panel">
+      <div class="vehicles-panel-heading">
+        <div>
+          <h3>Top Vehicle Brands</h3>
+        </div>
+      </div>
+      <div class="vehicles-brand-list" id="vehicles-brand-list"></div>
+    </article>
+  </section>
+
+  <section
+    class="vehicles-directory vehicles-panel"
+    aria-label="Vehicle directory"
+  >
+    <div class="vehicles-toolbar">
+      <label class="vehicles-search"
+        ><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i
+        ><span class="sr-only">Search vehicles</span
+        ><input
+          id="vehicles-search"
+          type="search"
+          placeholder="Search by plate number, owner, brand, model..."
+          autocomplete="off"
+      /></label>
+      <label class="vehicles-filter"
+        ><span class="sr-only">Owner type</span
+        ><select id="vehicles-owner-filter">
+          <option value="all">All Types</option>
+          <option value="Customer">Customer</option>
+          <option value="Valet Company">Valet Company</option>
+          <option value="Driver">Driver</option>
+        </select></label
+      >
+      <label class="vehicles-filter"
+        ><span class="sr-only">Valet company</span
+        ><select id="vehicles-company-filter">
+          <option value="all">All Companies</option>
+          <option value="Riyadh Valet Co.">Riyadh Valet Co.</option>
+          <option value="Jeddah Valet Co.">Jeddah Valet Co.</option>
+        </select></label
+      >
+      <label class="vehicles-filter"
+        ><span class="sr-only">Status</span
+        ><select id="vehicles-status-filter">
+          <option value="all">All Status</option>
+          <option value="Active">Active</option>
+          <option value="In Service">In Service</option>
+          <option value="Maintenance">Maintenance</option>
+          <option value="Inactive">Inactive</option>
+        </select></label
+      >
+      <button class="vehicles-toolbar-button" type="button" data-vehicle-export>
+        <i class="fa-solid fa-download" aria-hidden="true"></i
+        ><span>Export</span>
+      </button>
+      <div
+        class="vehicles-view-toggle"
+        role="group"
+        aria-label="Vehicle view mode"
+      >
+        <button
+          type="button"
+          class="active"
+          data-vehicle-view="list"
+          aria-label="List view"
+        >
+          <i class="fa-solid fa-list" aria-hidden="true"></i></button
+        ><button type="button" data-vehicle-view="grid" aria-label="Grid view">
+          <i class="fa-solid fa-grip" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+    <div class="vehicles-directory-heading">
+      <div>
+        <span>VEHICLE DIRECTORY</span>
+        <h3>All Vehicles</h3>
+      </div>
+      <strong id="vehicles-visible-count"
+        >Showing 1 to 5 of 1,248 vehicles</strong
+      >
+    </div>
+    <div class="vehicles-table-scroll">
+      <table class="vehicles-table">
+        <thead>
+          <tr>
+            <th>
+              <input
+                type="checkbox"
+                data-vehicles-select-all
+                aria-label="Select all vehicles"
+              />
+            </th>
+            <th>VEHICLE</th>
+            <th>PLATE NUMBER</th>
+            <th>OWNER TYPE</th>
+            <th>OWNER</th>
+            <th>BRAND / MODEL</th>
+            <th>COLOR</th>
+            <th>STATUS</th>
+            <th>ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody id="vehicles-table-body"></tbody>
+      </table>
+    </div>
+    <div class="vehicles-grid hidden" id="vehicles-grid"></div>
+    <div class="vehicles-directory-footer">
+      <span>Showing 1 to 5 of 1,248 vehicles</span>
+      <nav aria-label="Vehicle pages">
+        <button type="button" aria-label="Previous page">
+          <i class="fa-solid fa-chevron-left"></i></button
+        ><button type="button" class="active">1</button
+        ><button type="button">2</button><button type="button">3</button
+        ><button type="button">4</button><button type="button">5</button
+        ><span>...</span><button type="button">250</button
+        ><button type="button" aria-label="Next page">
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+      </nav>
+    </div>
+  </section>
+</div>

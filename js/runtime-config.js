@@ -12,7 +12,13 @@
     ? `${protocol}//${hostname}:3001`
     : "https://api.parkin.com.sa";
 
+  const userManagementApiBaseUrl = isLocalNetwork
+    ? `${protocol}//${hostname}:3002`
+    : apiBaseUrl;
+
   window.PARKIN_CONFIG = Object.freeze({
     apiBaseUrl,
+    userManagementApiBaseUrl,
+    customerDataMode: isLocalNetwork ? "demo" : "api",
   });
 })();

@@ -1946,6 +1946,24 @@ html[data-theme="dark"] .dashboard-page {
   outline: 0;
 }
 
+.dashboard-access-denied {
+  display: grid;
+  min-height: 320px;
+  place-content: center;
+  gap: 8px;
+  padding: 32px;
+  text-align: center;
+}
+
+.dashboard-access-denied h2,
+.dashboard-access-denied p {
+  margin: 0;
+}
+
+.dashboard-access-denied p {
+  color: var(--dash-muted);
+}
+
 .dashboard-header {
   display: flex;
   align-items: flex-start;

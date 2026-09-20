@@ -1,0 +1,209 @@
+<div class="bookings-page" data-dashboard-page="bookings">
+  <section class="bookings-heading">
+    <div>
+      <h2>Bookings</h2>
+      <p>
+        All parking bookings received from ParkIn mobile apps (Customer &amp;
+        Valet Driver).
+      </p>
+    </div>
+    <button class="bookings-export-button" type="button" data-bookings-export>
+      <i class="fa-solid fa-download" aria-hidden="true"></i><span>Export</span>
+    </button>
+  </section>
+
+  <section class="bookings-stat-grid" aria-label="Booking statistics">
+    <article class="bookings-stat-card bookings-stat-featured">
+      <span class="bookings-stat-icon"
+        ><i class="fa-solid fa-calendar-check" aria-hidden="true"></i
+      ></span>
+      <div>
+        <small>TOTAL BOOKINGS</small><strong>256</strong>
+        <p>From mobile apps <b>↑ 12%</b></p>
+      </div>
+    </article>
+    <article class="bookings-stat-card">
+      <span class="bookings-stat-icon blue"
+        ><i class="fa-solid fa-car" aria-hidden="true"></i
+      ></span>
+      <div>
+        <small>ONGOING</small><strong>48</strong>
+        <p>Currently parked</p>
+      </div>
+    </article>
+    <article class="bookings-stat-card">
+      <span class="bookings-stat-icon green"
+        ><i class="fa-solid fa-circle-check" aria-hidden="true"></i
+      ></span>
+      <div>
+        <small>COMPLETED</small><strong>182</strong>
+        <p>Successfully completed</p>
+      </div>
+    </article>
+    <article class="bookings-stat-card">
+      <span class="bookings-stat-icon orange"
+        ><i class="fa-solid fa-clock" aria-hidden="true"></i
+      ></span>
+      <div>
+        <small>UPCOMING</small><strong>18</strong>
+        <p>Today &amp; tomorrow</p>
+      </div>
+    </article>
+    <article class="bookings-stat-card">
+      <span class="bookings-stat-icon red"
+        ><i class="fa-solid fa-ban" aria-hidden="true"></i
+      ></span>
+      <div>
+        <small>CANCELLED</small><strong>14</strong>
+        <p>By users or system</p>
+      </div>
+    </article>
+  </section>
+
+  <section
+    class="bookings-directory bookings-panel"
+    aria-label="Bookings directory"
+  >
+    <div class="bookings-tabs" role="tablist" aria-label="Booking status">
+      <button
+        type="button"
+        class="active"
+        data-booking-status="all"
+        role="tab"
+        aria-selected="true"
+      >
+        All Bookings <b>256</b>
+      </button>
+      <button
+        type="button"
+        data-booking-status="Active"
+        role="tab"
+        aria-selected="false"
+      >
+        Ongoing <b>48</b>
+      </button>
+      <button
+        type="button"
+        data-booking-status="Upcoming"
+        role="tab"
+        aria-selected="false"
+      >
+        Upcoming <b>18</b>
+      </button>
+      <button
+        type="button"
+        data-booking-status="Completed"
+        role="tab"
+        aria-selected="false"
+      >
+        Completed <b>182</b>
+      </button>
+      <button
+        type="button"
+        data-booking-status="Cancelled"
+        role="tab"
+        aria-selected="false"
+      >
+        Cancelled <b>14</b>
+      </button>
+    </div>
+    <div class="bookings-toolbar">
+      <label class="bookings-search"
+        ><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i
+        ><span class="sr-only">Search bookings</span
+        ><input
+          id="bookings-search"
+          type="search"
+          placeholder="Search by booking ID, customer, vehicle, or location..."
+          autocomplete="off"
+      /></label>
+      <button
+        type="button"
+        class="bookings-filter-button"
+        data-bookings-filter-toggle
+        aria-expanded="false"
+      >
+        <i class="fa-solid fa-sliders" aria-hidden="true"></i
+        ><span>Filters</span
+        ><i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+      </button>
+      <div class="bookings-filter-panel hidden" data-bookings-filter-panel>
+        <label
+          >Source<select id="bookings-source-filter">
+            <option value="all">All Sources</option>
+            <option>Customer App</option>
+            <option>Valet Driver App</option>
+          </select></label
+        >
+        <label
+          >Payment<select id="bookings-payment-filter">
+            <option value="all">All Payments</option>
+            <option>Online</option>
+            <option>Apple Pay</option>
+            <option>Cash</option>
+            <option>Refunded</option>
+          </select></label
+        >
+        <label
+          >Location<select id="bookings-location-filter">
+            <option value="all">All Locations</option>
+            <option>Riyadh - Business District</option>
+            <option>Riyadh Park Mall</option>
+            <option>Granada Center</option>
+            <option>King Abdullah Road</option>
+          </select></label
+        >
+      </div>
+    </div>
+
+    <div class="bookings-directory-heading">
+      <div>
+        <span>BOOKING DIRECTORY</span>
+        <h3>All Bookings</h3>
+      </div>
+      <strong id="bookings-visible-count"
+        >Showing 1 to 8 of 256 bookings</strong
+      >
+    </div>
+    <div class="bookings-table-scroll">
+      <table class="bookings-table">
+        <thead>
+          <tr>
+            <th>
+              <input
+                type="checkbox"
+                data-bookings-select-all
+                aria-label="Select all bookings"
+              />
+            </th>
+            <th>BOOKING ID</th>
+            <th>CUSTOMER (FROM APP)</th>
+            <th>VEHICLE</th>
+            <th>BOOKING DETAILS</th>
+            <th>LOCATION / ZONE</th>
+            <th>SOURCE</th>
+            <th>STATUS</th>
+            <th>PAYMENT</th>
+            <th>ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody id="bookings-table-body"></tbody>
+      </table>
+    </div>
+    <div class="bookings-mobile-list hidden" id="bookings-mobile-list"></div>
+    <div class="bookings-directory-footer">
+      <span>Showing 1 to 8 of 256 bookings</span>
+      <nav aria-label="Booking pages">
+        <button type="button" aria-label="Previous page">
+          <i class="fa-solid fa-chevron-left"></i></button
+        ><button type="button" class="active">1</button
+        ><button type="button">2</button><button type="button">3</button
+        ><button type="button">4</button><button type="button">5</button
+        ><span>...</span><button type="button">32</button
+        ><button type="button" aria-label="Next page">
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+      </nav>
+    </div>
+  </section>
+</div>

@@ -778,6 +778,53 @@
   gap: 9px;
 }
 
+.company-assignment-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: -4px 0 12px;
+}
+
+.company-assignment-search {
+  position: relative;
+  flex: 1 1 auto;
+}
+
+.company-assignment-search i {
+  position: absolute;
+  top: 50%;
+  left: 11px;
+  color: var(--company-muted);
+  font-size: 0.7rem;
+  transform: translateY(-50%);
+}
+
+.company-assignment-search input {
+  width: 100%;
+  min-height: 36px;
+  border: 1px solid #d9e1e8;
+  border-radius: 8px;
+  padding: 0 10px 0 31px;
+  background: #fff;
+  color: var(--company-ink);
+  font: inherit;
+  font-size: 0.75rem;
+}
+
+.company-assignment-search input:focus {
+  border-color: #0d9a53;
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(13, 154, 83, 0.1);
+}
+
+.company-assignment-toolbar > strong {
+  flex: 0 0 auto;
+  color: var(--company-green-dark);
+  font-size: 0.72rem;
+  white-space: nowrap;
+}
+
 .company-option-card {
   min-height: 64px;
   display: grid;
@@ -1133,6 +1180,11 @@ body.company-drawer-open {
 
   .company-form-section {
     padding: 15px;
+  }
+
+  .company-assignment-toolbar {
+    align-items: stretch;
+    flex-direction: column;
   }
 
   .company-drawer-header {

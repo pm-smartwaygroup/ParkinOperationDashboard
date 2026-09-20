@@ -1,0 +1,246 @@
+<section
+  class="user-management-add-page"
+  aria-labelledby="user-management-add-heading"
+>
+  <div class="user-management-add-topbar">
+    <div>
+      <nav class="user-management-add-breadcrumb" aria-label="Breadcrumb">
+        <a href="#dashboard">Home</a><span aria-hidden="true">/</span>
+        <a href="#user-management">User Management</a
+        ><span aria-hidden="true">/</span>
+        <span>Add New User</span>
+      </nav>
+      <p class="user-management-add-eyebrow">Administration</p>
+      <h2 id="user-management-add-heading">Add New User</h2>
+      <p class="user-management-add-subtitle">
+        Create a new dashboard user and configure their role and access.
+      </p>
+    </div>
+    <a class="user-management-add-back" href="#user-management"
+      ><i class="fa-solid fa-arrow-left" aria-hidden="true"></i
+      ><span>Back to Users</span></a
+    >
+  </div>
+
+  <div
+    class="user-management-add-feedback hidden"
+    data-user-add-feedback
+    role="alert"
+  ></div>
+
+  <form class="user-management-add-form" data-user-add-form novalidate>
+    <section class="user-management-add-card">
+      <div class="user-management-add-card-heading">
+        <span class="user-management-add-card-icon"
+          ><i class="fa-solid fa-user" aria-hidden="true"></i
+        ></span>
+        <div>
+          <p>Profile</p>
+          <h3>User Information</h3>
+        </div>
+      </div>
+      <div class="user-management-add-fields">
+        <label class="user-management-add-field"
+          ><span>First Name <b>*</b></span
+          ><input name="firstName" autocomplete="given-name" required /><small
+            data-error-for="firstName"
+          ></small
+        ></label>
+        <label class="user-management-add-field"
+          ><span>Last Name <b>*</b></span
+          ><input name="lastName" autocomplete="family-name" required /><small
+            data-error-for="lastName"
+          ></small
+        ></label>
+        <label class="user-management-add-field"
+          ><span>Email Address <b>*</b></span
+          ><input
+            name="email"
+            type="email"
+            autocomplete="email"
+            required /><small data-error-for="email"></small
+        ></label>
+        <label class="user-management-add-field"
+          ><span>Phone Number</span
+          ><span class="user-management-add-phone"
+            ><b>+966</b
+            ><input
+              name="phoneNumber"
+              inputmode="tel"
+              autocomplete="tel-national"
+              placeholder="50 123 4567" /></span
+          ><small data-error-for="phoneNumber"></small
+        ></label>
+        <label class="user-management-add-field"
+          ><span>Employee ID</span
+          ><input name="employeeId" autocomplete="off" /><small
+            data-error-for="employeeId"
+          ></small
+        ></label>
+        <label class="user-management-add-field"
+          ><span>Department</span
+          ><input name="department" autocomplete="organization-title" /><small
+            data-error-for="department"
+          ></small
+        ></label>
+        <label class="user-management-add-field"
+          ><span>Region</span
+          ><input name="region" autocomplete="address-level1" /><small
+            data-error-for="region"
+          ></small
+        ></label>
+      </div>
+    </section>
+
+    <section class="user-management-add-card">
+      <div class="user-management-add-card-heading">
+        <span class="user-management-add-card-icon"
+          ><i class="fa-solid fa-sliders" aria-hidden="true"></i
+        ></span>
+        <div>
+          <p>Configuration</p>
+          <h3>Account &amp; Role</h3>
+        </div>
+      </div>
+      <div
+        class="user-management-add-fields user-management-add-account-fields"
+      >
+        <label class="user-management-add-field"
+          ><span>Role <b>*</b></span
+          ><select name="role" required>
+            <option value="">Select role</option>
+            <option value="COMPANY_ADMIN">Company Admin</option>
+            <option value="OPERATIONS_MANAGER">Operations Manager</option>
+            <option value="VALET_OPERATIONS">Valet Operations</option>
+            <option value="SUPPORT">Support</option>
+            <option value="DRIVER">Driver</option></select
+          ><small data-error-for="role"></small
+        ></label>
+        <label class="user-management-add-field"
+          ><span>Company <b>*</b></span
+          ><select name="companyId" required>
+            <option value="">Loading companies...</option></select
+          ><small data-error-for="companyId"></small
+        ></label>
+        <label class="user-management-add-field"
+          ><span>Access Scope <b>*</b></span
+          ><select name="accessScope" required>
+            <option value="COMPANY">Company</option>
+            <option value="LOCATION">Location</option>
+            <option value="OWN">Own</option></select
+          ><small data-error-for="accessScope"></small
+        ></label>
+      </div>
+      <div class="user-management-add-status-note">
+        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+        <div>
+          <strong>Account status</strong
+          ><span>Disabled until password setup is completed</span>
+        </div>
+      </div>
+      <div
+        class="user-management-add-location-wrap hidden"
+        data-user-add-location-wrap
+      >
+        <label class="user-management-add-field"
+          ><span>Allowed Locations <b>*</b></span
+          ><select
+            name="locationIds"
+            multiple
+            size="4"
+            data-user-add-location-select
+          ></select
+          ><small>Select one or more locations for this user.</small
+          ><small data-error-for="locationIds"></small
+        ></label>
+      </div>
+    </section>
+
+    <section class="user-management-add-card user-management-add-invite-card">
+      <div class="user-management-add-card-heading">
+        <span class="user-management-add-card-icon"
+          ><i class="fa-solid fa-envelope" aria-hidden="true"></i
+        ></span>
+        <div>
+          <p>Secure onboarding</p>
+          <h3>Password Setup</h3>
+        </div>
+      </div>
+      <label class="user-management-add-check"
+        ><input type="checkbox" name="sendInvitation" checked /><span
+          class="user-management-add-checkmark"
+          ><i class="fa-solid fa-check" aria-hidden="true"></i></span
+        ><span
+          ><strong>Send invitation email</strong
+          ><small
+            >The user will receive a secure email link to create their password
+            and activate their account.</small
+          ></span
+        ></label
+      >
+    </section>
+
+    <section class="user-management-add-card user-management-add-preview-card">
+      <div class="user-management-add-card-heading">
+        <span class="user-management-add-card-icon"
+          ><i class="fa-solid fa-shield-halved" aria-hidden="true"></i
+        ></span>
+        <div>
+          <p>Access overview</p>
+          <h3>Access Privileges Preview</h3>
+        </div>
+      </div>
+      <p class="user-management-add-preview-copy">
+        Based on the selected role, this user will receive the configured
+        default access permissions.
+      </p>
+      <dl class="user-management-add-preview-grid">
+        <div>
+          <dt>Selected Role</dt>
+          <dd data-preview-role>—</dd>
+        </div>
+        <div>
+          <dt>Access Scope</dt>
+          <dd data-preview-scope>Company</dd>
+        </div>
+        <div>
+          <dt>Company</dt>
+          <dd data-preview-company>—</dd>
+        </div>
+        <div>
+          <dt>Locations</dt>
+          <dd data-preview-locations>All company locations</dd>
+        </div>
+      </dl>
+      <div class="user-management-add-preview-note">
+        <i class="fa-solid fa-lock" aria-hidden="true"></i
+        ><span
+          >Default permissions for this role are managed by the server and will
+          be available for review after the user is created.</span
+        >
+      </div>
+    </section>
+
+    <div class="user-management-add-actions">
+      <button
+        class="user-management-add-button secondary"
+        type="button"
+        data-user-add-reset
+      >
+        Reset</button
+      ><a
+        class="user-management-add-button ghost"
+        href="#user-management"
+        data-user-add-cancel
+        >Cancel</a
+      ><button
+        class="user-management-add-button primary"
+        type="submit"
+        data-user-add-submit
+      >
+        <i class="fa-solid fa-user-plus" aria-hidden="true"></i
+        ><span>Create User</span>
+      </button>
+    </div>
+  </form>
+</section>

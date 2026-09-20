@@ -1,0 +1,317 @@
+<div class="booking-details-page" data-dashboard-page="booking-details">
+  <section class="booking-details-heading">
+    <div>
+      <h2>Booking Details</h2>
+      <p>
+        Complete information about this booking received from the ParkIn mobile
+        app.
+      </p>
+    </div>
+    <div class="booking-details-actions">
+      <button type="button" data-booking-back>
+        <i class="fa-solid fa-arrow-left" aria-hidden="true"></i
+        ><span>Back to Bookings</span></button
+      ><button type="button" data-booking-share aria-label="Share booking">
+        <i class="fa-solid fa-share-nodes" aria-hidden="true"></i>
+      </button>
+    </div>
+  </section>
+  <div class="booking-details-content" data-booking-content>
+    <section class="booking-summary-card booking-details-card">
+      <div class="booking-summary-main">
+        <span class="booking-details-summary-label">BOOKING ID</span>
+        <div class="booking-id-line">
+          <strong data-booking-id></strong
+          ><button
+            type="button"
+            data-booking-copy-id
+            aria-label="Copy booking ID"
+          >
+            <i class="fa-regular fa-copy" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="booking-summary-context">
+          <div class="booking-summary-status" data-booking-summary-status></div>
+          <p class="booking-summary-source" data-booking-summary-source></p>
+        </div>
+      </div>
+      <div class="booking-details-summary-metrics">
+        <div class="booking-details-summary-metric">
+          <div class="booking-details-summary-icon booking-details-summary-icon--date">
+            <i class="fa-regular fa-calendar" aria-hidden="true"></i>
+          </div>
+          <div class="booking-details-summary-copy">
+            <span class="booking-details-summary-label">Booking Date</span><strong data-booking-date></strong
+            ><small data-booking-date-time></small>
+          </div>
+        </div>
+        <div class="booking-details-summary-metric">
+          <div class="booking-details-summary-icon booking-details-summary-icon--time">
+            <i class="fa-regular fa-clock" aria-hidden="true"></i>
+          </div>
+          <div class="booking-details-summary-copy">
+            <span class="booking-details-summary-label">Scheduled Start</span><strong data-booking-start></strong
+            ><small data-booking-start-time></small>
+          </div>
+        </div>
+        <div class="booking-details-summary-metric">
+          <div class="booking-details-summary-icon booking-details-summary-icon--time">
+            <i class="fa-regular fa-clock" aria-hidden="true"></i>
+          </div>
+          <div class="booking-details-summary-copy">
+            <span class="booking-details-summary-label">Scheduled End</span><strong data-booking-end></strong
+            ><small data-booking-end-time></small>
+          </div>
+        </div>
+        <div class="booking-details-summary-metric">
+          <div class="booking-details-summary-icon booking-details-summary-icon--duration">
+            <i class="fa-solid fa-hourglass-half" aria-hidden="true"></i>
+          </div>
+          <div class="booking-details-summary-copy">
+            <span class="booking-details-summary-label">Duration</span><strong data-booking-duration></strong>
+          </div>
+        </div>
+      </div>
+    </section>
+    <div class="booking-details-body">
+      <main class="booking-details-left">
+        <div class="booking-upper-grid">
+          <section class="booking-details-card booking-customer-card">
+            <h3>
+              <i class="fa-solid fa-user" aria-hidden="true"></i>Customer
+              Information
+            </h3>
+            <div class="booking-person booking-customer-person">
+              <span
+                class="booking-avatar"
+                data-booking-customer-initials
+              ></span>
+              <div>
+                <strong data-booking-customer></strong
+                ><span data-booking-phone></span
+                ><span data-booking-email>ahmed.q@example.com</span>
+              </div>
+              <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+            </div>
+            <div class="booking-mini-metrics">
+              <div>
+                <i class="fa-regular fa-calendar" aria-hidden="true"></i
+                ><span>Customer Since</span><strong>Feb 2024</strong>
+              </div>
+              <div>
+                <i class="fa-solid fa-calendar-check" aria-hidden="true"></i
+                ><span>Total Bookings</span><strong>12</strong>
+              </div>
+              <div>
+                <i class="fa-solid fa-wallet" aria-hidden="true"></i
+                ><span>Total Spent</span><strong>SAR 480</strong>
+              </div>
+            </div>
+          </section>
+          <div class="booking-upper-side">
+            <section class="booking-details-card booking-info-card">
+              <h3>
+                <i class="fa-solid fa-car-side" aria-hidden="true"></i>Vehicle
+                Information
+              </h3>
+              <div class="booking-vehicle-detail">
+                <span class="booking-detail-vehicle-logo"
+                  ><img
+                    src="/public/assets/vehicle-brands/toyota.svg"
+                    alt="Toyota"
+                    data-booking-vehicle-logo
+                /></span>
+                <div>
+                  <strong data-booking-vehicle></strong
+                  ><span data-booking-vehicle-meta></span>
+                </div>
+                <span class="booking-detail-brand"
+                  ><img
+                    src="/public/assets/vehicle-brands/toyota.svg"
+                    alt="Toyota"
+                    data-booking-vehicle-brand
+                /></span>
+              </div>
+              <div class="booking-plate-row">
+                <span>Plate Number</span><strong data-booking-plate></strong
+                ><button
+                  type="button"
+                  data-booking-copy-plate
+                  aria-label="Copy plate number"
+                >
+                  <i class="fa-regular fa-copy" aria-hidden="true"></i>
+                </button>
+              </div>
+            </section>
+            <section
+              class="booking-details-card booking-info-card booking-parking-card"
+            >
+              <h3>
+                <i class="fa-solid fa-location-dot" aria-hidden="true"></i
+                >Parking Details
+              </h3>
+              <div class="booking-parking-detail">
+                <span class="booking-parking-thumb"
+                  ><i class="fa-solid fa-square-parking" aria-hidden="true"></i
+                ></span>
+                <div>
+                  <strong data-booking-zone></strong
+                  ><span data-booking-location></span>
+                </div>
+                <button
+                  type="button"
+                  class="booking-map-button"
+                  data-booking-map
+                >
+                  <i class="fa-solid fa-map-location-dot" aria-hidden="true"></i
+                  ><span>View Zone on Map</span>
+                </button>
+              </div>
+            </section>
+          </div>
+        </div>
+        <div class="booking-lower-grid">
+          <section class="booking-details-card booking-route-card">
+            <h3>
+              <i class="fa-solid fa-route" aria-hidden="true"></i>Location &amp;
+              Route
+            </h3>
+            <div class="booking-route-map" aria-label="Static route preview">
+              <svg class="booking-map-art" viewBox="0 0 900 260" preserveAspectRatio="none" aria-hidden="true">
+                <rect width="900" height="260" fill="#edf3ee"></rect>
+                <g class="booking-map-major-streets">
+                  <path d="M-30 118 C170 92 260 157 420 120 S700 85 930 122"></path>
+                  <path d="M580 -20 C530 66 660 139 600 280"></path>
+                </g>
+                <g class="booking-map-minor-streets">
+                  <path d="M-30 44 C150 18 230 88 410 55 S700 25 930 54"></path>
+                  <path d="M-20 214 C150 175 250 231 410 188 S720 220 930 169"></path>
+                  <path d="M70 -20 C120 68 205 95 180 280"></path>
+                  <path d="M390 -20 C355 65 470 105 440 280"></path>
+                  <path d="M760 -20 C690 64 780 156 720 280"></path>
+                </g>
+                <path class="booking-map-highlight-road" d="M-30 90 C210 120 330 64 520 108 S760 155 930 112"></path>
+                <path class="booking-map-route-path" d="M180 184 C285 230 340 145 445 158 S590 130 710 82"></path>
+              </svg>
+              <span class="booking-map-label">Riyadh</span
+              ><span class="booking-route-marker pickup"
+                ><i class="fa-solid fa-location-dot" aria-hidden="true"></i
+                ><b>Pickup Location</b></span
+              ><span class="booking-route-marker zone"
+                ><i class="fa-solid fa-square-parking" aria-hidden="true"></i
+                ><b>Parking Zone</b></span
+              >
+              <div class="booking-map-controls">
+                <button type="button" aria-label="Zoom in">+</button
+                ><button type="button" aria-label="Zoom out">−</button
+                ><button type="button" aria-label="Center map">
+                  <i class="fa-solid fa-location-crosshairs"></i>
+                </button>
+              </div>
+            </div>
+            <div class="booking-route-meta">
+              <div>
+                <i class="fa-solid fa-location-dot" aria-hidden="true"></i
+                ><span>Pickup Location</span><strong>King Abdullah Road</strong
+                ><small>Riyadh 12345</small>
+              </div>
+              <div>
+                <i class="fa-solid fa-car" aria-hidden="true"></i
+                ><span>Distance</span><strong>4.2 km</strong
+                ><small>Estimated 12 mins</small>
+              </div>
+              <div>
+                <i class="fa-solid fa-square-parking" aria-hidden="true"></i
+                ><span>Parking Zone</span
+                ><strong data-booking-zone-route></strong
+                ><small data-booking-location-route></small>
+              </div>
+            </div>
+          </section>
+          <section class="booking-details-card booking-payment-card">
+            <h3>
+              <i class="fa-solid fa-credit-card" aria-hidden="true"></i>Payment
+              Information
+            </h3>
+            <div class="booking-payment-row">
+              <span>Parking Fee</span><strong>SAR 40.00</strong>
+            </div>
+            <div class="booking-payment-row">
+              <span>Service Fee</span><strong>SAR 0.00</strong>
+            </div>
+            <div class="booking-payment-row">
+              <span>VAT (15%)</span><strong>SAR 6.00</strong>
+            </div>
+            <div class="booking-payment-total">
+              <span>Total Amount</span><strong>SAR 46.00</strong>
+            </div>
+            <div class="booking-paid-row">
+              <span class="booking-card-icon"
+                ><i class="fa-brands fa-cc-mastercard" aria-hidden="true"></i
+              ></span>
+              <div><strong>•••• 4242</strong><span>Payment Method</span></div>
+              <b>Paid</b>
+            </div>
+            <div class="booking-payment-status">
+              <span>Payment Status</span><strong>Completed</strong
+              ><small>24 May 2024, 10:30 AM</small>
+            </div>
+          </section>
+        </div>
+      </main>
+      <aside class="booking-details-right">
+        <section class="booking-details-card booking-timeline-card">
+          <h3>
+            <i class="fa-solid fa-file-lines" aria-hidden="true"></i
+            >Booking Status
+          </h3>
+          <ol class="booking-timeline" data-booking-timeline></ol>
+        </section>
+        <section class="booking-details-card booking-info-card">
+          <h3>
+            <i class="fa-solid fa-user-check" aria-hidden="true"></i>Assigned
+            Valet Driver
+          </h3>
+          <div class="booking-person booking-driver">
+            <span class="booking-avatar">FA</span>
+            <div><strong>Fahad Ali</strong><span>+966 55 987 6543</span></div>
+            <b>On Duty</b>
+          </div>
+        </section>
+        <section class="booking-details-card booking-info-card">
+          <h3>
+            <i class="fa-solid fa-file-lines" aria-hidden="true"></i>Additional
+            Information
+          </h3>
+          <dl class="booking-additional">
+            <div>
+              <dt>Booking Source</dt>
+              <dd data-booking-source></dd>
+            </div>
+            <div>
+              <dt>Notes</dt>
+              <dd>—</dd>
+            </div>
+            <div>
+              <dt>Created At</dt>
+              <dd data-booking-created></dd>
+            </div>
+            <div>
+              <dt>Last Updated</dt>
+              <dd>24 May 2024, 10:45 AM</dd>
+            </div>
+          </dl>
+        </section>
+      </aside>
+    </div>
+  </div>
+  <section
+    class="booking-not-found booking-details-card hidden"
+    data-booking-not-found
+  >
+    <i class="fa-solid fa-calendar-xmark" aria-hidden="true"></i>
+    <h3>Booking not found</h3>
+    <p>The requested booking could not be found.</p>
+    <button type="button" data-booking-back>Back to Bookings</button>
+  </section>
+</div>

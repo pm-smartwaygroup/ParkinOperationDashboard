@@ -1,0 +1,390 @@
+.user-management-add-page {
+  --uma-card: var(--dash-card);
+  --uma-panel: var(--dash-panel);
+  --uma-line: var(--dash-line);
+  --uma-soft-line: var(--dash-soft-line);
+  --uma-ink: var(--dash-ink);
+  --uma-muted: var(--dash-muted);
+  --uma-green: var(--dash-green);
+  max-width: 1180px;
+  margin: 0 auto;
+  color: var(--uma-ink);
+}
+.user-management-add-topbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+.user-management-add-breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 20px;
+  color: var(--uma-muted);
+  font-size: 11px;
+}
+.user-management-add-breadcrumb a {
+  color: var(--uma-muted);
+  text-decoration: none;
+}
+.user-management-add-breadcrumb a:hover {
+  color: var(--uma-green);
+}
+.user-management-add-eyebrow,
+.user-management-add-card-heading p {
+  margin: 0 0 5px;
+  color: var(--uma-green);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.user-management-add-topbar h2 {
+  margin: 0;
+  font-size: clamp(25px, 3vw, 34px);
+  letter-spacing: 0;
+}
+.user-management-add-subtitle {
+  margin: 8px 0 0;
+  color: var(--uma-muted);
+  font-size: 13px;
+}
+.user-management-add-back,
+.user-management-add-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 0 15px;
+  border: 1px solid var(--uma-line);
+  border-radius: 7px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+.user-management-add-back {
+  color: var(--uma-ink);
+  background: var(--uma-card);
+}
+.user-management-add-back:hover {
+  border-color: var(--uma-green);
+  color: var(--uma-green);
+}
+.user-management-add-form {
+  display: grid;
+  gap: 16px;
+}
+.user-management-add-card {
+  padding: 22px;
+  border: 1px solid var(--uma-line);
+  border-radius: 10px;
+  background: var(--uma-card);
+  box-shadow: var(--dash-shadow);
+}
+.user-management-add-card-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+.user-management-add-card-heading h3 {
+  margin: 0;
+  font-size: 16px;
+}
+.user-management-add-card-icon {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  place-items: center;
+  border-radius: 8px;
+  color: var(--uma-green);
+  background: color-mix(in srgb, var(--uma-green) 11%, transparent);
+}
+.user-management-add-fields {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px 16px;
+}
+.user-management-add-field {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+.user-management-add-field > span:first-child {
+  color: var(--uma-muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+.user-management-add-field b {
+  color: var(--uma-green);
+}
+.user-management-add-field input,
+.user-management-add-field select {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 43px;
+  padding: 0 12px;
+  border: 1px solid var(--uma-line);
+  border-radius: 7px;
+  color: var(--uma-ink);
+  background: var(--dash-input);
+  font: inherit;
+  font-size: 13px;
+  outline: none;
+}
+.user-management-add-field select[multiple] {
+  height: 116px;
+  padding: 8px;
+}
+.user-management-add-field input:focus,
+.user-management-add-field select:focus {
+  border-color: var(--uma-green);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--uma-green) 14%, transparent);
+}
+.user-management-add-field [aria-invalid="true"] {
+  border-color: var(--dash-red);
+}
+.user-management-add-field small {
+  min-height: 14px;
+  color: var(--uma-muted);
+  font-size: 10px;
+  line-height: 1.4;
+}
+.user-management-add-field small[data-error-for] {
+  color: var(--dash-red);
+}
+.user-management-add-phone {
+  display: flex;
+  align-items: center;
+  min-height: 43px;
+  border: 1px solid var(--uma-line);
+  border-radius: 7px;
+  background: var(--dash-input);
+  overflow: hidden;
+}
+.user-management-add-phone:focus-within {
+  border-color: var(--uma-green);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--uma-green) 14%, transparent);
+}
+.user-management-add-phone b {
+  align-self: stretch;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 10px;
+  border-right: 1px solid var(--uma-line);
+  color: var(--uma-ink);
+  font-size: 12px;
+}
+.user-management-add-phone input {
+  min-height: 41px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.user-management-add-account-fields {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.user-management-add-status-note,
+.user-management-add-preview-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 20px;
+  padding: 13px;
+  border: 1px solid color-mix(in srgb, var(--uma-green) 22%, var(--uma-line));
+  border-radius: 7px;
+  color: var(--uma-muted);
+  background: color-mix(in srgb, var(--uma-green) 6%, transparent);
+  font-size: 11px;
+  line-height: 1.5;
+}
+.user-management-add-status-note > i,
+.user-management-add-preview-note > i {
+  margin-top: 2px;
+  color: var(--uma-green);
+}
+.user-management-add-status-note strong {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--uma-ink);
+}
+.user-management-add-location-wrap {
+  margin-top: 18px;
+}
+.user-management-add-location-wrap.hidden {
+  display: none;
+}
+.user-management-add-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  cursor: pointer;
+}
+.user-management-add-check input {
+  position: absolute;
+  opacity: 0;
+}
+.user-management-add-checkmark {
+  display: grid;
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  place-items: center;
+  border: 1px solid var(--uma-line);
+  border-radius: 5px;
+  color: transparent;
+  background: var(--dash-input);
+}
+.user-management-add-check input:checked + .user-management-add-checkmark {
+  border-color: var(--uma-green);
+  color: #fff;
+  background: var(--uma-green);
+}
+.user-management-add-check
+  input:focus-visible
+  + .user-management-add-checkmark {
+  outline: 3px solid color-mix(in srgb, var(--uma-green) 22%, transparent);
+}
+.user-management-add-checkmark i {
+  font-size: 11px;
+}
+.user-management-add-check strong,
+.user-management-add-check small {
+  display: block;
+}
+.user-management-add-check strong {
+  margin-bottom: 5px;
+  font-size: 13px;
+}
+.user-management-add-check small {
+  max-width: 600px;
+  color: var(--uma-muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+.user-management-add-preview-copy {
+  margin: -7px 0 18px;
+  color: var(--uma-muted);
+  font-size: 12px;
+}
+.user-management-add-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin: 0;
+}
+.user-management-add-preview-grid dt {
+  margin-bottom: 5px;
+  color: var(--uma-muted);
+  font-size: 10px;
+  text-transform: uppercase;
+}
+.user-management-add-preview-grid dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-size: 12px;
+  font-weight: 700;
+}
+.user-management-add-preview-note {
+  margin-top: 18px;
+}
+.user-management-add-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 9px;
+  padding: 4px 0 16px;
+}
+.user-management-add-button.primary {
+  border-color: var(--uma-green);
+  color: #fff;
+  background: var(--uma-green);
+}
+.user-management-add-button.secondary {
+  color: var(--uma-ink);
+  background: var(--uma-card);
+}
+.user-management-add-button.ghost {
+  color: var(--uma-muted);
+  background: transparent;
+}
+.user-management-add-button:hover {
+  filter: brightness(0.96);
+}
+.user-management-add-button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+.user-management-add-feedback {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 13px 15px;
+  border: 1px solid var(--uma-line);
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+.user-management-add-feedback.hidden {
+  display: none;
+}
+.user-management-add-feedback.error {
+  color: var(--dash-red);
+  background: color-mix(in srgb, var(--dash-red) 7%, transparent);
+}
+.user-management-add-feedback.warning {
+  color: var(--uma-ink);
+  background: color-mix(in srgb, #d79a35 8%, transparent);
+}
+
+@media (max-width: 900px) {
+  .user-management-add-fields,
+  .user-management-add-account-fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .user-management-add-preview-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 620px) {
+  .user-management-add-topbar {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .user-management-add-back {
+    align-self: stretch;
+  }
+  .user-management-add-card {
+    padding: 17px 15px;
+  }
+  .user-management-add-fields,
+  .user-management-add-account-fields,
+  .user-management-add-preview-grid {
+    grid-template-columns: 1fr;
+  }
+  .user-management-add-actions {
+    position: sticky;
+    bottom: 0;
+    z-index: 5;
+    margin: 0 -15px;
+    padding: 12px 15px;
+    background: color-mix(in srgb, var(--uma-card) 94%, transparent);
+    border-top: 1px solid var(--uma-line);
+  }
+  .user-management-add-actions .user-management-add-button {
+    flex: 1;
+    min-width: 0;
+    padding-inline: 10px;
+  }
+  .user-management-add-feedback {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

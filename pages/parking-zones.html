@@ -1,0 +1,60 @@
+<div class="parking-zones-page" data-parking-zones-page>
+  <header class="parking-zones-heading">
+    <div>
+      <h1>Parking Zones</h1>
+      <p>Manage your parking zones, capacity, pricing, and location details.</p>
+    </div>
+    <button class="parking-zone-primary-button" type="button" data-zone-add>
+      <i class="fa-solid fa-plus" aria-hidden="true"></i>
+      <span>Add Zone</span>
+    </button>
+  </header>
+
+  <section class="parking-zone-kpi-grid" aria-label="Parking zone statistics" data-zone-kpis></section>
+
+  <section class="parking-zone-map-panel">
+    <div class="parking-zone-panel-heading">
+      <div class="parking-zone-section-title">
+        <span class="parking-zone-icon parking-zone-icon--green"><i class="fa-solid fa-location-dot" aria-hidden="true"></i></span>
+        <h2>Zones Map</h2>
+      </div>
+    </div>
+    <div class="parking-zone-map-layout">
+      <div class="parking-zone-map" data-zone-map aria-label="Parking zones around Riyadh">
+        <div id="parking-zones-map" class="parking-zones-map-canvas" aria-label="Parking zones map"></div>
+        <div class="parking-zone-map-error hidden" data-zone-map-error role="status">
+          <strong>Map unavailable</strong>
+          <span>Unable to load Google Maps.</span>
+        </div>
+      </div>
+      <aside class="parking-zone-status-summary">
+        <div class="parking-zone-panel-heading parking-zone-panel-heading--compact"><h3>Zones by Status</h3></div>
+        <div class="parking-zone-status-list" data-zone-status-list></div>
+        <div class="parking-zone-status-footnote"><i class="fa-solid fa-circle-info" aria-hidden="true"></i><span>Live operational status</span></div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="parking-zone-directory">
+    <div class="parking-zone-toolbar" data-zone-toolbar>
+      <label class="parking-zone-search">
+        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+        <span class="sr-only">Search zones</span>
+        <input type="search" data-zone-search placeholder="Search zones by name, location or notes..." autocomplete="off" />
+      </label>
+      <label class="parking-zone-select-wrap"><span>Location</span><select data-zone-location-filter><option value="all">All Locations</option></select></label>
+      <label class="parking-zone-select-wrap"><span>Status</span><select data-zone-status-filter><option value="all">All Status</option><option value="Active">Active</option><option value="Maintenance">Maintenance</option><option value="Inactive">Inactive</option></select></label>
+      <label class="parking-zone-select-wrap"><span>Sort</span><select data-zone-sort><option value="name-asc">Name (A-Z)</option><option value="name-desc">Name (Z-A)</option><option value="capacity-desc">Capacity High-Low</option><option value="capacity-asc">Capacity Low-High</option></select></label>
+      <div class="parking-zone-view-toggle" role="group" aria-label="Zone view">
+        <button type="button" class="is-active" data-zone-view="list" aria-label="List view"><i class="fa-solid fa-list" aria-hidden="true"></i></button>
+        <button type="button" data-zone-view="grid" aria-label="Grid view"><i class="fa-solid fa-table-cells-large" aria-hidden="true"></i></button>
+        <button type="button" data-zone-view="map" aria-label="Map view"><i class="fa-solid fa-map" aria-hidden="true"></i></button>
+      </div>
+    </div>
+    <div class="parking-zone-table-shell" data-zone-table-shell>
+      <div class="parking-zone-table" data-zone-results></div>
+    </div>
+    <footer class="parking-zone-pagination" data-zone-pagination></footer>
+  </section>
+  <div class="parking-zone-toast" data-zone-toast role="status" aria-live="polite"></div>
+</div>
