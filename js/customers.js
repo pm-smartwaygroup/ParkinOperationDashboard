@@ -495,6 +495,7 @@ function createCustomerRow(customer) {
     const button = document.createElement("button");
     button.type = "button";
     button.dataset.customerAction = action;
+    button.dataset.customerId = customer.id;
     if (permission) button.dataset.requiredPermission = permission;
     button.textContent = label;
     menu.append(button);
@@ -718,7 +719,13 @@ function bindCustomerActionMenus() {
     event.stopPropagation();
 
     const customerId =
-      actionButton.closest(".customers-row")?.dataset.customerId;
+      actionButton.dataset.customerId ||
+      actionButton.closest(".customers-row")?.dataset.customerId ||
+      actionButton
+        .closest(".customer-actions-cell")
+        ?.querySelector(".customer-more-btn")
+        ?.dataset.customerId;
+
     const action = actionButton.dataset.customerAction;
     closeCustomerActionMenus();
     if (!customerId) {
