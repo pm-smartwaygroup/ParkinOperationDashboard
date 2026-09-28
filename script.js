@@ -1112,7 +1112,11 @@ profileMenu
       closeProfileMenu();
 
       if (route) {
-        window.location.hash = route;
+        if (window.location.hash === route) {
+          handleDashboardRoute();
+        } else {
+          window.location.hash = route;
+        }
       }
     });
   });
