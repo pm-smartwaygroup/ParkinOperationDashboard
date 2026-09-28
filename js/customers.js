@@ -547,15 +547,21 @@ function renderCustomerPagination(container, page, totalPages) {
 }
 
 function renderCustomerList(container, customers, pagination) {
-  const tableBody = container.querySelector("#customers-table-body");
-  if (!tableBody) return;
-  tableBody.replaceChildren();
+  const table = container.querySelector(".customers-table-scroll");
+  if (!table) return;
+
+  table
+    .querySelectorAll(
+      ".customers-row:not(.customers-head), .customers-loading-state",
+    )
+    .forEach((element) => element.remove());
+
   if (customers.length) {
-    customers.forEach((customer) =>
-      tableBody.append(createCustomerRow(customer)),
-    );
+    customers.forEach((customer) => {
+      table.append(createCustomerRow(customer));
+    });
   } else {
-    tableBody.append(createCustomerListMessage("No customers found."));
+    table.append(createCustomerListMessage("No customers found."));
   }
 
   const total = Number(pagination?.total || 0);
