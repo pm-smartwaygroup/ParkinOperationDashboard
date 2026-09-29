@@ -459,11 +459,11 @@ function createCustomerRow(customer) {
       "customer-type",
     ),
   );
-  const location = createCustomerText("span", "-");
-  const vehicles = createCustomerText("span", "-", "customer-vehicles");
-  const bookings = createCustomerText("span", "-");
-  const spent = createCustomerText("span", "-");
-  const activity = createCustomerText("span", "-");
+  const vehicles = createCustomerText(
+    "span",
+    String(customer.vehicleCount ?? 0),
+    "customer-vehicles",
+  );
   const status = document.createElement("span");
   const statusBadge = createCustomerText(
     "strong",
@@ -507,11 +507,7 @@ function createCustomerRow(customer) {
     profile,
     contact,
     type,
-    location,
     vehicles,
-    bookings,
-    spent,
-    activity,
     status,
     actions,
   );
@@ -975,7 +971,7 @@ function bindAddCustomerForm() {
       window.location.hash = "customers";
     });
 
-  form.addEventListener("submit", (event) => {
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     if (!form.checkValidity()) {
@@ -983,7 +979,81 @@ function bindAddCustomerForm() {
       return;
     }
 
-    console.log("Customer form submitted");
+    const submitButton = form.querySelector(".add-customer-submit");
+    const originalButtonHtml = submitButton?.innerHTML || "";
+
+    const payload = {
+      fullName: fullName?.value.trim() || "",
+      email: email?.value.trim() || "",
+      phoneCountryCode: "+966",
+      phoneNumber:
+        document.querySelector("#customer-phone")?.value.trim() || "",
+      customerType: customerType?.value.trim().toUpperCase() || "INDIVIDUAL",
+      status: customerStatus?.value.trim().toUpperCase() || "ACTIVE",
+      memberSince: memberSince?.value || undefined,
+      preferredLanguage: language?.value.trim() || undefined,
+      communicationPreference:
+        communication?.value.trim() || undefined,
+      notes: notes?.value.trim() || undefined,
+    };
+
+    try {
+      if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.innerHTML =
+          '<i class="fa-solid fa-spinner fa-spin"></i> Creating...';
+      }
+
+      const response = await fetch(
+        `${getCustomerManagementApiBaseUrl()}/customers`,
+        {
+          method: "POST",
+          headers: getCustomerManagementAuthHeaders(),
+          body: JSON.stringify(payload),
+        },
+      );
+
+      const body = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        const message = Array.isArray(body?.message)
+          ? body.message.join(" ")
+          : body?.message ||
+            body?.error ||
+            "Unable to create customer.";
+
+        throw new Error(message);
+      }
+
+      const result = body?.data || body;
+      const customer = result?.customer || result;
+
+      if (!customer?.id) {
+        throw new Error(
+          "Customer was created but no customer ID was returned.",
+        );
+      }
+
+      customerListState.page = 1;
+
+      window.location.hash =
+        `customer-details?id=${encodeURIComponent(customer.id)}`;
+    } catch (error) {
+      console.error("Unable to create customer:", error);
+
+      window.showDashboardAlert?.(
+        error?.message || "Unable to create customer.",
+        {
+          title: "Customer creation failed",
+          type: "error",
+        },
+      );
+    } finally {
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.innerHTML = originalButtonHtml;
+      }
+    }
   });
 
   updateSummary();
