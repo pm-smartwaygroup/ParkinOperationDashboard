@@ -187,6 +187,8 @@ function userManagementAddUpdatePreview(container) {
     (item) => String(item.id) === userManagementAddValue(form, "companyId"),
   );
   const locations = userManagementAddSelectedLocations(form);
+  const password = userManagementAddValue(form, "password");
+  const confirmPassword = userManagementAddValue(form, "confirmPassword");
   container.querySelector("[data-preview-role]").textContent =
     userManagementRoleLabel(role) || "—";
   container.querySelector("[data-preview-scope]").textContent =
@@ -197,6 +199,53 @@ function userManagementAddUpdatePreview(container) {
     scope === "LOCATION"
       ? `${locations.length} selected`
       : "All company locations";
+}
+
+function userManagementAddUpdatePasswordRules(container) {
+  const form = container.querySelector("[data-user-add-form]");
+  if (!form) return;
+
+  const password = userManagementAddValue(form, "password");
+  const confirmPassword =
+    userManagementAddValue(form, "confirmPassword");
+
+  const rules = {
+    length: password.length >= 8,
+    letter: /[A-Za-z]/.test(password),
+    number: /[0-9]/.test(password),
+  };
+
+  Object.entries(rules).forEach(([name, met]) => {
+    container
+      .querySelector(`[data-user-password-rule="${name}"]`)
+      ?.classList.toggle("is-met", met);
+  });
+
+  const passwordValid =
+    rules.length &&
+    rules.letter &&
+    rules.number;
+
+  if (passwordValid) {
+    const passwordError =
+      form.querySelector('[data-error-for="password"]');
+
+    if (passwordError) {
+      passwordError.textContent = "";
+    }
+  }
+
+  if (
+    confirmPassword &&
+    password === confirmPassword
+  ) {
+    const confirmError =
+      form.querySelector('[data-error-for="confirmPassword"]');
+
+    if (confirmError) {
+      confirmError.textContent = "";
+    }
+  }
 }
 
 function userManagementAddValidate(container) {
@@ -210,6 +259,10 @@ function userManagementAddValidate(container) {
   const companyId = userManagementAddValue(form, "companyId");
   const scope = userManagementAddValue(form, "accessScope");
   const locations = userManagementAddSelectedLocations(form);
+  const password = userManagementAddValue(form, "password");
+  const confirmPassword =
+    userManagementAddValue(form, "confirmPassword");
+
   if (!firstName) {
     userManagementAddSetError(form, "firstName", "First name is required.");
     valid = false;
@@ -254,6 +307,48 @@ function userManagementAddValidate(container) {
     );
     valid = false;
   }
+  if (!password) {
+    userManagementAddSetError(form, "password", "Initial password is required.");
+    valid = false;
+  } else if (password.length < 8) {
+    userManagementAddSetError(
+      form,
+      "password",
+      "Password must be at least 8 characters.",
+    );
+    valid = false;
+  } else if (!/[A-Za-z]/.test(password)) {
+    userManagementAddSetError(
+      form,
+      "password",
+      "Password must contain at least one letter.",
+    );
+    valid = false;
+  } else if (!/[0-9]/.test(password)) {
+    userManagementAddSetError(
+      form,
+      "password",
+      "Password must contain at least one number.",
+    );
+    valid = false;
+  }
+
+  if (!confirmPassword) {
+    userManagementAddSetError(
+      form,
+      "confirmPassword",
+      "Confirm the initial password.",
+    );
+    valid = false;
+  } else if (password !== confirmPassword) {
+    userManagementAddSetError(
+      form,
+      "confirmPassword",
+      "Passwords do not match.",
+    );
+    valid = false;
+  }
+
   const phone = userManagementAddValue(form, "phoneNumber").replace(/\D/g, "");
   if (phone && !(phone.length === 9 && phone.startsWith("5"))) {
     userManagementAddSetError(
@@ -274,6 +369,8 @@ function userManagementAddPayload(container) {
     role: userManagementAddValue(form, "role"),
     companyId: userManagementAddValue(form, "companyId"),
     accessScope: userManagementAddValue(form, "accessScope"),
+    password: userManagementAddValue(form, "password"),
+    confirmPassword: userManagementAddValue(form, "confirmPassword"),
   };
   const optional = {
     employeeId: userManagementAddValue(form, "employeeId"),
@@ -304,98 +401,66 @@ function userManagementAddCreatedUserId(result) {
   );
 }
 
-function userManagementAddErrorMessage(error, operation) {
+function userManagementAddErrorMessage(error) {
   if (error?.status === 401)
     return "Your session has expired. Please sign in again.";
   if (error?.status === 403)
-    return operation === "invite"
-      ? "User was created, but you do not have permission to send the invitation."
-      : "You do not have permission to create this user.";
+    return "You do not have permission to create this user.";
   if (error?.status === 409)
     return "A user with this email address already exists.";
   if (error?.status === 400)
-    return "Please review the highlighted fields and try again.";
-  return operation === "invite"
-    ? "The invitation email could not be sent."
-    : "Unable to create user. Please try again.";
+    return error?.message || "Please review the highlighted fields and try again.";
+  return "Unable to create user. Please try again.";
 }
 
-async function userManagementAddInvite(container) {
-  const response = await fetch(
-    `${getUserManagementApiBaseUrl()}/users/${encodeURIComponent(userManagementAddState.createdUserId)}/invite`,
-    { method: "POST", headers: userManagementAddAuthHeaders() },
-  );
-  await userManagementAddResponse(response);
-}
-
-async function userManagementAddSubmit(container, retryInvite = false) {
+async function userManagementAddSubmit(container) {
   if (userManagementAddState.submitting) return;
+
   userManagementAddState.submitting = true;
+
   const form = container.querySelector("[data-user-add-form]");
   const submit = container.querySelector("[data-user-add-submit]");
   const reset = container.querySelector("[data-user-add-reset]");
   const label = submit.querySelector("span");
+
   submit.disabled = true;
   reset.disabled = true;
   userManagementAddClearFeedback(container);
+
   try {
-    if (retryInvite) {
-      label.textContent = "Sending Invitation...";
-      await userManagementAddInvite(container);
-      window.showDashboardAlert?.(
-        `Invitation email sent to ${userManagementAddState.createdEmail}.`,
-        { title: "Invitation sent", type: "success" },
-      );
-      window.location.hash = "user-management";
-      return;
-    }
     label.textContent = "Creating User...";
+
     const response = await fetch(`${getUserManagementApiBaseUrl()}/users`, {
       method: "POST",
       headers: userManagementAddAuthHeaders(true),
       body: JSON.stringify(userManagementAddPayload(container)),
     });
+
     const result = await userManagementAddResponse(response);
     const createdUserId = userManagementAddCreatedUserId(result);
-    if (!createdUserId)
+
+    if (!createdUserId) {
       throw new Error("The created user could not be identified.");
-    userManagementAddState.createdUserId = createdUserId;
-    userManagementAddState.createdEmail = userManagementAddValue(form, "email");
-    userManagementAddState.dirty = false;
-    if (userManagementAddField(form, "sendInvitation").checked) {
-      label.textContent = "Sending Invitation...";
-      try {
-        await userManagementAddInvite(container);
-        window.showDashboardAlert?.(
-          `User created successfully. Invitation email sent to ${userManagementAddState.createdEmail}.`,
-          { title: "User created", type: "success" },
-        );
-        window.location.hash = "user-management";
-      } catch (error) {
-        userManagementAddState.inviteFailed = true;
-        const feedback = container.querySelector("[data-user-add-feedback]");
-        feedback.className = "user-management-add-feedback warning";
-        feedback.replaceChildren();
-        const text = document.createElement("span");
-        text.textContent = `User created successfully, but the invitation email could not be sent.`;
-        const retry = document.createElement("button");
-        retry.type = "button";
-        retry.className = "user-management-add-button secondary";
-        retry.dataset.userAddRetryInvite = "true";
-        retry.textContent = "Retry Invitation";
-        feedback.append(text, retry);
-      }
-    } else {
-      window.showDashboardAlert?.(
-        "User created successfully. The account remains disabled until an invitation is sent and password setup is completed.",
-        { title: "User created", type: "success" },
-      );
-      window.location.hash = "user-management";
     }
+
+    userManagementAddState.createdUserId = createdUserId;
+    userManagementAddState.createdEmail =
+      userManagementAddValue(form, "email");
+    userManagementAddState.dirty = false;
+
+    window.showDashboardAlert?.(
+      "User created successfully. The account is active and ready to sign in.",
+      {
+        title: "User created",
+        type: "success",
+      },
+    );
+
+    window.location.hash = "user-management";
   } catch (error) {
     userManagementAddDisplayError(
       container,
-      userManagementAddErrorMessage(error, "create"),
+      userManagementAddErrorMessage(error),
     );
   } finally {
     userManagementAddState.submitting = false;
@@ -446,6 +511,7 @@ function userManagementAddReset(container) {
   userManagementAddRenderCompanies(container);
   userManagementAddUpdateLocationVisibility(container);
   userManagementAddUpdatePreview(container);
+  userManagementAddUpdatePasswordRules(container);
 }
 
 async function userManagementAddLoadOptions(container) {
@@ -486,16 +552,52 @@ async function userManagementAddLoadOptions(container) {
 }
 
 function bindUserManagementAddPage(container) {
-  if (container.dataset.eventsBound === "true") return;
-  container.dataset.eventsBound = "true";
   const form = container.querySelector("[data-user-add-form]");
-  form.addEventListener("input", () => {
+  if (!form || form.dataset.eventsBound === "true") return;
+  form.dataset.eventsBound = "true";
+  form.addEventListener("input", (event) => {
     userManagementAddState.dirty = true;
     userManagementAddClearFeedback(container);
+
+    const fieldName = event.target?.name;
+    if (fieldName) {
+      const fieldError = form.querySelector(
+        `[data-error-for="${fieldName}"]`,
+      );
+      if (fieldError) fieldError.textContent = "";
+    }
+
+    if (
+      fieldName === "password" ||
+      fieldName === "confirmPassword"
+    ) {
+      const password = userManagementAddValue(form, "password");
+      const confirmPassword =
+        userManagementAddValue(form, "confirmPassword");
+
+      if (
+        password.length >= 8 &&
+        /[A-Za-z]/.test(password) &&
+        /[0-9]/.test(password)
+      ) {
+        const passwordError =
+          form.querySelector('[data-error-for="password"]');
+        if (passwordError) passwordError.textContent = "";
+      }
+
+      if (confirmPassword && password === confirmPassword) {
+        const confirmError =
+          form.querySelector('[data-error-for="confirmPassword"]');
+        if (confirmError) confirmError.textContent = "";
+      }
+    }
+
     userManagementAddUpdatePreview(container);
+    userManagementAddUpdatePasswordRules(container);
   });
   form.addEventListener("change", (event) => {
     userManagementAddState.dirty = true;
+    userManagementAddUpdatePasswordRules(container);
     if (event.target.name === "companyId") {
       userManagementAddClearLocations(form);
       userManagementAddRenderLocations(container);
@@ -507,6 +609,31 @@ function bindUserManagementAddPage(container) {
     }
     userManagementAddUpdatePreview(container);
   });
+  form.addEventListener("click", (event) => {
+    const toggle = event.target.closest("[data-user-add-password-toggle]");
+    if (!toggle) return;
+
+    const fieldName = toggle.dataset.userAddPasswordToggle;
+    const input = userManagementAddField(form, fieldName);
+
+    if (!input) return;
+
+    const showing = input.type === "text";
+    input.type = showing ? "password" : "text";
+
+    toggle.setAttribute(
+      "aria-label",
+      showing ? "Show password" : "Hide password",
+    );
+
+    const icon = toggle.querySelector("i");
+    if (icon) {
+      icon.className = showing
+        ? "fa-solid fa-eye"
+        : "fa-solid fa-eye-slash";
+    }
+  });
+
   form.addEventListener("submit", (event) => {
     event.preventDefault();
     if (userManagementAddValidate(container))
@@ -531,6 +658,19 @@ function bindUserManagementAddPage(container) {
     if (event.target.closest("[data-user-add-retry-invite]"))
       void userManagementAddSubmit(container, true);
   });
+  userManagementAddUpdatePasswordRules(container);
+
+  // Browsers/password managers may populate credentials after page render
+  // without dispatching a normal input event.
+  window.setTimeout(
+    () => userManagementAddUpdatePasswordRules(container),
+    150,
+  );
+  window.setTimeout(
+    () => userManagementAddUpdatePasswordRules(container),
+    600,
+  );
+
   window.onbeforeunload = (event) => {
     if (userManagementAddState.dirty) {
       event.preventDefault();

@@ -135,7 +135,7 @@
         <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
         <div>
           <strong>Account status</strong
-          ><span>Disabled until password setup is completed</span>
+          ><span>Active immediately after successful creation</span>
         </div>
       </div>
       <div
@@ -156,31 +156,89 @@
       </div>
     </section>
 
-    <section class="user-management-add-card user-management-add-invite-card">
+    <section class="user-management-add-card user-management-add-credentials-card">
       <div class="user-management-add-card-heading">
-        <span class="user-management-add-card-icon"
-          ><i class="fa-solid fa-envelope" aria-hidden="true"></i
-        ></span>
+        <span class="user-management-add-card-icon">
+          <i class="fa-solid fa-key" aria-hidden="true"></i>
+        </span>
         <div>
-          <p>Secure onboarding</p>
+          <p>Secure credentials</p>
           <h3>Password Setup</h3>
         </div>
       </div>
-      <label class="user-management-add-check"
-        ><input type="checkbox" name="sendInvitation" checked /><span
-          class="user-management-add-checkmark"
-          ><i class="fa-solid fa-check" aria-hidden="true"></i></span
-        ><span
-          ><strong>Send invitation email</strong
-          ><small
-            >The user will receive a secure email link to create their password
-            and activate their account.</small
-          ></span
-        ></label
-      >
+
+      <div class="user-management-add-password-grid">
+        <label class="user-management-add-field">
+          <span>Initial Password <b>*</b></span>
+          <span class="user-management-add-password-control">
+            <input
+              name="password"
+              type="password"
+              autocomplete="new-password"
+              required
+            />
+            <button
+              type="button"
+              class="user-management-add-password-toggle"
+              data-user-add-password-toggle="password"
+              aria-label="Show password"
+            >
+              <i class="fa-solid fa-eye" aria-hidden="true"></i>
+            </button>
+          </span>
+          <small data-error-for="password"></small>
+        </label>
+
+        <label class="user-management-add-field">
+          <span>Confirm Password <b>*</b></span>
+          <span class="user-management-add-password-control">
+            <input
+              name="confirmPassword"
+              type="password"
+              autocomplete="new-password"
+              required
+            />
+            <button
+              type="button"
+              class="user-management-add-password-toggle"
+              data-user-add-password-toggle="confirmPassword"
+              aria-label="Show password"
+            >
+              <i class="fa-solid fa-eye" aria-hidden="true"></i>
+            </button>
+          </span>
+          <small data-error-for="confirmPassword"></small>
+        </label>
+      </div>
+
+      <div class="user-management-add-password-rules">
+        <span data-user-password-rule="length">
+          <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+          Minimum 8 characters
+        </span>
+        <span data-user-password-rule="letter">
+          <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+          At least one letter
+        </span>
+        <span data-user-password-rule="number">
+          <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+          At least one number
+        </span>
+      </div>
+
+      <div class="user-management-add-credential-note">
+        <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+        <div>
+          <strong>Login ready</strong>
+          <span>
+            The account will be active immediately and the user can sign in
+            with the credentials created here.
+          </span>
+        </div>
+      </div>
     </section>
 
-    <section class="user-management-add-card user-management-add-preview-card">
+<section class="user-management-add-card user-management-add-preview-card">
       <div class="user-management-add-card-heading">
         <span class="user-management-add-card-icon"
           ><i class="fa-solid fa-shield-halved" aria-hidden="true"></i

@@ -388,3 +388,153 @@
     flex-direction: column;
   }
 }
+
+/* ===== Add User direct password setup ===== */
+
+.user-management-add-credentials-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.user-management-add-credentials-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: rgb(10 155 85 / 5%);
+  transform: translate(45%, -48%);
+  pointer-events: none;
+}
+
+.user-management-add-password-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.user-management-add-password-control {
+  position: relative;
+  display: block;
+}
+
+.user-management-add-password-control input {
+  width: 100%;
+  padding-right: 48px;
+}
+
+.user-management-add-password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: #64748b;
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition:
+    color 0.18s ease,
+    background-color 0.18s ease;
+}
+
+.user-management-add-password-toggle:hover,
+.user-management-add-password-toggle:focus-visible {
+  color: #078147;
+  background: rgb(10 155 85 / 8%);
+  outline: none;
+}
+
+.user-management-add-password-rules {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 16px;
+}
+
+.user-management-add-password-rules span {
+  min-height: 31px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 11px;
+  border: 1px solid #e2e8f0;
+  border-radius: 999px;
+  background: #f8fafc;
+  color: #64748b;
+  font-size: 0.76rem;
+  font-weight: 700;
+  transition:
+    color 0.18s ease,
+    border-color 0.18s ease,
+    background-color 0.18s ease;
+}
+
+.user-management-add-password-rules span i {
+  font-size: 0.72rem;
+  color: #94a3b8;
+}
+
+.user-management-add-password-rules span.is-met {
+  border-color: #b8e4ca;
+  background: #f0fbf5;
+  color: #087545;
+}
+
+.user-management-add-password-rules span.is-met i {
+  color: #0a9b55;
+}
+
+.user-management-add-credential-note {
+  margin-top: 18px;
+  min-height: 58px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 15px;
+  border: 1px solid #b8e4ca;
+  border-radius: 10px;
+  background: #f5fbf7;
+}
+
+.user-management-add-credential-note > i {
+  flex: 0 0 auto;
+  color: #0a9b55;
+}
+
+.user-management-add-credential-note div {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.user-management-add-credential-note strong {
+  color: #172234;
+  font-size: 0.8rem;
+}
+
+.user-management-add-credential-note span {
+  color: #64748b;
+  font-size: 0.74rem;
+  line-height: 1.45;
+}
+
+@media (max-width: 760px) {
+  .user-management-add-password-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .user-management-add-password-rules {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===== End Add User direct password setup ===== */
