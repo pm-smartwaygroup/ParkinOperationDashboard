@@ -88,6 +88,9 @@ const DARK_MODE_STORAGE_KEY = "parkin_dark_mode";
 
 const API_BASE_URL =
   window.PARKIN_CONFIG?.apiBaseUrl || "https://api.parkin.com.sa";
+const USER_MANAGEMENT_API_BASE_URL =
+  window.PARKIN_CONFIG?.userManagementApiBaseUrl ||
+  "https://api.parkin.com.sa";
 
 const dashboardAccessState = {
   ready: false,
@@ -115,19 +118,28 @@ const DASHBOARD_PERMISSION_BY_ROUTE = Object.freeze({
 });
 
 function getDashboardAccessApiBaseUrl() {
-  return (
-    window.PARKIN_CONFIG?.userManagementApiBaseUrl ||
-    window.PARKIN_CONFIG?.apiBaseUrl ||
-    "https://api.parkin.com.sa"
-  );
+  return USER_MANAGEMENT_API_BASE_URL;
+}
+
+function getCurrentDashboardUserRole() {
+  if (!dashboardAccessState.ready) return null;
+  return dashboardAccessState.user?.role || null;
 }
 
 function hasDashboardPermission(code) {
-  return dashboardAccessState.ready && dashboardAccessState.permissions.has(code);
+  if (!dashboardAccessState.ready) return false;
+
+  if (getCurrentDashboardUserRole() === "SUPER_ADMIN") return true;
+
+  return dashboardAccessState.permissions.has(code);
 }
 
 function hasAnyDashboardPermission(...codes) {
-  return codes.some((code) => hasDashboardPermission(code));
+  if (!dashboardAccessState.ready) return false;
+
+  if (getCurrentDashboardUserRole() === "SUPER_ADMIN") return true;
+
+  return codes.some((code) => dashboardAccessState.permissions.has(code));
 }
 
 function applyDashboardPermissionVisibility(root = document) {
@@ -200,6 +212,7 @@ window.hasAnyDashboardPermission = hasAnyDashboardPermission;
 window.applyDashboardPermissionVisibility = applyDashboardPermissionVisibility;
 window.getParkinCurrentPermissions = () =>
   dashboardAccessState.ready ? [...dashboardAccessState.permissions] : [];
+window.getParkinCurrentUserRole = getCurrentDashboardUserRole;
 window.getParkinCurrentUserId = () =>
   dashboardAccessState.ready ? dashboardAccessState.user?.id || null : null;
 window.refreshParkinDashboardAccess = async () => {
@@ -526,7 +539,7 @@ function connectAuthSocket() {
 
   disconnectAuthSocket();
 
-  authSocket = io(API_BASE_URL, {
+  authSocket = io(USER_MANAGEMENT_API_BASE_URL, {
     transports: ["websocket"],
   });
 
@@ -766,7 +779,7 @@ async function hydrateDashboardProfile() {
   if (!token) return;
 
   try {
-    const response = await fetch(`${API_BASE_URL}/auth/me`, {
+    const response = await fetch(`${USER_MANAGEMENT_API_BASE_URL}/auth/me`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     const result = await response.json();
@@ -846,7 +859,7 @@ async function checkSession() {
   }
 
   try {
-    const response = await fetch(`${API_BASE_URL}/auth/session`, {
+    const response = await fetch(`${USER_MANAGEMENT_API_BASE_URL}/auth/session`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -936,7 +949,7 @@ form.addEventListener("submit", async (event) => {
     console.log("API:", API_BASE_URL);
 
     const [response] = await Promise.all([
-      fetch(`${API_BASE_URL}/auth/login`, {
+      fetch(`${USER_MANAGEMENT_API_BASE_URL}/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -985,7 +998,7 @@ async function performDashboardLogout() {
 
   try {
     if (token) {
-      await fetch(`${API_BASE_URL}/auth/logout`, {
+      await fetch(`${USER_MANAGEMENT_API_BASE_URL}/auth/logout`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -1191,7 +1204,7 @@ async function restoreSession() {
   }
 
   try {
-    const response = await fetch(`${API_BASE_URL}/auth/session`, {
+    const response = await fetch(`${USER_MANAGEMENT_API_BASE_URL}/auth/session`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

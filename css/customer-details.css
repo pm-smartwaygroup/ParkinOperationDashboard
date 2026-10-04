@@ -2779,6 +2779,183 @@
 }
 
 /* ==========================================================
+   LIVE CUSTOMER DATA STATES
+========================================================== */
+
+.customer-data-state,
+.customer-unavailable-panel,
+.customer-coming-soon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 150px;
+  padding: 24px;
+  color: #64748b;
+  text-align: center;
+}
+
+.customer-data-state i,
+.customer-unavailable-panel > i,
+.customer-coming-soon > i {
+  color: #0f9f5c;
+  font-size: 1.35rem;
+}
+
+.customer-data-state.error i {
+  color: #dc5a5a;
+}
+
+.customer-data-state span,
+.customer-data-note,
+.customer-unavailable-panel p,
+.customer-coming-soon p,
+.customer-coming-soon span {
+  color: #64748b;
+  font-size: 0.76rem;
+  line-height: 1.55;
+}
+
+.customer-data-note {
+  margin: 16px 0 0;
+  text-align: center;
+}
+
+.customer-coming-soon {
+  min-height: 170px;
+  border: 1px dashed #d8e2ed;
+  border-radius: 10px;
+  background: #fbfdff;
+}
+
+.customer-coming-soon.compact {
+  min-height: 115px;
+  padding: 16px;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.customer-coming-soon strong {
+  color: #172234;
+  font-size: 0.86rem;
+}
+
+.customer-coming-soon h2,
+.customer-unavailable-panel h3 {
+  margin: 0;
+  color: #172234;
+  font-size: 0.95rem;
+}
+
+.customer-unavailable-panel {
+  min-height: 320px;
+}
+
+.customer-live-vehicles-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.customer-live-vehicle-card {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  gap: 13px;
+  align-items: center;
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid #e3eaf2;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.customer-live-vehicle-icon,
+.registered-vehicle-logo {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: #e6f8ee;
+  color: #0f9f5c;
+}
+
+.customer-live-vehicle-details {
+  min-width: 0;
+}
+
+.customer-live-vehicle-details strong {
+  display: block;
+  color: #0f172a;
+  font-size: 0.82rem;
+  font-weight: 900;
+  overflow-wrap: anywhere;
+}
+
+.customer-live-vehicle-details strong small,
+.customer-registered-vehicle-item.live strong small {
+  display: inline-flex;
+  margin-left: 6px;
+  padding: 3px 6px;
+  border-radius: 5px;
+  background: #dcfce7;
+  color: #0f8b4c;
+  font-size: 0.58rem;
+}
+
+.customer-live-vehicle-details span {
+  display: block;
+  margin-top: 5px;
+  color: #42547a;
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.customer-live-vehicle-details p {
+  margin: 5px 0 0;
+  color: #64748b;
+  font-size: 0.68rem;
+  line-height: 1.4;
+}
+
+.customer-live-vehicle-activity {
+  color: #64748b;
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: capitalize;
+}
+
+.customer-registered-vehicle-item.live {
+  grid-template-columns: 42px minmax(0, 1fr);
+  align-items: center;
+}
+
+.customer-registered-vehicle-item.live .registered-vehicle-logo {
+  width: 42px;
+  height: 42px;
+}
+
+.customer-registered-vehicle-item.live .customer-live-vehicle-details span {
+  margin-top: 5px;
+}
+
+@media (max-width: 620px) {
+  .customer-live-vehicles-list {
+    grid-template-columns: 1fr;
+  }
+
+  .customer-live-vehicle-card {
+    grid-template-columns: 40px minmax(0, 1fr);
+  }
+
+  .customer-live-vehicle-activity {
+    grid-column: 2;
+  }
+}
+
+/* ==========================================================
    CUSTOMER ACTIVITY LOG
 ========================================================== */
 
