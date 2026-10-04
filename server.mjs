@@ -27,9 +27,21 @@ function getLocalAddresses() {
 }
 
 const server = createServer((request, response) => {
-  const requestPath = decodeURIComponent(
-    new URL(request.url, `http://${request.headers.host}`).pathname,
-  );
+  let requestPath;
+
+  try {
+    const host = request.headers.host || `127.0.0.1:${port}`;
+    const requestUrl = new URL(request.url || "/", `http://${host}`);
+
+    requestPath = decodeURIComponent(requestUrl.pathname);
+  } catch {
+    response.writeHead(400, {
+      "Cache-Control": "no-cache",
+      "Content-Type": "text/plain; charset=utf-8",
+    });
+    response.end("Bad request");
+    return;
+  }
 
   const relativePath =
     requestPath === "/" ? "index.html" : requestPath.replace(/^\/+/, "");
