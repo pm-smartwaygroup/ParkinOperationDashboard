@@ -1302,7 +1302,6 @@ html[data-theme="dark"] .profile-page .profile-verified.is-pending {
   position: absolute;
   right: 12px;
   color: var(--profile-muted);
-  content: "\\f078";
   font-family: "Font Awesome 6 Free";
   font-size: 0.62rem;
   font-weight: 900;

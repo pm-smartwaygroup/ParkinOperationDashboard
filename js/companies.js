@@ -83,6 +83,18 @@ function formatCompanyStatus(status) {
     .replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
+function formatCompanyCategory(category) {
+  const labels = {
+    VALET_PARKING: "Valet Parking",
+    B2B: "B2B",
+    B2C: "B2C",
+    PRIVATE_PARKING: "Private Parking",
+    GOVERNMENT_PARKING: "Government Parking",
+  };
+
+  return labels[category] || formatCompanyStatus(category || "VALET_PARKING");
+}
+
 function setCompaniesLoading(isLoading) {
   document.querySelector("#companies-loading")?.classList.toggle("hidden", !isLoading);
 
@@ -208,6 +220,11 @@ function renderCompanyDirectory(items, meta) {
                 )}</small>
               </span>
             </div>
+            <span class="company-category-cell" data-label="Category" role="cell">
+              <span class="company-category-badge">${escapeCompanyHtml(
+                formatCompanyCategory(company.category),
+              )}</span>
+            </span>
             <span class="company-metric-cell" data-label="Drivers" role="cell">
               ${Number(company.totalDrivers || 0).toLocaleString()}
               <small>${Number(company.activeDrivers || 0).toLocaleString()} active</small>
@@ -223,6 +240,7 @@ function renderCompanyDirectory(items, meta) {
                 <i class="fa-solid fa-ellipsis-vertical" aria-hidden="true"></i>
               </button>
               <div class="company-action-popover hidden">
+                <button type="button" data-view-company="${escapeCompanyHtml(company.id)}"><i class="fa-solid fa-eye"></i>View company</button>
                 <button type="button" data-edit-company="${escapeCompanyHtml(company.id)}"><i class="fa-solid fa-pen"></i>Edit company</button>
                 <button type="button" data-company-status-id="${escapeCompanyHtml(company.id)}" data-company-next-status="${nextStatus}"><i class="fa-solid fa-power-off"></i>${nextStatusLabel}</button>
               </div>
@@ -440,6 +458,7 @@ function resetCompanyForm() {
   });
   document.querySelector("#company-record-id").value = "";
   document.querySelector("#company-status").value = "ACTIVE";
+  document.querySelector("#company-category").value = "VALET_PARKING";
   document.querySelector("#company-notes-count").textContent = "0";
   companyAssignmentState.accounts = [];
   companyAssignmentState.locations = [];
@@ -465,6 +484,10 @@ function populateCompanyForm(company) {
   setCompanyFormValue("company-registration", company.commercialRegistrationNumber);
   setCompanyFormValue("company-vat", company.vatNumber);
   setCompanyFormValue("company-status", company.status || "ACTIVE");
+  setCompanyFormValue(
+    "company-category",
+    company.category || "VALET_PARKING",
+  );
   setCompanyFormValue("company-city", company.city);
   setCompanyFormValue("company-address", company.address);
   setCompanyFormValue("company-contact-person", company.contactPerson);
@@ -552,8 +575,25 @@ function renderCompanyAssignmentOptions(options = companyAssignmentState, select
   document.querySelector("#company-location-selected").textContent = `${companyAssignmentState.selectedLocationIds.size} selected`;
 }
 
-async function openCompanyDrawer(companyId = null) {
+function setCompanyFormReadOnly(isReadOnly) {
+  const form = document.querySelector("#company-form");
+
+  form?.querySelectorAll("input, select, textarea").forEach((field) => {
+    if (field.id === "company-record-id") return;
+    field.disabled = isReadOnly;
+  });
+
+  document
+    .querySelector("#save-company")
+    ?.classList.toggle("hidden", isReadOnly);
+}
+
+async function openCompanyDrawer(companyId = null, mode = "edit") {
   resetCompanyForm();
+
+  const isViewMode = mode === "view";
+
+  setCompanyFormReadOnly(false);
   setCompanyDrawerOpen(true);
 
   const title = document.querySelector("#company-drawer-title");
@@ -565,9 +605,25 @@ async function openCompanyDrawer(companyId = null) {
 
   if (companyId) assignmentUrl.searchParams.set("companyId", companyId);
 
-  if (title) title.textContent = companyId ? "Edit Valet Company" : "Add Valet Company";
-  if (eyebrow) eyebrow.textContent = companyId ? "Tenant settings" : "New tenant";
-  if (saveLabel) saveLabel.textContent = companyId ? "Update Company" : "Save Company";
+  if (title) {
+    title.textContent = isViewMode
+      ? "View Company"
+      : companyId
+        ? "Edit Valet Company"
+        : "Add Valet Company";
+  }
+
+  if (eyebrow) {
+    eyebrow.textContent = isViewMode
+      ? "Company overview"
+      : companyId
+        ? "Tenant settings"
+        : "New tenant";
+  }
+
+  if (saveLabel) {
+    saveLabel.textContent = companyId ? "Update Company" : "Save Company";
+  }
 
   const codeInput = document.querySelector("#company-code");
   if (codeInput) {
@@ -605,7 +661,11 @@ async function openCompanyDrawer(companyId = null) {
       company?.locations || [],
     );
 
-    document.querySelector("#company-name")?.focus();
+    if (isViewMode) {
+      setCompanyFormReadOnly(true);
+    } else {
+      document.querySelector("#company-name")?.focus();
+    }
   } catch (error) {
     showCompanyFormAlert(error.message || "Unable to prepare the company form.");
   }
@@ -620,6 +680,7 @@ function collectCompanyFormPayload() {
     legalName: value("company-legal-name") || undefined,
     commercialRegistrationNumber: value("company-registration") || undefined,
     vatNumber: value("company-vat") || undefined,
+    category: value("company-category") || "VALET_PARKING",
     status: value("company-status"),
     city: value("company-city") || undefined,
     address: value("company-address") || undefined,
@@ -814,6 +875,12 @@ function bindCompanyPageEvents(container) {
         "aria-expanded",
         String(!popover?.classList.contains("hidden")),
       );
+      return;
+    }
+
+    const viewButton = event.target.closest("[data-view-company]");
+    if (viewButton) {
+      await openCompanyDrawer(viewButton.dataset.viewCompany, "view");
       return;
     }
 

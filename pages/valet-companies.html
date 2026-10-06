@@ -77,6 +77,7 @@
           <span role="columnheader">Company</span>
           <span role="columnheader">Contact</span>
           <span role="columnheader">Location</span>
+          <span role="columnheader">Category</span>
           <span role="columnheader">Drivers</span>
           <span role="columnheader">Accounts</span>
           <span role="columnheader">Status</span>
@@ -151,6 +152,7 @@
           <label class="span-two"><span>Legal Name</span><input id="company-legal-name" name="legalName" type="text" maxlength="180" placeholder="Registered legal company name" /></label>
           <label><span>Commercial Registration</span><input id="company-registration" name="commercialRegistrationNumber" inputmode="numeric" maxlength="10" placeholder="10 digits" /></label>
           <label><span>VAT Number</span><input id="company-vat" name="vatNumber" inputmode="numeric" maxlength="15" placeholder="15 digits" /></label>
+          <label class="span-two"><span>Category <b>*</b></span><select id="company-category" name="category" required><option value="VALET_PARKING">Valet Parking</option><option value="B2B">B2B</option><option value="B2C">B2C</option><option value="PRIVATE_PARKING">Private Parking</option><option value="GOVERNMENT_PARKING">Government Parking</option></select></label>
           <label><span>Status <b>*</b></span><select id="company-status" name="status" required><option value="ACTIVE">Active</option><option value="INACTIVE">Inactive</option><option value="SUSPENDED">Suspended</option></select></label>
           <label><span>City</span><input id="company-city" name="city" type="text" maxlength="100" placeholder="Riyadh" /></label>
           <label class="span-two"><span>Address</span><input id="company-address" name="address" type="text" maxlength="300" placeholder="Building, street and district" /></label>

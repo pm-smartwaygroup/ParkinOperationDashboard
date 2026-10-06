@@ -441,7 +441,7 @@ async function openUserManagementDetails(container, userId) {
 
 function renderUserManagementDetails(body, user) {
   body.innerHTML =
-    '<div class="user-management-detail-hero"><span class="user-management-avatar"></span><div class="user-management-detail-identity"><h3></h3><p></p><span class="user-management-detail-role"></span></div></div><section class="user-management-detail-section user-management-account-section"><div class="user-management-detail-section-title"><div><p class="user-management-section-kicker">Account information</p><h3>Account</h3></div></div><dl class="user-management-detail-grid"></dl></section><section class="user-management-detail-section user-management-account-actions" data-user-account-actions><div class="user-management-detail-section-title"><div><p class="user-management-section-kicker">Lifecycle</p><h3>Account actions</h3></div></div><div data-user-account-action-body></div></section><section class="user-management-detail-section user-management-access-section" data-user-permissions><div class="user-management-section-heading"><div><p class="user-management-section-kicker">Permissions</p><h3>Screen Access</h3></div><span data-user-permission-count></span></div><div data-user-permission-body></div><div class="user-management-permission-legend" data-user-permission-legend><span><i class="fa-solid fa-check" aria-hidden="true"></i> Granted</span><span><i class="fa-solid fa-minus" aria-hidden="true"></i> Not granted</span><span><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Role default</span></div></section><section class="user-management-detail-section user-management-preferences-section"><div class="user-management-detail-section-title"><div><p class="user-management-section-kicker">Personalization</p><h3>Preferences</h3></div></div><dl class="user-management-detail-grid"></dl></section>';
+    '<div class="user-management-detail-hero"><span class="user-management-avatar"></span><div class="user-management-detail-identity"><h3></h3><p></p><span class="user-management-detail-role"></span></div></div><section class="user-management-detail-section user-management-account-section"><div class="user-management-detail-section-title"><div><p class="user-management-section-kicker">Account information</p><h3>Account</h3></div><button class="user-management-button secondary" type="button" data-user-edit-account><i class="fa-solid fa-pen" aria-hidden="true"></i>Edit User</button></div><dl class="user-management-detail-grid"></dl></section><section class="user-management-detail-section user-management-account-actions" data-user-account-actions><div class="user-management-detail-section-title"><div><p class="user-management-section-kicker">Lifecycle</p><h3>Account actions</h3></div></div><div data-user-account-action-body></div></section><section class="user-management-detail-section user-management-access-section" data-user-permissions><div class="user-management-section-heading"><div><p class="user-management-section-kicker">Permissions</p><h3>Screen Access</h3></div><span data-user-permission-count></span></div><div data-user-permission-body></div><div class="user-management-permission-legend" data-user-permission-legend><span><i class="fa-solid fa-check" aria-hidden="true"></i> Granted</span><span><i class="fa-solid fa-minus" aria-hidden="true"></i> Not granted</span><span><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Role default</span></div></section><section class="user-management-detail-section user-management-preferences-section"><div class="user-management-detail-section-title"><div><p class="user-management-section-kicker">Personalization</p><h3>Preferences</h3></div></div><dl class="user-management-detail-grid"></dl></section>';
   renderUserManagementAvatar(
     body.querySelector(".user-management-avatar"),
     user,
@@ -451,6 +451,17 @@ function renderUserManagementDetails(body, user) {
     user?.email || "No email";
   body.querySelector(".user-management-detail-role").textContent =
     userManagementRoleLabel(user?.role) || "—";
+
+  const editAccountButton = body.querySelector("[data-user-edit-account]");
+  const canEditAccount =
+    user?.role !== "SUPER_ADMIN" &&
+    user?.id !== window.getParkinCurrentUserId?.() &&
+    window.hasDashboardPermission?.("users.edit") === true;
+
+  if (editAccountButton) {
+    editAccountButton.hidden = !canEditAccount;
+    editAccountButton.classList.toggle("hidden", !canEditAccount);
+  }
   const sections = body.querySelectorAll(".user-management-detail-grid");
   const account = [
     ["Role", userManagementRoleLabel(user?.role) || "—"],
@@ -507,17 +518,25 @@ function renderUserManagementDetails(body, user) {
   renderUserAccountActions(body, user, lifecycle);
 }
 
-function renderUserAccountActions(body, user, lifecycle = getUserLifecycleStatus(user)) {
+function renderUserAccountActions(
+  body,
+  user,
+  lifecycle = getUserLifecycleStatus(user),
+) {
   const actionBody = body.querySelector("[data-user-account-action-body]");
   if (!actionBody) return;
+
   actionBody.replaceChildren();
+
   if (user?.role === "SUPER_ADMIN") {
     const note = document.createElement("p");
     note.className = "user-management-muted";
-    note.textContent = "Super Admin account actions are managed through a separate protected flow.";
+    note.textContent =
+      "Super Admin account actions are managed through a separate protected flow.";
     actionBody.append(note);
     return;
   }
+
   if (user?.id === window.getParkinCurrentUserId?.()) {
     const note = document.createElement("p");
     note.className = "user-management-muted";
@@ -528,50 +547,615 @@ function renderUserAccountActions(body, user, lifecycle = getUserLifecycleStatus
 
   const action = (label, icon, actionName, options = {}) => {
     const button = document.createElement("button");
-    button.className = `user-management-button ${options.primary ? "primary" : "secondary"}`;
+    button.className =
+      `user-management-button ${options.primary ? "primary" : "secondary"}`;
     button.type = "button";
     button.dataset.userLifecycleAction = actionName;
     button.textContent = label;
+
     const iconElement = document.createElement("i");
     iconElement.className = `fa-solid ${icon}`;
     iconElement.setAttribute("aria-hidden", "true");
     button.prepend(iconElement);
+
     if (options.disabled || userManagementState.statusUpdating) {
       button.disabled = true;
-      button.title = options.title;
+      button.title = options.title || "";
     }
+
     return button;
   };
 
   const actions = document.createElement("div");
   actions.className = "user-management-lifecycle-actions";
+
+  if (window.hasDashboardPermission?.("users.edit")) {
+    actions.append(
+      action("Reset Password", "fa-key", "RESET_PASSWORD", {
+        primary: false,
+      }),
+    );
+  }
+
   if (lifecycle === "ACTIVE") {
     if (window.hasDashboardPermission?.("users.disable")) {
-      actions.append(action("Disable User", "fa-user-slash", "DISABLED", { primary: false }));
-    }
-  } else if (lifecycle === "SETUP_PENDING") {
-    if (window.hasDashboardPermission?.("users.edit")) {
-      actions.append(action("Set Initial Password", "fa-key", "SET_INITIAL_PASSWORD", { primary: false }));
-    }
-    if (window.hasDashboardPermission?.("users.disable")) {
       actions.append(
-        action("Activate User", "fa-user-check", "ACTIVE", {
-          disabled: true,
-          title: "Password setup must be completed before this account can be activated.",
+        action("Disable User", "fa-user-slash", "DISABLED", {
+          primary: false,
         }),
       );
     }
+  } else if (lifecycle === "SETUP_PENDING") {
     const helper = document.createElement("p");
     helper.className = "user-management-lifecycle-helper";
-    helper.textContent = "Password setup must be completed before this account can be activated.";
+    helper.textContent =
+      "Reset the password first. The account can then be activated.";
+
     actionBody.append(actions, helper);
     return;
-  } else {
-    if (window.hasDashboardPermission?.("users.disable")) {
-      actions.append(action("Activate User", "fa-user-check", "ACTIVE", { primary: true }));
-    }
+  } else if (window.hasDashboardPermission?.("users.disable")) {
+    actions.append(
+      action("Activate User", "fa-user-check", "ACTIVE", {
+        primary: true,
+      }),
+    );
   }
+
   actionBody.append(actions);
+}
+
+
+function userManagementEditCollection(payload, keys = []) {
+  if (Array.isArray(payload)) return payload;
+
+  for (const key of keys) {
+    if (Array.isArray(payload?.[key])) return payload[key];
+    if (Array.isArray(payload?.data?.[key])) return payload.data[key];
+  }
+
+  if (Array.isArray(payload?.data)) return payload.data;
+  if (Array.isArray(payload?.items)) return payload.items;
+  if (Array.isArray(payload?.data?.data)) return payload.data.data;
+
+  return [];
+}
+
+function getUserManagementCoreApiBaseUrl() {
+  return getUserManagementApiBaseUrl();
+}
+
+async function openEditUserModal(container, user) {
+  if (!user?.id) return;
+
+  document.querySelector("[data-user-edit-dialog]")?.remove();
+
+  const dialog = document.createElement("dialog");
+  dialog.className = "user-management-edit-dialog";
+  dialog.dataset.userEditDialog = "true";
+
+  dialog.innerHTML = `
+    <form method="dialog" class="user-management-edit-form">
+      <div class="user-management-edit-header">
+        <div>
+          <p class="user-management-section-kicker">User administration</p>
+          <h2>Edit User</h2>
+          <p>Update account information, role and access scope.</p>
+        </div>
+        <button type="button" class="user-management-icon-button" data-user-edit-close aria-label="Close">
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <div class="user-management-edit-error hidden" data-user-edit-error></div>
+
+      <div class="user-management-edit-grid">
+        <label>
+          <span>Full Name *</span>
+          <input name="name" required />
+        </label>
+
+        <label>
+          <span>Email</span>
+          <input name="email" type="email" disabled />
+          <small>Email cannot be changed from User Management.</small>
+        </label>
+
+        <label>
+          <span>Role *</span>
+          <select name="role" required>
+            <option value="COMPANY_ADMIN">Company Admin</option>
+            <option value="OPERATIONS_MANAGER">Operations Manager</option>
+            <option value="VALET_OPERATIONS">Valet Operations</option>
+            <option value="SUPPORT">Support</option>
+          </select>
+        </label>
+
+        <label>
+          <span>Company *</span>
+          <select name="companyId" required>
+            <option value="">Loading companies...</option>
+          </select>
+        </label>
+
+        <label>
+          <span>Access Scope *</span>
+          <select name="accessScope" required>
+            <option value="COMPANY">Company</option>
+            <option value="LOCATION">Location</option>
+          </select>
+        </label>
+
+        <label>
+          <span>Phone</span>
+          <div class="user-management-edit-phone">
+            <span>+966</span>
+            <input name="phoneNumber" inputmode="numeric" placeholder="50 123 4567" />
+          </div>
+        </label>
+
+        <label>
+          <span>Employee ID</span>
+          <input name="employeeId" />
+        </label>
+
+        <label>
+          <span>Department</span>
+          <input name="department" />
+        </label>
+
+        <label>
+          <span>Region</span>
+          <input name="region" />
+        </label>
+      </div>
+
+      <fieldset class="user-management-edit-location-section" data-user-edit-location-section>
+        <legend>Assigned Locations *</legend>
+        <div class="user-management-edit-locations" data-user-edit-locations>
+          <p>Loading locations...</p>
+        </div>
+      </fieldset>
+
+      <div class="user-management-edit-actions">
+        <button type="button" class="user-management-button secondary" data-user-edit-cancel>
+          Cancel
+        </button>
+        <button type="submit" class="user-management-button primary" data-user-edit-save>
+          Save Changes
+        </button>
+      </div>
+    </form>
+  `;
+
+  document.body.append(dialog);
+
+  const form = dialog.querySelector("form");
+  const errorBox = dialog.querySelector("[data-user-edit-error]");
+  const saveButton = dialog.querySelector("[data-user-edit-save]");
+
+  const field = (name) => form.elements.namedItem(name);
+
+  field("name").value = user.name || "";
+  field("email").value = user.email || "";
+  field("role").value = user.role || "";
+  field("accessScope").value = user.accessScope || "COMPANY";
+  field("phoneNumber").value = user.profile?.phoneNumber || "";
+  field("employeeId").value = user.profile?.employeeId || "";
+  field("department").value = user.profile?.department || "";
+  field("region").value = user.profile?.region || "";
+
+  const selectedLocationIds = new Set(
+    Array.isArray(user.locationIds)
+      ? user.locationIds
+      : Array.isArray(user.locations)
+        ? user.locations.map((location) => location.id)
+        : Array.isArray(user.locationAccess)
+          ? user.locationAccess
+              .map((item) => item.locationId || item.location?.id)
+              .filter(Boolean)
+          : [],
+  );
+
+  let companies = [];
+  let locations = [];
+
+  const renderLocationOptions = () => {
+    const root = dialog.querySelector("[data-user-edit-locations]");
+    const section = dialog.querySelector(
+      "[data-user-edit-location-section]",
+    );
+    const companyId = field("companyId").value;
+    const isLocationScope = field("accessScope").value === "LOCATION";
+
+    section.hidden = !isLocationScope;
+
+    if (!isLocationScope) {
+      root.replaceChildren();
+      return;
+    }
+
+    const matching = locations.filter(
+      (location) =>
+        String(location.companyId || location.company?.id || "") === companyId,
+    );
+
+    root.replaceChildren();
+
+    if (!matching.length) {
+      const empty = document.createElement("p");
+      empty.className = "user-management-muted";
+      empty.textContent = "No locations are available for this company.";
+      root.append(empty);
+      return;
+    }
+
+    matching.forEach((location) => {
+      const label = document.createElement("label");
+      label.className = "user-management-edit-location";
+
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.name = "locationIds";
+      checkbox.value = location.id;
+      checkbox.checked = selectedLocationIds.has(location.id);
+
+      const copy = document.createElement("span");
+      copy.innerHTML = `<strong></strong><small></small>`;
+      copy.querySelector("strong").textContent = location.name || "Location";
+      copy.querySelector("small").textContent =
+        [location.city, location.district].filter(Boolean).join(" · ") || "";
+
+      label.append(checkbox, copy);
+      root.append(label);
+    });
+  };
+
+  try {
+    const headers = userManagementHeaders();
+
+    const [companiesResponse, locationsResponse] = await Promise.all([
+      fetch(
+        `${getUserManagementCoreApiBaseUrl()}/companies?page=1&limit=100`,
+        { headers },
+      ),
+      fetch(
+        `${getUserManagementCoreApiBaseUrl()}/locations?page=1&limit=100`,
+        { headers },
+      ),
+    ]);
+
+    const [companiesResult, locationsResult] = await Promise.all([
+      parseUserManagementResponse(companiesResponse),
+      parseUserManagementResponse(locationsResponse),
+    ]);
+
+    companies = userManagementEditCollection(companiesResult, [
+      "companies",
+      "items",
+    ]);
+
+    locations = userManagementEditCollection(locationsResult, [
+      "locations",
+      "items",
+    ]);
+
+    const companySelect = field("companyId");
+    companySelect.replaceChildren();
+
+    companies.forEach((company) => {
+      const option = document.createElement("option");
+      option.value = company.id;
+      option.textContent = company.name || company.code || "Company";
+      companySelect.append(option);
+    });
+
+    const currentCompanyId = String(
+      user.companyId || user.company?.id || "",
+    );
+
+    if (
+      currentCompanyId &&
+      !companies.some((company) => String(company.id) === currentCompanyId)
+    ) {
+      const option = document.createElement("option");
+      option.value = currentCompanyId;
+      option.textContent = user.company?.name || "Current Company";
+      companySelect.append(option);
+    }
+
+    companySelect.value = currentCompanyId;
+    renderLocationOptions();
+  } catch (error) {
+    errorBox.textContent =
+      error?.message || "Unable to load companies and locations.";
+    errorBox.classList.remove("hidden");
+  }
+
+  const closeDialog = () => {
+    if (dialog.open) dialog.close();
+    dialog.remove();
+  };
+
+  dialog
+    .querySelector("[data-user-edit-close]")
+    .addEventListener("click", closeDialog);
+
+  dialog
+    .querySelector("[data-user-edit-cancel]")
+    .addEventListener("click", closeDialog);
+
+  field("companyId").addEventListener("change", () => {
+    selectedLocationIds.clear();
+    renderLocationOptions();
+  });
+
+  field("accessScope").addEventListener("change", renderLocationOptions);
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    errorBox.classList.add("hidden");
+    errorBox.textContent = "";
+
+    const name = field("name").value.trim();
+    const role = field("role").value;
+    const companyId = field("companyId").value;
+    const accessScope = field("accessScope").value;
+    const phoneNumber = field("phoneNumber").value.replace(/\D/g, "");
+
+    if (!name) {
+      errorBox.textContent = "Full name is required.";
+      errorBox.classList.remove("hidden");
+      return;
+    }
+
+    if (!companyId) {
+      errorBox.textContent = "Company is required.";
+      errorBox.classList.remove("hidden");
+      return;
+    }
+
+    if (phoneNumber && !(phoneNumber.length === 9 && phoneNumber.startsWith("5"))) {
+      errorBox.textContent =
+        "Enter a Saudi mobile number such as 50 123 4567.";
+      errorBox.classList.remove("hidden");
+      return;
+    }
+
+    const locationIds = [
+      ...form.querySelectorAll(
+        'input[name="locationIds"]:checked',
+      ),
+    ].map((input) => input.value);
+
+    if (accessScope === "LOCATION" && !locationIds.length) {
+      errorBox.textContent =
+        "Select at least one location for Location access scope.";
+      errorBox.classList.remove("hidden");
+      return;
+    }
+
+    const payload = {
+      name,
+      role,
+      companyId,
+      accessScope,
+      locationIds: accessScope === "LOCATION" ? locationIds : [],
+      employeeId: field("employeeId").value.trim(),
+      phoneCountryCode: phoneNumber ? "+966" : "",
+      phoneNumber,
+      department: field("department").value.trim(),
+      region: field("region").value.trim(),
+    };
+
+    saveButton.disabled = true;
+    saveButton.textContent = "Saving...";
+
+    try {
+      const response = await fetch(
+        `${getUserManagementApiBaseUrl()}/users/${encodeURIComponent(user.id)}`,
+        {
+          method: "PATCH",
+          headers: {
+            ...userManagementHeaders(),
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        },
+      );
+
+      await parseUserManagementResponse(response);
+
+      closeDialog();
+
+      await refreshUserManagementPage(container);
+      await openUserManagementDetails(container, user.id);
+
+      window.showDashboardAlert?.(
+        "User information updated successfully.",
+        {
+          title: "User updated",
+          type: "success",
+        },
+      );
+    } catch (error) {
+      saveButton.disabled = false;
+      saveButton.textContent = "Save Changes";
+
+      errorBox.textContent =
+        error?.message ||
+        "Unable to update this user. Please review the information and try again.";
+      errorBox.classList.remove("hidden");
+    }
+  });
+
+  dialog.showModal();
+  field("name").focus();
+}
+
+function openResetPasswordModal(container, user) {
+  const targetId = user?.id;
+  if (!targetId) return;
+
+  document.querySelector("[data-user-reset-password-dialog]")?.remove();
+
+  const dialog = document.createElement("dialog");
+  dialog.className = "user-management-password-dialog";
+  dialog.dataset.userResetPasswordDialog = "true";
+
+  dialog.innerHTML = `
+    <form class="user-management-password-form">
+      <div class="user-management-password-dialog-header">
+        <div>
+          <p class="user-management-section-kicker">Account security</p>
+          <h2>Reset Password</h2>
+        </div>
+        <button type="button" class="user-management-icon-button" data-password-close aria-label="Close">
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <p class="user-management-muted">
+        Set a new password for ${user.name || "this user"}.
+        Existing active sessions will be signed out.
+      </p>
+
+      <label class="user-management-password-field">
+        <span>New Password</span>
+        <input name="password" type="password" autocomplete="new-password" />
+        <small data-password-error></small>
+      </label>
+
+      <label class="user-management-password-field">
+        <span>Confirm New Password</span>
+        <input name="confirmPassword" type="password" autocomplete="new-password" />
+        <small data-password-error></small>
+      </label>
+
+      <p class="user-management-muted">
+        Minimum 8 characters with at least one letter and one number.
+      </p>
+
+      <div class="user-management-password-actions">
+        <button type="button" class="user-management-button secondary" data-password-cancel>
+          Cancel
+        </button>
+        <button type="submit" class="user-management-button primary" data-password-submit>
+          Reset Password
+        </button>
+      </div>
+    </form>
+  `;
+
+  document.body.append(dialog);
+
+  const form = dialog.querySelector("form");
+  const password = form.elements.namedItem("password");
+  const confirmPassword = form.elements.namedItem("confirmPassword");
+  const submit = dialog.querySelector("[data-password-submit]");
+
+  const close = () => {
+    password.value = "";
+    confirmPassword.value = "";
+    if (dialog.open) dialog.close();
+    dialog.remove();
+  };
+
+  dialog
+    .querySelector("[data-password-close]")
+    .addEventListener("click", close);
+
+  dialog
+    .querySelector("[data-password-cancel]")
+    .addEventListener("click", close);
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const errors = dialog.querySelectorAll("[data-password-error]");
+    errors.forEach((item) => {
+      item.textContent = "";
+    });
+
+    if (!password.value) {
+      errors[0].textContent = "Enter a new password.";
+      return;
+    }
+
+    if (password.value.length < 8) {
+      errors[0].textContent = "Use at least 8 characters.";
+      return;
+    }
+
+    if (!/[A-Za-z]/.test(password.value)) {
+      errors[0].textContent = "Include at least one letter.";
+      return;
+    }
+
+    if (!/[0-9]/.test(password.value)) {
+      errors[0].textContent = "Include at least one number.";
+      return;
+    }
+
+    if (!confirmPassword.value) {
+      errors[1].textContent = "Confirm the new password.";
+      return;
+    }
+
+    if (password.value !== confirmPassword.value) {
+      errors[1].textContent = "Passwords do not match.";
+      return;
+    }
+
+    submit.disabled = true;
+    submit.textContent = "Resetting...";
+
+    try {
+      const response = await fetch(
+        `${getUserManagementApiBaseUrl()}/users/${encodeURIComponent(targetId)}/reset-password`,
+        {
+          method: "PATCH",
+          headers: {
+            ...userManagementHeaders(),
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            password: password.value,
+            confirmPassword: confirmPassword.value,
+          }),
+        },
+      );
+
+      await parseUserManagementResponse(response);
+
+      close();
+
+      await refreshUserManagementPage(container);
+      await openUserManagementDetails(container, targetId);
+
+      window.showDashboardAlert?.(
+        "Password reset successfully. Existing sessions were signed out.",
+        {
+          title: "Password updated",
+          type: "success",
+        },
+      );
+    } catch (error) {
+      submit.disabled = false;
+      submit.textContent = "Reset Password";
+
+      window.showDashboardAlert?.(
+        error?.message || "Unable to reset password. Please try again.",
+        {
+          title: "Password reset failed",
+          type: "error",
+        },
+      );
+    }
+  });
+
+  dialog.showModal();
+  password.focus();
 }
 
 async function updateUserManagementStatus(container, targetId, nextStatus) {
@@ -1437,16 +2021,26 @@ function bindUserManagementPage(container) {
       return;
     }
     const body = container.querySelector("[data-user-drawer-body]");
+
+    if (event.target.closest("[data-user-edit-account]")) {
+      openEditUserModal(container, userManagementState.detailUser);
+      return;
+    }
+
     const lifecycleAction = event.target.closest("[data-user-lifecycle-action]");
     if (lifecycleAction) {
       const targetId = userManagementState.detailUser?.id;
-      if (lifecycleAction.dataset.userLifecycleAction === "SET_INITIAL_PASSWORD") {
-        openInitialPasswordModal(container, userManagementState.detailUser);
+      const actionName = lifecycleAction.dataset.userLifecycleAction;
+
+      if (actionName === "RESET_PASSWORD") {
+        openResetPasswordModal(container, userManagementState.detailUser);
+      } else if (actionName === "SET_INITIAL_PASSWORD") {
+        openResetPasswordModal(container, userManagementState.detailUser);
       } else if (targetId) {
         void updateUserManagementStatus(
           container,
           targetId,
-          lifecycleAction.dataset.userLifecycleAction,
+          actionName,
         );
       }
       return;

@@ -233,12 +233,12 @@
 }
 
 .companies-table {
-  min-width: 970px;
+  min-width: 1120px;
 }
 
 .companies-row {
   display: grid;
-  grid-template-columns: minmax(210px, 1.4fr) minmax(190px, 1.1fr) minmax(170px, 1fr) 90px 80px 100px 64px;
+  grid-template-columns: minmax(200px, 1.35fr) minmax(175px, 1.05fr) minmax(160px, 1fr) 135px 82px 78px 95px 64px;
   align-items: center;
   min-height: 74px;
   padding: 0 16px;
@@ -336,6 +336,27 @@
 .company-status-pill.suspended {
   background: #fee9e7;
   color: #c52c25;
+}
+
+.company-category-cell {
+  min-width: 0;
+}
+
+.company-category-badge {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  min-height: 28px;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: #eef7f2;
+  color: #176b47;
+  font-size: 0.74rem;
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .company-row-action {
@@ -1060,7 +1081,8 @@ body.company-drawer-open {
     border-top: 1px solid #edf1f5;
   }
 
-  .company-metric-cell::before {
+  .company-metric-cell::before,
+  .company-category-cell::before {
     content: attr(data-label);
     display: block;
     margin-bottom: 3px;
@@ -1907,3 +1929,183 @@ body.company-drawer-open {
     gap: 14px;
   }
 }
+
+/* === COMPANY DIRECTORY RESPONSIVE ALIGNMENT START === */
+
+/*
+ * Company directory responsive table
+ *
+ * Desktop:
+ * Company | Contact | Location | Category | Drivers | Accounts | Status | Actions
+ *
+ * Medium screens:
+ * Preserve column alignment and allow horizontal scrolling when necessary.
+ *
+ * Mobile:
+ * Switch back to card layout.
+ */
+
+.companies-table-scroll {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.companies-table {
+  width: 100%;
+  min-width: 1160px;
+}
+
+.companies-row {
+  display: grid;
+  grid-template-columns:
+    minmax(210px, 1.45fr)
+    minmax(180px, 1.15fr)
+    minmax(180px, 1.15fr)
+    minmax(150px, 0.9fr)
+    minmax(72px, 0.5fr)
+    minmax(78px, 0.52fr)
+    minmax(90px, 0.62fr)
+    56px;
+  column-gap: 14px;
+  align-items: center;
+}
+
+/* Prevent any cell from forcing the grid wider than its column. */
+.companies-head > span,
+.company-identity,
+.company-contact,
+.company-location-cell,
+.company-category-cell,
+.company-metric-cell,
+.company-status-pill,
+.company-action-menu {
+  min-width: 0;
+}
+
+.company-category-cell {
+  overflow: hidden;
+  padding-right: 4px;
+}
+
+/*
+ * Important:
+ * box-sizing prevents badge padding from extending into Drivers column.
+ */
+.company-category-badge {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  width: max-content;
+  max-width: 100%;
+  min-height: 28px;
+  padding: 5px 9px;
+  overflow: hidden;
+  border-radius: 999px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.company-metric-cell {
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.company-status-pill {
+  justify-self: start;
+  white-space: nowrap;
+}
+
+.company-action-menu {
+  justify-self: center;
+}
+
+
+/* Medium laptops / tablets */
+@media (min-width: 901px) and (max-width: 1280px) {
+  .companies-table {
+    min-width: 1100px;
+  }
+
+  .companies-row {
+    grid-template-columns:
+      minmax(190px, 1.4fr)
+      minmax(165px, 1.1fr)
+      minmax(165px, 1.1fr)
+      minmax(145px, 0.9fr)
+      70px
+      74px
+      88px
+      54px;
+    column-gap: 12px;
+  }
+}
+
+
+/* Mobile / narrow tablet card layout */
+@media (max-width: 900px) {
+  .companies-table {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .companies-head {
+    display: none;
+  }
+
+  .companies-row {
+    position: relative;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 14px 12px;
+    min-height: 0;
+  }
+
+  .company-identity {
+    grid-column: 1 / -1;
+    padding-right: 48px;
+  }
+
+  .company-contact,
+  .company-location-cell {
+    grid-column: 1 / -1;
+  }
+
+  .company-category-cell {
+    grid-column: 1 / -1;
+    overflow: visible;
+    padding-right: 48px;
+  }
+
+  .company-category-badge {
+    width: auto;
+    max-width: 100%;
+    white-space: normal;
+    line-height: 1.25;
+  }
+
+  .company-action-menu {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+  }
+}
+
+
+/* Small phones */
+@media (max-width: 520px) {
+  .companies-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px 10px;
+  }
+
+  .company-category-cell {
+    grid-column: 1 / -1;
+  }
+
+  .company-category-badge {
+    font-size: 0.72rem;
+  }
+}
+
+/* === COMPANY DIRECTORY RESPONSIVE ALIGNMENT END === */

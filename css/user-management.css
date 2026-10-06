@@ -1540,3 +1540,820 @@
   object-position: center;
   border-radius: 50%;
 }
+
+/* === USER MANAGEMENT EDIT DIALOG START === */
+
+/* -------------------------------------------------------
+   Shared modal design tokens
+   Dialogs are mounted directly under body, so they need
+   their own User Management variables.
+------------------------------------------------------- */
+
+.user-management-edit-dialog,
+.user-management-password-dialog {
+  --um-card: var(--dash-card, #ffffff);
+  --um-panel: var(--dash-panel, #ffffff);
+  --um-line: var(--dash-line, #dfe6ee);
+  --um-soft-line: var(--dash-soft-line, #eef3f7);
+  --um-ink: var(--dash-ink, #172033);
+  --um-muted: var(--dash-muted, #718096);
+  --um-green: var(--dash-green, #0a9b55);
+
+  box-sizing: border-box;
+  color: var(--um-ink);
+  background: var(--um-card);
+  font-family: inherit;
+}
+
+
+/* =======================================================
+   EDIT USER
+======================================================= */
+
+.user-management-edit-dialog {
+  width: min(720px, calc(100vw - 32px));
+  max-width: 720px;
+  max-height: calc(100dvh - 40px);
+  margin: auto;
+  padding: 0;
+  overflow: hidden;
+
+  border: 1px solid var(--um-line);
+  border-radius: 16px;
+
+  background: var(--um-card);
+
+  box-shadow:
+    0 28px 70px rgba(15, 23, 42, 0.24),
+    0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+.user-management-edit-dialog::backdrop {
+  background: rgba(15, 23, 42, 0.52);
+  backdrop-filter: blur(2px);
+}
+
+.user-management-edit-form {
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  max-height: calc(100dvh - 40px);
+  overflow: hidden;
+}
+
+
+/* Header */
+
+.user-management-edit-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+
+  padding: 22px 24px 18px;
+
+  border-bottom: 1px solid var(--um-soft-line);
+
+  background:
+    linear-gradient(
+      180deg,
+      #ffffff 0%,
+      #fcfdfd 100%
+    );
+}
+
+.user-management-edit-header h2 {
+  margin: 3px 0 4px;
+
+  color: var(--um-ink);
+
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.user-management-edit-header > div > p:last-child {
+  margin: 0;
+
+  color: var(--um-muted);
+
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.user-management-edit-dialog .user-management-section-kicker,
+.user-management-password-dialog .user-management-section-kicker {
+  margin: 0;
+
+  color: var(--um-green);
+
+  font-size: 0.64rem;
+  font-weight: 800;
+
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+
+/* Close button */
+
+.user-management-edit-dialog .user-management-icon-button,
+.user-management-password-dialog .user-management-icon-button {
+  display: inline-grid;
+  place-items: center;
+
+  width: 36px;
+  height: 36px;
+
+  flex: 0 0 36px;
+
+  padding: 0;
+
+  border: 1px solid transparent;
+  border-radius: 9px;
+
+  color: #475467;
+  background: transparent;
+
+  cursor: pointer;
+
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease;
+}
+
+.user-management-edit-dialog .user-management-icon-button:hover,
+.user-management-password-dialog .user-management-icon-button:hover {
+  color: var(--um-green);
+
+  border-color: #dce9e3;
+
+  background: #f1f8f4;
+}
+
+
+/* Error */
+
+.user-management-edit-error {
+  margin: 16px 24px 0;
+  padding: 11px 13px;
+
+  border: 1px solid #fecaca;
+  border-radius: 10px;
+
+  color: #b42318;
+  background: #fff4f4;
+
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+
+/* Form body */
+
+.user-management-edit-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 16px;
+
+  padding: 20px 24px 22px;
+
+  overflow-y: auto;
+}
+
+.user-management-edit-grid label {
+  display: grid;
+  gap: 7px;
+
+  min-width: 0;
+
+  color: #344054;
+
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.user-management-edit-grid label > span {
+  min-height: 16px;
+}
+
+.user-management-edit-grid input,
+.user-management-edit-grid select {
+  box-sizing: border-box;
+
+  width: 100%;
+  min-width: 0;
+  height: 44px;
+
+  padding: 0 12px;
+
+  border: 1px solid #d7e0ea;
+  border-radius: 9px;
+
+  color: var(--um-ink);
+  background: #ffffff;
+
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 500;
+
+  outline: none;
+
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.user-management-edit-grid input:focus,
+.user-management-edit-grid select:focus {
+  border-color: var(--um-green);
+
+  box-shadow:
+    0 0 0 3px
+    color-mix(
+      in srgb,
+      var(--um-green) 13%,
+      transparent
+    );
+}
+
+.user-management-edit-grid input:disabled {
+  color: #7b8798;
+
+  border-color: #dbe2ea;
+
+  background: #f5f7f9;
+
+  cursor: not-allowed;
+}
+
+.user-management-edit-grid small {
+  color: #8995a6;
+
+  font-size: 0.68rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+
+/* Phone */
+
+.user-management-edit-phone {
+  display: grid;
+
+  grid-template-columns:
+    auto minmax(0, 1fr);
+
+  align-items: center;
+
+  height: 44px;
+
+  overflow: hidden;
+
+  border: 1px solid #d7e0ea;
+  border-radius: 9px;
+
+  background: #ffffff;
+
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.user-management-edit-phone:focus-within {
+  border-color: var(--um-green);
+
+  box-shadow:
+    0 0 0 3px
+    color-mix(
+      in srgb,
+      var(--um-green) 13%,
+      transparent
+    );
+}
+
+.user-management-edit-phone > span {
+  display: flex;
+  align-items: center;
+
+  height: 100%;
+
+  padding: 0 11px;
+
+  border-right: 1px solid #e3e8ee;
+
+  color: #667085;
+  background: #fafbfc;
+
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.user-management-edit-phone input {
+  height: 42px;
+
+  border: 0;
+  border-radius: 0;
+
+  box-shadow: none !important;
+}
+
+
+/* Location assignment */
+
+.user-management-edit-location-section {
+  margin: 0 24px 20px;
+  padding: 15px;
+
+  border: 1px solid #dfe6ed;
+  border-radius: 11px;
+
+  background: #fbfcfd;
+}
+
+.user-management-edit-location-section[hidden] {
+  display: none !important;
+}
+
+.user-management-edit-location-section legend {
+  padding: 0 6px;
+
+  color: #344054;
+
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.user-management-edit-locations {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 9px;
+
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.user-management-edit-location {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 9px;
+
+  padding: 10px;
+
+  border: 1px solid #e4e9ef;
+  border-radius: 9px;
+
+  background: #ffffff;
+
+  cursor: pointer;
+}
+
+.user-management-edit-location:hover {
+  border-color: #b9dccb;
+  background: #f7fcf9;
+}
+
+.user-management-edit-location input {
+  margin-top: 2px;
+  accent-color: var(--um-green);
+}
+
+.user-management-edit-location span {
+  display: grid;
+  gap: 2px;
+}
+
+.user-management-edit-location strong {
+  color: #253041;
+
+  font-size: 0.77rem;
+}
+
+.user-management-edit-location small {
+  color: #8490a2;
+
+  font-size: 0.68rem;
+}
+
+
+/* Edit footer */
+
+.user-management-edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+
+  gap: 10px;
+
+  flex: 0 0 auto;
+
+  padding: 16px 24px;
+
+  border-top: 1px solid var(--um-soft-line);
+
+  background: #fbfcfd;
+}
+
+
+/* =======================================================
+   RESET PASSWORD
+======================================================= */
+
+.user-management-password-dialog {
+  width: min(500px, calc(100vw - 32px));
+  max-width: 500px;
+  max-height: calc(100dvh - 40px);
+
+  margin: auto;
+  padding: 0;
+
+  overflow: hidden;
+
+  border: 1px solid var(--um-line);
+  border-radius: 16px;
+
+  background: var(--um-card);
+
+  box-shadow:
+    0 28px 70px rgba(15, 23, 42, 0.24),
+    0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+.user-management-password-dialog::backdrop {
+  background: rgba(15, 23, 42, 0.52);
+  backdrop-filter: blur(2px);
+}
+
+.user-management-password-dialog .user-management-password-form {
+  display: flex;
+  flex-direction: column;
+
+  gap: 0;
+
+  width: 100%;
+  max-height: calc(100dvh - 40px);
+
+  overflow-y: auto;
+}
+
+
+/* Password header */
+
+.user-management-password-dialog
+.user-management-password-dialog-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 16px;
+
+  padding: 22px 24px 18px;
+
+  border-bottom: 1px solid var(--um-soft-line);
+
+  background:
+    linear-gradient(
+      180deg,
+      #ffffff 0%,
+      #fcfdfd 100%
+    );
+}
+
+.user-management-password-dialog
+.user-management-password-dialog-header h2 {
+  margin: 3px 0 0;
+
+  color: var(--um-ink);
+
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+
+/* Description */
+
+.user-management-password-dialog
+.user-management-password-form
+> .user-management-muted {
+  margin: 20px 24px 0;
+
+  color: #667085;
+
+  font-size: 0.8rem;
+  line-height: 1.55;
+}
+
+
+/* Password fields */
+
+.user-management-password-dialog
+.user-management-password-field {
+  display: grid;
+
+  gap: 7px;
+
+  margin: 18px 24px 0;
+
+  color: #344054;
+
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.user-management-password-dialog
+.user-management-password-field input {
+  box-sizing: border-box;
+
+  width: 100%;
+  height: 44px;
+
+  padding: 0 12px;
+
+  border: 1px solid #d7e0ea;
+  border-radius: 9px;
+
+  color: var(--um-ink);
+  background: #ffffff;
+
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 500;
+
+  outline: none;
+
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.user-management-password-dialog
+.user-management-password-field input:focus {
+  border-color: var(--um-green);
+
+  box-shadow:
+    0 0 0 3px
+    color-mix(
+      in srgb,
+      var(--um-green) 13%,
+      transparent
+    );
+}
+
+.user-management-password-dialog
+.user-management-password-field
+small {
+  min-height: 15px;
+
+  color: #c62828;
+
+  font-size: 0.68rem;
+  font-weight: 600;
+}
+
+
+/* Password requirement box */
+
+.user-management-password-dialog
+.user-management-password-form
+> .user-management-muted:last-of-type {
+  margin-top: 17px;
+
+  padding: 11px 12px;
+
+  border: 1px solid #e4ebe7;
+  border-radius: 9px;
+
+  color: #526171;
+  background: #f7faf8;
+
+  font-size: 0.72rem;
+}
+
+
+/* Password footer */
+
+.user-management-password-dialog
+.user-management-password-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+
+  gap: 10px;
+
+  margin-top: 20px;
+
+  padding: 16px 24px;
+
+  border-top: 1px solid var(--um-soft-line);
+
+  background: #fbfcfd;
+}
+
+
+/* =======================================================
+   BUTTONS INSIDE BODY-MOUNTED DIALOGS
+======================================================= */
+
+.user-management-edit-dialog .user-management-button,
+.user-management-password-dialog .user-management-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  min-width: 108px;
+  min-height: 42px;
+
+  padding: 0 16px;
+
+  border: 1px solid transparent;
+  border-radius: 8px;
+
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  transition:
+    background 0.18s ease,
+    color 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
+}
+
+.user-management-edit-dialog
+.user-management-button.primary:not(:disabled),
+.user-management-password-dialog
+.user-management-button.primary:not(:disabled) {
+  color: #ffffff;
+
+  border-color: var(--um-green);
+
+  background: var(--um-green);
+
+  box-shadow:
+    0 4px 10px
+    color-mix(
+      in srgb,
+      var(--um-green) 18%,
+      transparent
+    );
+}
+
+.user-management-edit-dialog
+.user-management-button.primary:not(:disabled):hover,
+.user-management-password-dialog
+.user-management-button.primary:not(:disabled):hover {
+  background:
+    color-mix(
+      in srgb,
+      var(--um-green) 90%,
+      #000000
+    );
+
+  transform: translateY(-1px);
+}
+
+.user-management-edit-dialog
+.user-management-button.secondary,
+.user-management-password-dialog
+.user-management-button.secondary {
+  color: #344054;
+
+  border-color: #d4dce5;
+
+  background: #ffffff;
+}
+
+.user-management-edit-dialog
+.user-management-button.secondary:hover,
+.user-management-password-dialog
+.user-management-button.secondary:hover {
+  color: var(--um-green);
+
+  border-color: #a9d4bd;
+
+  background: #f7fcf9;
+}
+
+.user-management-edit-dialog
+.user-management-button:disabled,
+.user-management-password-dialog
+.user-management-button:disabled {
+  color: #98a2b3;
+
+  border-color: #e6e9ed;
+
+  background: #f2f4f7;
+
+  box-shadow: none;
+
+  cursor: not-allowed;
+
+  opacity: 1;
+}
+
+.user-management-edit-dialog
+[data-user-edit-save] {
+  min-width: 132px;
+}
+
+.user-management-password-dialog
+[data-password-submit] {
+  min-width: 140px;
+}
+
+
+/* =======================================================
+   RESPONSIVE
+======================================================= */
+
+@media (max-width: 700px) {
+  .user-management-edit-dialog {
+    width: calc(100vw - 20px);
+    max-height: calc(100dvh - 20px);
+  }
+
+  .user-management-edit-form {
+    max-height: calc(100dvh - 20px);
+  }
+
+  .user-management-edit-grid {
+    grid-template-columns: 1fr;
+
+    padding: 18px;
+  }
+
+  .user-management-edit-header {
+    padding: 19px 18px 16px;
+  }
+
+  .user-management-edit-location-section {
+    margin-inline: 18px;
+  }
+
+  .user-management-edit-locations {
+    grid-template-columns: 1fr;
+  }
+
+  .user-management-edit-actions {
+    padding: 14px 18px;
+  }
+}
+
+@media (max-width: 520px) {
+  .user-management-password-dialog {
+    width: calc(100vw - 20px);
+    max-height: calc(100dvh - 20px);
+  }
+
+  .user-management-password-dialog
+  .user-management-password-dialog-header {
+    padding: 19px 18px 16px;
+  }
+
+  .user-management-password-dialog
+  .user-management-password-form
+  > .user-management-muted,
+  .user-management-password-dialog
+  .user-management-password-field {
+    margin-left: 18px;
+    margin-right: 18px;
+  }
+
+  .user-management-password-dialog
+  .user-management-password-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    padding: 14px 18px;
+  }
+
+  .user-management-edit-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .user-management-edit-dialog .user-management-button,
+  .user-management-password-dialog .user-management-button {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+/* === USER MANAGEMENT EDIT DIALOG END === */
+

@@ -86,6 +86,40 @@ const loginLoader = document.querySelector("#login-loader");
 
 const DARK_MODE_STORAGE_KEY = "parkin_dark_mode";
 
+function cleanLegacyAddUserQueryString() {
+  if (!window.location.search) return;
+
+  const params = new URLSearchParams(window.location.search);
+
+  const legacyAddUserFields = [
+    "firstName",
+    "lastName",
+    "email",
+    "phoneNumber",
+    "employeeId",
+    "department",
+    "region",
+    "role",
+    "companyId",
+    "accessScope",
+    "sendInvitation",
+  ];
+
+  const containsLegacyAddUserData = legacyAddUserFields.some((field) =>
+    params.has(field),
+  );
+
+  if (!containsLegacyAddUserData) return;
+
+  window.history.replaceState(
+    null,
+    "",
+    `${window.location.pathname}${window.location.hash}`,
+  );
+}
+
+cleanLegacyAddUserQueryString();
+
 const API_BASE_URL =
   window.PARKIN_CONFIG?.apiBaseUrl || "https://api.parkin.com.sa";
 const USER_MANAGEMENT_API_BASE_URL =
