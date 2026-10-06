@@ -2357,6 +2357,7 @@ function bindCustomerAddVehicleForm() {
     A: "ا",
     B: "ب",
     D: "د",
+    E: "ع",
     G: "ق",
     H: "هـ",
     J: "ح",
@@ -2610,7 +2611,7 @@ function bindCustomerAddVehicleForm() {
 
     const plateLettersEnglish = getEnglishPlateLetters().join("").toUpperCase();
 
-    if (!/^[ABDGHJKLNRSTUVXZ]{3}$/.test(plateLettersEnglish)) {
+    if (!/^[ABDEGHJKLNRSTUVXZ]{3}$/.test(plateLettersEnglish)) {
       throw new Error("Please select three valid plate letters.");
     }
 

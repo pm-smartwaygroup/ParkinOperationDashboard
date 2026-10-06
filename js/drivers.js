@@ -1496,6 +1496,7 @@ function ensureDriverNewVehicleModal() {
     "A",
     "B",
     "D",
+    "E",
     "G",
     "H",
     "J",
@@ -1903,7 +1904,7 @@ function collectDriverNewVehiclePayload(modal) {
     throw new Error("Plate number must contain exactly four digits.");
   }
 
-  if (!/^[ABDGHJKLNRSTUVXZ]{3}$/.test(plateLettersEnglish)) {
+  if (!/^[ABDEGHJKLNRSTUVXZ]{3}$/.test(plateLettersEnglish)) {
     throw new Error("Please select three valid plate letters.");
   }
 
