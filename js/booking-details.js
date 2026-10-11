@@ -11,6 +11,13 @@ const BOOKING_DETAIL_BRANDS = Object.freeze({
 let bookingDetailsRoot = null;
 let bookingDetailsRoute = null;
 let bookingDetailsEventsRoot = null;
+
+const BOOKING_DETAILS_SYNC_INTERVAL_MS = 3000;
+
+let bookingDetailsSyncTimer = null;
+let bookingDetailsSyncInFlight = false;
+let bookingDetailsLastFingerprint = null;
+let bookingDetailsLiveEventsBound = false;
 function bookingDetailEscape(value) {
   return String(value ?? "")
     .replaceAll("&", "&amp;")
@@ -722,6 +729,200 @@ function initializeBookingDetailsPage() {
     bookingDetailsEventsRoot = root;
   }
 }
+
+function bookingDetailsRouteIsActive() {
+  return String(
+    window.location.hash || "",
+  ).startsWith("#booking-details");
+}
+
+function bookingDetailsFingerprint(
+  booking,
+) {
+  if (!booking) return "";
+
+  return [
+    booking.databaseId,
+    booking.rawStatus,
+    booking.status,
+    booking.returnRequestedAt,
+    booking.retrievalStartedAt,
+    booking.readyForHandoverAt,
+    booking.completedAt,
+    booking.cancelledAt,
+  ]
+    .map((value) => value ?? "")
+    .join("|");
+}
+
+function stopBookingDetailsLiveSync() {
+  if (bookingDetailsSyncTimer) {
+    window.clearInterval(
+      bookingDetailsSyncTimer,
+    );
+    bookingDetailsSyncTimer = null;
+  }
+
+  bookingDetailsSyncInFlight = false;
+}
+
+async function refreshBookingDetailsLive({
+  force = false,
+} = {}) {
+  if (
+    bookingDetailsSyncInFlight ||
+    document.hidden
+  ) {
+    return;
+  }
+
+  if (!bookingDetailsRouteIsActive()) {
+    stopBookingDetailsLiveSync();
+    return;
+  }
+
+  const root = document.querySelector(
+    ".booking-details-page",
+  );
+
+  const routeId =
+    bookingDetailRouteId();
+
+  if (
+    !root ||
+    !routeId ||
+    typeof window.refreshBookingByIdFromApi !==
+      "function"
+  ) {
+    return;
+  }
+
+  bookingDetailsSyncInFlight = true;
+
+  try {
+    const booking =
+      await window.refreshBookingByIdFromApi(
+        routeId,
+      );
+
+    const fingerprint =
+      bookingDetailsFingerprint(booking);
+
+    if (
+      force ||
+      fingerprint !==
+        bookingDetailsLastFingerprint
+    ) {
+      bookingDetailsLastFingerprint =
+        fingerprint;
+
+      // Allow normal renderer to execute again.
+      // Keep bookingDetailsEventsRoot intact so
+      // click handlers are not duplicated.
+      bookingDetailsRoot = null;
+      bookingDetailsRoute = null;
+
+      initializeBookingDetailsPage();
+    }
+
+    const terminalStatuses = new Set([
+      "COMPLETED",
+      "CANCELLED",
+      "EXPIRED",
+    ]);
+
+    if (
+      terminalStatuses.has(
+        String(
+          booking?.rawStatus || "",
+        ).toUpperCase(),
+      )
+    ) {
+      stopBookingDetailsLiveSync();
+    }
+  } catch (error) {
+    // Do not repeatedly interrupt operators with
+    // modal alerts during transient network errors.
+    console.warn(
+      "Booking live sync failed:",
+      error,
+    );
+  } finally {
+    bookingDetailsSyncInFlight = false;
+  }
+}
+
+function startBookingDetailsLiveSync() {
+  stopBookingDetailsLiveSync();
+
+  if (!bookingDetailsRouteIsActive()) {
+    return;
+  }
+
+  const currentBooking =
+    window.getBookingDemoById?.(
+      bookingDetailRouteId(),
+    );
+
+  bookingDetailsLastFingerprint =
+    bookingDetailsFingerprint(
+      currentBooking,
+    );
+
+  void refreshBookingDetailsLive({
+    force: true,
+  });
+
+  bookingDetailsSyncTimer =
+    window.setInterval(() => {
+      void refreshBookingDetailsLive();
+    }, BOOKING_DETAILS_SYNC_INTERVAL_MS);
+
+  if (!bookingDetailsLiveEventsBound) {
+    bookingDetailsLiveEventsBound = true;
+
+    document.addEventListener(
+      "visibilitychange",
+      () => {
+        if (
+          !document.hidden &&
+          bookingDetailsRouteIsActive()
+        ) {
+          void refreshBookingDetailsLive({
+            force: true,
+          });
+        }
+      },
+    );
+
+    window.addEventListener(
+      "focus",
+      () => {
+        if (
+          bookingDetailsRouteIsActive()
+        ) {
+          void refreshBookingDetailsLive({
+            force: true,
+          });
+        }
+      },
+    );
+
+    window.addEventListener(
+      "hashchange",
+      () => {
+        if (
+          bookingDetailsRouteIsActive()
+        ) {
+          startBookingDetailsLiveSync();
+        } else {
+          stopBookingDetailsLiveSync();
+        }
+      },
+    );
+  }
+}
+
 async function loadBookingDetailsPage() {
   const container = document.querySelector("#booking-details-container");
   if (!container) return;
@@ -741,4 +942,5 @@ async function loadBookingDetailsPage() {
     container.dataset.loaded = "true";
   }
   initializeBookingDetailsPage();
+  startBookingDetailsLiveSync();
 }

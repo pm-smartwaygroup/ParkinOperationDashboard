@@ -369,6 +369,99 @@ async function fetchBookingsApiPage(
   };
 }
 
+
+async function fetchBookingByIdFromApi(
+  identifier,
+  token,
+) {
+  const response = await fetch(
+    `${getBookingsApiBaseUrl()}/bookings/${encodeURIComponent(identifier)}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      cache: "no-store",
+    },
+  );
+
+  const payload = await response
+    .json()
+    .catch(() => null);
+
+  if (!response.ok) {
+    const message = Array.isArray(
+      payload?.message,
+    )
+      ? payload.message.join("\n")
+      : payload?.message;
+
+    throw new Error(
+      message ||
+        `Unable to refresh booking (${response.status}).`,
+    );
+  }
+
+  const data = payload?.data ?? payload;
+  const rawBooking =
+    data?.booking ?? data;
+
+  if (!rawBooking) {
+    throw new Error(
+      "Booking response did not contain booking data.",
+    );
+  }
+
+  return rawBooking;
+}
+
+function updateBookingDataFromApi(
+  rawBooking,
+) {
+  const mapped =
+    mapBookingFromApi(rawBooking);
+
+  const index = BOOKING_DATA.findIndex(
+    (booking) =>
+      (
+        mapped.databaseId &&
+        booking.databaseId ===
+          mapped.databaseId
+      ) ||
+      booking.id === mapped.id,
+  );
+
+  if (index >= 0) {
+    BOOKING_DATA[index] = mapped;
+  } else {
+    BOOKING_DATA.unshift(mapped);
+  }
+
+  return mapped;
+}
+
+window.refreshBookingByIdFromApi =
+  async (identifier) => {
+    const token = localStorage.getItem(
+      "parkin_access_token",
+    );
+
+    if (!token) {
+      throw new Error(
+        "Dashboard access token is unavailable. Please sign in again.",
+      );
+    }
+
+    const rawBooking =
+      await fetchBookingByIdFromApi(
+        identifier,
+        token,
+      );
+
+    return updateBookingDataFromApi(
+      rawBooking,
+    );
+  };
+
 function replaceBookingFilterOptions(
   selector,
   allLabel,
