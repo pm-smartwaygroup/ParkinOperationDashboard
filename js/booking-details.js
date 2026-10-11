@@ -13,8 +13,12 @@ let bookingDetailsRoute = null;
 let bookingDetailsEventsRoot = null;
 
 const BOOKING_DETAILS_SYNC_INTERVAL_MS = 3000;
+const BOOKING_DETAILS_FEEDBACK_SYNC_INTERVAL_MS = 10000;
+const BOOKING_DETAILS_FEEDBACK_WINDOW_MS =
+  7 * 24 * 60 * 60 * 1000;
 
 let bookingDetailsSyncTimer = null;
+let bookingDetailsSyncIntervalMs = null;
 let bookingDetailsSyncInFlight = false;
 let bookingDetailsLastFingerprint = null;
 let bookingDetailsLiveEventsBound = false;
@@ -609,6 +613,192 @@ function renderBookingReceiptAction(root, booking) {
   const shareButton = actions.querySelector("[data-booking-share]");
   actions.insertBefore(button, shareButton || null);
 }
+function bookingFeedbackWindowIsActive(
+  booking,
+) {
+  if (!booking?.completedAtIso) {
+    return false;
+  }
+
+  const completedAt = new Date(
+    booking.completedAtIso,
+  );
+
+  if (
+    Number.isNaN(
+      completedAt.getTime(),
+    )
+  ) {
+    return false;
+  }
+
+  return (
+    completedAt.getTime() +
+      BOOKING_DETAILS_FEEDBACK_WINDOW_MS >
+    Date.now()
+  );
+}
+
+function renderBookingCustomerFeedback(
+  root,
+  booking,
+) {
+  const card = root.querySelector(
+    "[data-booking-feedback-card]",
+  );
+
+  if (!card) return;
+
+  const isCompleted =
+    String(
+      booking?.rawStatus || "",
+    ).toUpperCase() === "COMPLETED";
+
+  card.classList.toggle(
+    "hidden",
+    !isCompleted,
+  );
+
+  if (!isCompleted) {
+    return;
+  }
+
+  const stars = card.querySelector(
+    "[data-booking-feedback-stars]",
+  );
+
+  const score = card.querySelector(
+    "[data-booking-feedback-score]",
+  );
+
+  const state = card.querySelector(
+    "[data-booking-feedback-state]",
+  );
+
+  const comment = card.querySelector(
+    "[data-booking-feedback-comment]",
+  );
+
+  const submitted = card.querySelector(
+    "[data-booking-feedback-submitted]",
+  );
+
+  const source = card.querySelector(
+    "[data-booking-feedback-source]",
+  );
+
+  const rating =
+    Number.isInteger(
+      booking?.customerRating,
+    ) &&
+    booking.customerRating >= 1 &&
+    booking.customerRating <= 5
+      ? booking.customerRating
+      : null;
+
+  const hasSubmittedFeedback =
+    Boolean(
+      booking?.feedbackSubmittedAt,
+    ) &&
+    rating !== null;
+
+  if (!hasSubmittedFeedback) {
+    const feedbackWindowActive =
+      bookingFeedbackWindowIsActive(
+        booking,
+      );
+
+    if (stars) {
+      stars.textContent = "☆☆☆☆☆";
+      stars.setAttribute(
+        "aria-label",
+        "No customer rating submitted",
+      );
+    }
+
+    if (score) {
+      score.textContent = "Not rated";
+    }
+
+    if (state) {
+      state.textContent =
+        feedbackWindowActive
+          ? "Awaiting feedback"
+          : "No feedback submitted";
+
+      state.classList.remove(
+        "is-submitted",
+      );
+    }
+
+    if (comment) {
+      comment.textContent =
+        feedbackWindowActive
+          ? "Customer can still submit feedback from the secure vehicle-return link."
+          : "The feedback period ended without a customer review.";
+
+      comment.classList.add(
+        "is-empty",
+      );
+    }
+
+    if (submitted) {
+      submitted.textContent = "—";
+    }
+
+    if (source) {
+      source.textContent =
+        "Customer Return Link";
+    }
+
+    return;
+  }
+
+  if (stars) {
+    stars.textContent =
+      "★".repeat(rating) +
+      "☆".repeat(5 - rating);
+
+    stars.setAttribute(
+      "aria-label",
+      `${rating} out of 5 stars`,
+    );
+  }
+
+  if (score) {
+    score.textContent =
+      `${rating}.0 / 5`;
+  }
+
+  if (state) {
+    state.textContent = "Submitted";
+    state.classList.add(
+      "is-submitted",
+    );
+  }
+
+  if (comment) {
+    comment.classList.remove(
+      "is-empty",
+    );
+
+    comment.textContent =
+      booking.customerFeedback ||
+      "No written comment provided.";
+  }
+
+  if (submitted) {
+    submitted.textContent =
+      booking.feedbackSubmittedAt ||
+      "—";
+  }
+
+  if (source) {
+    source.textContent =
+      "Customer Return Link";
+  }
+}
+
 function initializeBookingDetailsPage() {
   const root = document.querySelector(".booking-details-page");
   const routeId = bookingDetailRouteId();
@@ -621,6 +811,7 @@ function initializeBookingDetailsPage() {
   const notFound = root.querySelector("[data-booking-not-found]");
   renderBookingReceiptAction(root, booking);
   renderBookingWorkflowAction(root, booking);
+  renderBookingCustomerFeedback(root, booking);
   if (!booking) {
     content?.classList.add("hidden");
     notFound?.classList.remove("hidden");
@@ -749,10 +940,44 @@ function bookingDetailsFingerprint(
     booking.retrievalStartedAt,
     booking.readyForHandoverAt,
     booking.completedAt,
+    booking.completedAtIso,
     booking.cancelledAt,
+    booking.customerRating,
+    booking.customerFeedback,
+    booking.feedbackSubmittedAt,
   ]
     .map((value) => value ?? "")
     .join("|");
+}
+
+function scheduleBookingDetailsLiveSync(
+  intervalMs,
+) {
+  if (!bookingDetailsRouteIsActive()) {
+    return;
+  }
+
+  if (
+    bookingDetailsSyncTimer &&
+    bookingDetailsSyncIntervalMs ===
+      intervalMs
+  ) {
+    return;
+  }
+
+  if (bookingDetailsSyncTimer) {
+    window.clearInterval(
+      bookingDetailsSyncTimer,
+    );
+  }
+
+  bookingDetailsSyncIntervalMs =
+    intervalMs;
+
+  bookingDetailsSyncTimer =
+    window.setInterval(() => {
+      void refreshBookingDetailsLive();
+    }, intervalMs);
 }
 
 function stopBookingDetailsLiveSync() {
@@ -763,6 +988,7 @@ function stopBookingDetailsLiveSync() {
     bookingDetailsSyncTimer = null;
   }
 
+  bookingDetailsSyncIntervalMs = null;
   bookingDetailsSyncInFlight = false;
 }
 
@@ -825,20 +1051,42 @@ async function refreshBookingDetailsLive({
       initializeBookingDetailsPage();
     }
 
-    const terminalStatuses = new Set([
-      "COMPLETED",
-      "CANCELLED",
-      "EXPIRED",
-    ]);
+    const rawStatus = String(
+      booking?.rawStatus || "",
+    ).toUpperCase();
 
     if (
-      terminalStatuses.has(
-        String(
-          booking?.rawStatus || "",
-        ).toUpperCase(),
-      )
+      rawStatus === "CANCELLED" ||
+      rawStatus === "EXPIRED"
     ) {
       stopBookingDetailsLiveSync();
+    } else if (
+      rawStatus === "COMPLETED" &&
+      booking?.feedbackSubmittedAt
+    ) {
+      // Completed and feedback already received:
+      // no further polling is required.
+      stopBookingDetailsLiveSync();
+    } else if (
+      rawStatus === "COMPLETED" &&
+      bookingFeedbackWindowIsActive(
+        booking,
+      )
+    ) {
+      // Keep checking for post-handover customer
+      // feedback, but at a lower request rate.
+      scheduleBookingDetailsLiveSync(
+        BOOKING_DETAILS_FEEDBACK_SYNC_INTERVAL_MS,
+      );
+    } else if (
+      rawStatus === "COMPLETED"
+    ) {
+      // Feedback window has expired.
+      stopBookingDetailsLiveSync();
+    } else {
+      scheduleBookingDetailsLiveSync(
+        BOOKING_DETAILS_SYNC_INTERVAL_MS,
+      );
     }
   } catch (error) {
     // Do not repeatedly interrupt operators with
@@ -873,10 +1121,9 @@ function startBookingDetailsLiveSync() {
     force: true,
   });
 
-  bookingDetailsSyncTimer =
-    window.setInterval(() => {
-      void refreshBookingDetailsLive();
-    }, BOOKING_DETAILS_SYNC_INTERVAL_MS);
+  scheduleBookingDetailsLiveSync(
+    BOOKING_DETAILS_SYNC_INTERVAL_MS,
+  );
 
   if (!bookingDetailsLiveEventsBound) {
     bookingDetailsLiveEventsBound = true;

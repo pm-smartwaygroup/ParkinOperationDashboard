@@ -310,6 +310,30 @@ function mapBookingFromApi(raw) {
         )
       : null,
 
+    completedAtIso:
+      raw?.completedAt || null,
+
+    customerRating:
+      Number.isInteger(raw?.customerRating) &&
+      raw.customerRating >= 1 &&
+      raw.customerRating <= 5
+        ? raw.customerRating
+        : null,
+
+    customerFeedback:
+      typeof raw?.customerFeedback === "string" &&
+      raw.customerFeedback.trim()
+        ? raw.customerFeedback.trim()
+        : null,
+
+    feedbackSubmittedAt:
+      raw?.feedbackSubmittedAt
+        ? bookingFormatDateTime(
+            raw.feedbackSubmittedAt,
+            timeZone,
+          )
+        : null,
+
     cancelledAt: raw?.cancelledAt
       ? bookingFormatDateTime(
           raw.cancelledAt,
