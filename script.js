@@ -151,6 +151,20 @@ const DASHBOARD_PERMISSION_BY_ROUTE = Object.freeze({
   "#audit-logs": "audit_logs.view",
 });
 
+const DASHBOARD_LANDING_ROUTE_PRIORITY = Object.freeze([
+  "#dashboard",
+  "#locations",
+  "#valet-operations",
+  "#drivers",
+  "#customers",
+  "#vehicles",
+  "#zones",
+  "#bookings",
+  "#companies",
+  "#revenue",
+  "#user-management",
+]);
+
 function getDashboardAccessApiBaseUrl() {
   return USER_MANAGEMENT_API_BASE_URL;
 }
@@ -174,6 +188,39 @@ function hasAnyDashboardPermission(...codes) {
   if (getCurrentDashboardUserRole() === "SUPER_ADMIN") return true;
 
   return codes.some((code) => dashboardAccessState.permissions.has(code));
+}
+
+function canAccessDashboardRequirement(permission) {
+  if (!dashboardAccessState.ready) return false;
+
+  if (permission === null) return true;
+
+  return (
+    typeof permission === "string" &&
+    hasDashboardPermission(permission)
+  );
+}
+
+function getFirstAccessibleDashboardRoute() {
+  return (
+    DASHBOARD_LANDING_ROUTE_PRIORITY.find((route) =>
+      canAccessDashboardRequirement(
+        DASHBOARD_PERMISSION_BY_ROUTE[route],
+      ),
+    ) || null
+  );
+}
+
+function replaceDashboardRoute(route) {
+  const normalizedRoute = String(route || "").startsWith("#")
+    ? String(route)
+    : `#${String(route || "")}`;
+
+  window.history.replaceState(
+    null,
+    "",
+    `${window.location.pathname}${normalizedRoute}`,
+  );
 }
 
 function applyDashboardPermissionVisibility(root = document) {
@@ -630,15 +677,19 @@ async function showDashboard({ preserveRoute = false } = {}) {
   hydrateDashboardProfile();
 
   if (!preserveRoute) {
-    window.history.replaceState(null, "", "/#dashboard");
+    const initialRoute =
+      getFirstAccessibleDashboardRoute();
 
-    /*
-     * replaceState does not trigger
-     * the hashchange event, so render
-     * the Dashboard explicitly.
-     */
-    handleDashboardRoute();
+    replaceDashboardRoute(
+      initialRoute || "#dashboard",
+    );
   }
+
+  /*
+   * replaceState does not trigger hashchange.
+   * Route both fresh logins and restored sessions explicitly.
+   */
+  handleDashboardRoute();
 
   window.scrollTo({
     top: 0,
@@ -660,8 +711,7 @@ function applyPermissionNavigationVisibility() {
     if (!Object.hasOwn(DASHBOARD_PERMISSION_BY_ROUTE, route)) return;
     const permission = DASHBOARD_PERMISSION_BY_ROUTE[route];
     const visible =
-      permission === null ||
-      (typeof permission === "string" && hasDashboardPermission(permission));
+      canAccessDashboardRequirement(permission);
     link.hidden = !visible;
     link.classList.toggle("hidden", !visible);
     link.setAttribute("aria-hidden", String(!visible));
@@ -2049,10 +2099,22 @@ function handleDashboardRoute() {
   const requiredPermission = getDashboardRoutePermission(window.location.hash);
   if (
     requiredPermission !== undefined &&
-    requiredPermission !== null &&
-    (typeof requiredPermission !== "string" ||
-      !hasDashboardPermission(requiredPermission))
+    !canAccessDashboardRequirement(
+      requiredPermission,
+    )
   ) {
+    const fallbackRoute =
+      getFirstAccessibleDashboardRoute();
+
+    if (
+      fallbackRoute &&
+      fallbackRoute !== window.location.hash
+    ) {
+      replaceDashboardRoute(fallbackRoute);
+      handleDashboardRoute();
+      return;
+    }
+
     restoreDashboardTitleMarkup();
     showDashboardAccessDenied();
     return;
@@ -2186,7 +2248,33 @@ function handleDashboardRoute() {
     return;
   }
 
-  showMainDashboardView();
+  /*
+   * Unknown or unsupported routes must never bypass
+   * permission checks by falling through to Dashboard.
+   */
+  if (hasDashboardPermission("dashboard.view")) {
+    if (window.location.hash !== "#dashboard") {
+      replaceDashboardRoute("#dashboard");
+    }
+
+    showMainDashboardView();
+    return;
+  }
+
+  const fallbackRoute =
+    getFirstAccessibleDashboardRoute();
+
+  if (
+    fallbackRoute &&
+    fallbackRoute !== window.location.hash
+  ) {
+    replaceDashboardRoute(fallbackRoute);
+    handleDashboardRoute();
+    return;
+  }
+
+  restoreDashboardTitleMarkup();
+  showDashboardAccessDenied();
 }
 
 window.addEventListener("hashchange", handleDashboardRoute);
@@ -2209,12 +2297,12 @@ document.querySelectorAll('a[href="#dashboard"]').forEach((link) => {
     event.preventDefault();
 
     /*
-     * When the URL is already
-     * #dashboard, hashchange will
-     * not run. Render it directly.
+     * When the URL is already #dashboard,
+     * hashchange will not run. Route it
+     * explicitly through the permission guard.
      */
     if (window.location.hash === "#dashboard") {
-      showMainDashboardView();
+      handleDashboardRoute();
       return;
     }
 
