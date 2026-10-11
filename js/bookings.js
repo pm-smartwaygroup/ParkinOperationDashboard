@@ -1,149 +1,506 @@
-const BOOKING_DEMO_DATA = [
-  {
-    id: "BK-2024-00568",
-    created: "24 May 2024, 10:30 AM",
-    customer: "Ahmed Al-Qahtani",
-    phone: "+966 50 123 4567",
-    vehicle: "Toyota Camry",
-    plate: "KSA 1234 ABC",
-    color: "White",
-    start: "24 May, 10:30 AM",
-    end: "24 May, 02:30 PM",
-    duration: "4h 0m",
-    zone: "Zone A - Main Entrance",
-    location: "Riyadh - Business District",
-    source: "Customer App",
-    status: "Active",
-    amount: "SAR 40",
-    payment: "Online",
-  },
-  {
-    id: "BK-2024-00567",
-    created: "24 May 2024, 09:00 AM",
-    customer: "Sara Al-Mutairi",
-    phone: "+966 50 222 3344",
-    vehicle: "Kia Sportage",
-    plate: "KSA 7890 MNO",
-    color: "Black",
-    start: "24 May, 09:00 AM",
-    end: "24 May, 06:00 PM",
-    duration: "9h 0m",
-    zone: "Zone B - VIP",
-    location: "Riyadh Park Mall",
-    source: "Customer App",
-    status: "Upcoming",
-    amount: "SAR 80",
-    payment: "Apple Pay",
-  },
-  {
-    id: "BK-2024-00566",
-    created: "24 May 2024, 08:15 AM",
-    customer: "Omar Al-Shehri",
-    phone: "+966 55 987 6543",
-    vehicle: "Hyundai Tucson",
-    plate: "KSA 5678 DEF",
-    color: "Gray",
-    start: "24 May, 08:15 AM",
-    end: "24 May, 12:15 PM",
-    duration: "4h 0m",
-    zone: "Zone C - Mall Area",
-    location: "Granada Center",
-    source: "Valet Driver App",
-    status: "Completed",
-    amount: "SAR 35",
-    payment: "Online",
-  },
-  {
-    id: "BK-2024-00565",
-    created: "24 May 2024, 07:45 AM",
-    customer: "Noura Al-Harbi",
-    phone: "+966 53 111 2233",
-    vehicle: "Mercedes E-Class",
-    plate: "KSA 3456 JKL",
-    color: "Black",
-    start: "24 May, 07:45 AM",
-    end: "24 May, 11:45 AM",
-    duration: "4h 0m",
-    zone: "Zone B - VIP",
-    location: "Riyadh Park Mall",
-    source: "Customer App",
-    status: "Completed",
-    amount: "SAR 50",
-    payment: "Online",
-  },
-  {
-    id: "BK-2024-00564",
-    created: "24 May 2024, 01:00 PM",
-    customer: "Faisal Al-Otaibi",
-    phone: "+966 54 444 5566",
-    vehicle: "Ford F-150",
-    plate: "KSA 9012 GHI",
-    color: "White",
-    start: "24 May, 01:00 PM",
-    end: "-",
-    duration: "-",
-    zone: "Zone D - Event",
-    location: "King Abdullah Road",
-    source: "Customer App",
-    status: "Cancelled",
-    amount: "SAR 60",
-    payment: "Refunded",
-  },
-  {
-    id: "BK-2024-00563",
-    created: "24 May 2024, 11:20 AM",
-    customer: "Lama Al-Zahrani",
-    phone: "+966 56 777 8899",
-    vehicle: "Lexus RX",
-    plate: "KSA 2468 TUV",
-    color: "Blue",
-    start: "24 May, 11:20 AM",
-    end: "24 May, 03:20 PM",
-    duration: "4h 0m",
-    zone: "Zone A - Main Entrance",
-    location: "Riyadh - Business District",
-    source: "Customer App",
-    status: "Active",
-    amount: "SAR 45",
-    payment: "Online",
-  },
-  {
-    id: "BK-2024-00562",
-    created: "24 May 2024, 12:00 PM",
-    customer: "Yazeed Al-Dossari",
-    phone: "+966 58 333 6677",
-    vehicle: "Nissan Patrol",
-    plate: "KSA 1357 QWE",
-    color: "Black",
-    start: "24 May, 12:00 PM",
-    end: "-",
-    duration: "-",
-    zone: "Zone C - Mall Area",
-    location: "Granada Center",
-    source: "Valet Driver App",
-    status: "Upcoming",
-    amount: "SAR 50",
-    payment: "Cash",
-  },
-  {
-    id: "BK-2024-00561",
-    created: "24 May 2024, 08:30 AM",
-    customer: "Reem Al-Sudairi",
-    phone: "+966 59 888 1111",
-    vehicle: "Chevrolet Tahoe",
-    plate: "KSA 9753 ZXC",
-    color: "White",
-    start: "24 May, 08:30 AM",
-    end: "24 May, 04:30 PM",
-    duration: "8h 0m",
-    zone: "Zone B - VIP",
-    location: "Riyadh Park Mall",
-    source: "Customer App",
-    status: "Completed",
-    amount: "SAR 70",
-    payment: "Online",
-  },
-];
+let BOOKING_DATA = [];
+
+function getBookingsApiBaseUrl() {
+  return (
+    window.PARKIN_CONFIG?.userManagementApiBaseUrl ||
+    window.PARKIN_CONFIG?.apiBaseUrl ||
+    "https://api.parkin.com.sa"
+  );
+}
+
+function bookingHumanize(value) {
+  if (!value) return "—";
+
+  return String(value)
+    .trim()
+    .toLowerCase()
+    .split("_")
+    .filter(Boolean)
+    .map(
+      (part) =>
+        part.charAt(0).toUpperCase() +
+        part.slice(1),
+    )
+    .join(" ");
+}
+
+function bookingSourceLabel(source) {
+  switch (source) {
+    case "CUSTOMER_APP":
+      return "Customer App";
+
+    case "VALET_DRIVER_APP":
+      return "Valet Driver App";
+
+    case "DASHBOARD":
+      return "Dashboard";
+
+    default:
+      return bookingHumanize(source);
+  }
+}
+
+function bookingStatusLabel(status) {
+  switch (status) {
+    case "VEHICLE_PARKED":
+    case "RETURN_REQUESTED":
+    case "RETRIEVAL_IN_PROGRESS":
+    case "READY_FOR_HANDOVER":
+      return "Active";
+
+    case "COMPLETED":
+      return "Completed";
+
+    case "CANCELLED":
+    case "EXPIRED":
+      return "Cancelled";
+
+    case "CONFIRMED":
+    default:
+      return "Upcoming";
+  }
+}
+
+function bookingFormatDateTime(
+  value,
+  timeZone = "Asia/Riyadh",
+) {
+  if (!value) return "—";
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return "—";
+  }
+
+  try {
+    const datePart =
+      new Intl.DateTimeFormat("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        timeZone,
+      }).format(date);
+
+    const timePart =
+      new Intl.DateTimeFormat("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+        timeZone,
+      }).format(date);
+
+    return `${datePart}, ${timePart}`;
+  } catch {
+    return (
+      `${date.toISOString().slice(0, 10)}, ` +
+      `${date.toISOString().slice(11, 16)} UTC`
+    );
+  }
+}
+
+function bookingFormatDuration(minutes) {
+  const total = Number(minutes);
+
+  if (!Number.isFinite(total) || total < 0) {
+    return "—";
+  }
+
+  const hours = Math.floor(total / 60);
+  const remaining = total % 60;
+
+  return `${hours}h ${remaining}m`;
+}
+
+function bookingVehicleName(vehicle) {
+  const make = String(
+    vehicle?.make || "",
+  ).trim();
+
+  const model = String(
+    vehicle?.model || "",
+  ).trim();
+
+  const usefulParts = [make, model].filter(
+    (part) =>
+      part &&
+      part.toLowerCase() !== "unknown",
+  );
+
+  if (usefulParts.length) {
+    return usefulParts.join(" ");
+  }
+
+  return vehicle?.vehicleType || "Vehicle";
+}
+
+function bookingAmountLabel(value) {
+  if (
+    value === null ||
+    value === undefined ||
+    value === ""
+  ) {
+    return "—";
+  }
+
+  const amount = Number(value);
+
+  if (!Number.isFinite(amount)) {
+    return "—";
+  }
+
+  return `SAR ${amount.toFixed(2)}`;
+}
+
+function mapBookingFromApi(raw) {
+  const timeZone =
+    raw?.location?.timezone ||
+    "Asia/Riyadh";
+
+  const plateNumber =
+    raw?.vehicle?.plateNumberEnglish || "";
+
+  const plateLetters =
+    raw?.vehicle?.plateLettersEnglish || "";
+
+  const customerPhone =
+    raw?.customer?.phoneE164 ||
+    [
+      raw?.customer?.phoneCountryCode,
+      raw?.customer?.phoneNumber,
+    ]
+      .filter(Boolean)
+      .join("") ||
+    "—";
+
+  return {
+    // Existing Dashboard/detail routing uses "id"
+    // as the human-readable booking number.
+    id:
+      raw?.bookingCode ||
+      raw?.id ||
+      "—",
+
+    databaseId: raw?.id || null,
+
+    rawStatus: raw?.status || null,
+
+    created: bookingFormatDateTime(
+      raw?.createdAt,
+      timeZone,
+    ),
+
+    customer:
+      raw?.customer?.fullName ||
+      "Unknown Customer",
+
+    // Correct semantics for CUSTOMER (FROM APP).
+    phone: customerPhone,
+
+    // Retain driver mobile separately for later
+    // booking-detail / SMS workflow.
+    driverPhone:
+      raw?.driverPhoneE164 || "—",
+
+    vehicle: bookingVehicleName(
+      raw?.vehicle,
+    ),
+
+    plate:
+      plateNumber || plateLetters
+        ? `KSA ${plateNumber} ${plateLetters}`.trim()
+        : "—",
+
+    color:
+      raw?.vehicle?.color ||
+      "Unknown",
+
+    start: bookingFormatDateTime(
+      raw?.scheduledStartAt,
+      timeZone,
+    ),
+
+    end: bookingFormatDateTime(
+      raw?.scheduledEndAt,
+      timeZone,
+    ),
+
+    duration: bookingFormatDuration(
+      raw?.durationMinutes,
+    ),
+
+    zone:
+      raw?.parkingSpaceLabel ||
+      raw?.location?.district ||
+      raw?.location?.code ||
+      "—",
+
+    location:
+      raw?.location?.name ||
+      raw?.location?.city ||
+      "—",
+
+    source: bookingSourceLabel(
+      raw?.source,
+    ),
+
+    status: bookingStatusLabel(
+      raw?.status,
+    ),
+
+    amount: bookingAmountLabel(
+      raw?.amountSar,
+    ),
+
+    payment:
+      raw?.paymentMethod
+        ? bookingHumanize(
+            raw.paymentMethod,
+          )
+        : "Not set",
+
+    pickupMethod: bookingHumanize(
+      raw?.pickupMethod,
+    ),
+
+    notes: raw?.notes || null,
+
+    confirmedAt: raw?.confirmedAt
+      ? bookingFormatDateTime(
+          raw.confirmedAt,
+          timeZone,
+        )
+      : null,
+
+    parkedAt: raw?.parkedAt
+      ? bookingFormatDateTime(
+          raw.parkedAt,
+          timeZone,
+        )
+      : null,
+
+    returnRequestedAt:
+      raw?.returnRequestedAt
+        ? bookingFormatDateTime(
+            raw.returnRequestedAt,
+            timeZone,
+          )
+        : null,
+
+    retrievalStartedAt:
+      raw?.retrievalStartedAt
+        ? bookingFormatDateTime(
+            raw.retrievalStartedAt,
+            timeZone,
+          )
+        : null,
+
+    readyForHandoverAt:
+      raw?.readyForHandoverAt
+        ? bookingFormatDateTime(
+            raw.readyForHandoverAt,
+            timeZone,
+          )
+        : null,
+
+    completedAt: raw?.completedAt
+      ? bookingFormatDateTime(
+          raw.completedAt,
+          timeZone,
+        )
+      : null,
+
+    cancelledAt: raw?.cancelledAt
+      ? bookingFormatDateTime(
+          raw.cancelledAt,
+          timeZone,
+        )
+      : null,
+  };
+}
+
+async function fetchBookingsApiPage(
+  page,
+  limit,
+  token,
+) {
+  const response = await fetch(
+    `${getBookingsApiBaseUrl()}/bookings?page=${page}&limit=${limit}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+
+  const payload = await response
+    .json()
+    .catch(() => null);
+
+  if (!response.ok) {
+    const message = Array.isArray(
+      payload?.message,
+    )
+      ? payload.message.join("\n")
+      : payload?.message;
+
+    throw new Error(
+      message ||
+        `Unable to load bookings (${response.status}).`,
+    );
+  }
+
+  const data = payload?.data ?? payload;
+
+  return {
+    bookings: Array.isArray(
+      data?.bookings,
+    )
+      ? data.bookings
+      : [],
+
+    pagination:
+      data?.pagination || {
+        page,
+        limit,
+        total: 0,
+        totalPages: 0,
+      },
+  };
+}
+
+function replaceBookingFilterOptions(
+  selector,
+  allLabel,
+  values,
+  stateKey,
+) {
+  const select =
+    document.querySelector(selector);
+
+  if (!select) return;
+
+  const previous =
+    bookingState[stateKey];
+
+  const uniqueValues = [
+    ...new Set(values),
+  ]
+    .filter(
+      (value) =>
+        value &&
+        value !== "—",
+    )
+    .sort((a, b) =>
+      a.localeCompare(b),
+    );
+
+  select.replaceChildren(
+    new Option(allLabel, "all"),
+    ...uniqueValues.map(
+      (value) =>
+        new Option(value, value),
+    ),
+  );
+
+  if (
+    previous !== "all" &&
+    uniqueValues.includes(previous)
+  ) {
+    select.value = previous;
+    return;
+  }
+
+  select.value = "all";
+  bookingState[stateKey] = "all";
+}
+
+function syncBookingFilterOptions() {
+  replaceBookingFilterOptions(
+    "#bookings-source-filter",
+    "All Sources",
+    BOOKING_DATA.map(
+      (booking) => booking.source,
+    ),
+    "source",
+  );
+
+  replaceBookingFilterOptions(
+    "#bookings-payment-filter",
+    "All Payments",
+    BOOKING_DATA.map(
+      (booking) => booking.payment,
+    ),
+    "payment",
+  );
+
+  replaceBookingFilterOptions(
+    "#bookings-location-filter",
+    "All Locations",
+    BOOKING_DATA.map(
+      (booking) => booking.location,
+    ),
+    "location",
+  );
+}
+
+async function loadBookingsData() {
+  const token = localStorage.getItem(
+    "parkin_access_token",
+  );
+
+  if (!token) {
+    throw new Error(
+      "Dashboard access token is unavailable. Please sign in again.",
+    );
+  }
+
+  const limit = 25;
+
+  const firstPage =
+    await fetchBookingsApiPage(
+      1,
+      limit,
+      token,
+    );
+
+  const rawBookings = [
+    ...firstPage.bookings,
+  ];
+
+  const totalPages = Math.max(
+    1,
+    Number(
+      firstPage.pagination
+        ?.totalPages || 1,
+    ),
+  );
+
+  for (
+    let page = 2;
+    page <= totalPages;
+    page += 1
+  ) {
+    const nextPage =
+      await fetchBookingsApiPage(
+        page,
+        limit,
+        token,
+      );
+
+    rawBookings.push(
+      ...nextPage.bookings,
+    );
+  }
+
+  BOOKING_DATA = rawBookings.map(
+    mapBookingFromApi,
+  );
+
+  bookingState.selectedIds.clear();
+
+  syncBookingFilterOptions();
+}
 
 const BOOKING_VEHICLE_BRAND_ASSETS = Object.freeze({
   Toyota: "/public/assets/vehicle-brands/toyota.svg",
@@ -156,8 +513,12 @@ const BOOKING_VEHICLE_BRAND_ASSETS = Object.freeze({
   Chevrolet: "/public/assets/vehicle-brands/chevrolet.svg",
 });
 
-window.getBookingDemoById = (id) =>
-  BOOKING_DEMO_DATA.find((booking) => booking.id === id) || null;
+window.getBookingById = (id) =>
+  BOOKING_DATA.find((booking) => booking.id === id) || null;
+
+// Keep the existing name because booking-details.js
+// and booking-receipt.js currently call it.
+window.getBookingDemoById = window.getBookingById;
 
 const bookingState = {
   search: "",
@@ -188,7 +549,7 @@ function bookingInitials(name) {
 }
 function bookingFilteredData() {
   const query = bookingState.search.toLowerCase();
-  return BOOKING_DEMO_DATA.filter((booking) => {
+  return BOOKING_DATA.filter((booking) => {
     const matchesSearch =
       !query ||
       [
@@ -216,7 +577,12 @@ function bookingColorClass(color) {
   return color.toLowerCase();
 }
 function bookingStatusMarkup(status) {
-  return `<span class="bookings-status ${status.toLowerCase()}"><i aria-hidden="true"></i>${bookingEscape(status)}</span>`;
+  const displayStatus =
+    status === "Completed"
+      ? "Collected"
+      : status;
+
+  return `<span class="bookings-status ${status.toLowerCase()}"><i aria-hidden="true"></i>${bookingEscape(displayStatus)}</span>`;
 }
 function bookingVehicleBrand(vehicleName) {
   return Object.keys(BOOKING_VEHICLE_BRAND_ASSETS).find((brand) =>
@@ -281,20 +647,161 @@ function renderBookingMobile(items) {
     .join("");
   bindBookingVehicleImageFallback(target);
 }
+function renderBookingCounts() {
+  const counts = {
+    total: BOOKING_DATA.length,
+    Active: 0,
+    Upcoming: 0,
+    Completed: 0,
+    Cancelled: 0,
+  };
+
+  BOOKING_DATA.forEach((booking) => {
+    if (
+      Object.prototype.hasOwnProperty.call(
+        counts,
+        booking.status,
+      )
+    ) {
+      counts[booking.status] += 1;
+    }
+  });
+
+  document
+    .querySelectorAll(
+      ".bookings-stat-card",
+    )
+    .forEach((card) => {
+      const label = card
+        .querySelector("small")
+        ?.textContent
+        ?.trim()
+        ?.toUpperCase();
+
+      const value =
+        card.querySelector("strong");
+
+      if (!value) return;
+
+      if (label === "TOTAL BOOKINGS") {
+        value.textContent =
+          String(counts.total);
+
+        const note =
+          card.querySelector("p");
+
+        if (note) {
+          note.textContent =
+            "From synced booking API";
+        }
+
+        return;
+      }
+
+      if (label === "ONGOING") {
+        value.textContent =
+          String(counts.Active);
+        return;
+      }
+
+      if (label === "COMPLETED") {
+        value.textContent =
+          String(counts.Completed);
+        return;
+      }
+
+      if (label === "UPCOMING") {
+        value.textContent =
+          String(counts.Upcoming);
+        return;
+      }
+
+      if (label === "CANCELLED") {
+        value.textContent =
+          String(counts.Cancelled);
+      }
+    });
+
+  document
+    .querySelectorAll(
+      "[data-booking-status]",
+    )
+    .forEach((button) => {
+      const status =
+        button.dataset.bookingStatus;
+
+      const count =
+        button.querySelector("b");
+
+      if (!count) return;
+
+      count.textContent =
+        status === "all"
+          ? String(counts.total)
+          : String(
+              counts[status] || 0,
+            );
+    });
+}
+
 function renderBookings() {
   const items = bookingFilteredData();
+
   renderBookingTable(items);
   renderBookingMobile(items);
-  const text = `Showing ${items.length ? 1 : 0} to ${items.length} of 256 bookings`;
-  document.querySelector("#bookings-visible-count").textContent = text;
-  document.querySelector(".bookings-directory-footer > span").textContent =
-    text;
-  const selectAll = document.querySelector("[data-bookings-select-all]");
-  if (selectAll)
+  renderBookingCounts();
+
+  const text =
+    `Showing ${items.length ? 1 : 0} ` +
+    `to ${items.length} ` +
+    `of ${BOOKING_DATA.length} bookings`;
+
+  const visibleCount =
+    document.querySelector(
+      "#bookings-visible-count",
+    );
+
+  if (visibleCount) {
+    visibleCount.textContent = text;
+  }
+
+  const footerCount =
+    document.querySelector(
+      ".bookings-directory-footer > span",
+    );
+
+  if (footerCount) {
+    footerCount.textContent = text;
+  }
+
+  // Existing pagination buttons contain demo values.
+  // We load all API pages into this view.
+  const pagination =
+    document.querySelector(
+      ".bookings-directory-footer nav",
+    );
+
+  if (pagination) {
+    pagination.hidden = true;
+    pagination.style.display = "none";
+  }
+
+  const selectAll =
+    document.querySelector(
+      "[data-bookings-select-all]",
+    );
+
+  if (selectAll) {
     selectAll.checked =
       items.length > 0 &&
-      items.every((item) => bookingState.selectedIds.has(item.id));
+      items.every((item) =>
+        bookingState.selectedIds.has(
+          item.id,
+        ),
+      );
+  }
 }
+
 function exportBookingsCsv() {
   const headers = [
     "Booking ID",
@@ -424,5 +931,25 @@ async function loadBookingsPage() {
     container.innerHTML = await response.text();
     container.dataset.loaded = "true";
   }
+  try {
+    await loadBookingsData();
+  } catch (error) {
+    BOOKING_DATA = [];
+    syncBookingFilterOptions();
+
+    console.error(
+      "Unable to load bookings:",
+      error,
+    );
+
+    window.showDashboardAlert?.(
+      error?.message ||
+        "Could not load bookings. Please try again.",
+    );
+  }
+
   initializeBookingsPage();
+
+  // Refresh real data when returning to Bookings.
+  renderBookings();
 }

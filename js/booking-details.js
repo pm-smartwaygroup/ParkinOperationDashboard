@@ -177,7 +177,7 @@ function resolveBookingTimeline(booking) {
 
   const buildCompletedTimeline = () => {
     const completedSteps = steps.map((step) => ({ ...step, state: "completed" }));
-    completedSteps[4].title = "Checked Out";
+    completedSteps[4].title = "Collected";
     completedSteps[4].timestamp = checkoutAt || completedSteps[4].timestamp;
     return completedSteps;
   };
@@ -233,6 +233,357 @@ function showBookingDetailNotice(message) {
     type: "info",
   });
 }
+
+function getBookingDetailsApiBaseUrl() {
+  return (
+    window.PARKIN_CONFIG?.userManagementApiBaseUrl ||
+    window.PARKIN_CONFIG?.apiBaseUrl ||
+    "https://api.parkin.com.sa"
+  );
+}
+
+function bookingDetailFormatApiDateTime(value) {
+  if (!value) return null;
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return null;
+  }
+
+  try {
+    const datePart = new Intl.DateTimeFormat("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      timeZone: "Asia/Riyadh",
+    }).format(date);
+
+    const timePart = new Intl.DateTimeFormat("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+      timeZone: "Asia/Riyadh",
+    }).format(date);
+
+    return `${datePart}, ${timePart}`;
+  } catch {
+    return date.toISOString();
+  }
+}
+
+async function updateBookingWorkflowApi(
+  booking,
+  actionPath,
+) {
+  const token = localStorage.getItem(
+    "parkin_access_token",
+  );
+
+  if (!token) {
+    throw new Error(
+      "Your dashboard session has expired. Please sign in again.",
+    );
+  }
+
+  const identifier =
+    booking?.databaseId ||
+    booking?.id;
+
+  if (!identifier) {
+    throw new Error(
+      "Booking identifier is not available.",
+    );
+  }
+
+  const response = await fetch(
+    `${getBookingDetailsApiBaseUrl()}/bookings/${encodeURIComponent(identifier)}/${actionPath}`,
+    {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+
+  const payload = await response
+    .json()
+    .catch(() => null);
+
+  if (!response.ok) {
+    const message = Array.isArray(payload?.message)
+      ? payload.message.join("\n")
+      : payload?.message;
+
+    throw new Error(
+      message ||
+        `Unable to update booking (${response.status}).`,
+    );
+  }
+
+  return payload?.data ?? payload;
+}
+
+function bookingWorkflowActionConfig(rawStatus) {
+  switch (rawStatus) {
+    case "RETURN_REQUESTED":
+      return {
+        actionPath: "start-retrieval",
+        label: "Start Retrieval",
+        icon: "fa-play",
+        confirmTitle: "Start vehicle retrieval?",
+        confirmMessage:
+          "This confirms that valet retrieval has begun.",
+      };
+
+    case "RETRIEVAL_IN_PROGRESS":
+      return {
+        actionPath: "ready-for-handover",
+        label: "Ready for Handover",
+        icon: "fa-car-side",
+        confirmTitle:
+          "Mark vehicle ready for handover?",
+        confirmMessage:
+          "This confirms that the vehicle is ready to be handed back to the customer.",
+      };
+
+    case "READY_FOR_HANDOVER":
+      return {
+        actionPath: "collect",
+        label: "Mark as Collected",
+        icon: "fa-circle-check",
+        confirmTitle:
+          "Mark vehicle as collected?",
+        confirmMessage:
+          "This confirms that the vehicle has been handed over to the customer.",
+      };
+
+    default:
+      return null;
+  }
+}
+
+function bookingWorkflowSuccessMessage(
+  actionPath,
+  result,
+) {
+  switch (actionPath) {
+    case "start-retrieval":
+      return result?.alreadyStarted
+        ? "Vehicle retrieval is already in progress."
+        : "Vehicle retrieval started successfully.";
+
+    case "ready-for-handover":
+      return result?.alreadyReady
+        ? "Vehicle is already ready for handover."
+        : "Vehicle marked ready for handover.";
+
+    case "collect":
+      return result?.alreadyCollected
+        ? "Booking is already marked as collected."
+        : "Vehicle marked as collected successfully.";
+
+    default:
+      return "Booking updated successfully.";
+  }
+}
+
+function applyBookingWorkflowResult(
+  root,
+  booking,
+  result,
+) {
+  const nextStatus =
+    result?.status ||
+    booking.rawStatus;
+
+  booking.rawStatus = nextStatus;
+
+  if (
+    nextStatus ===
+    "RETRIEVAL_IN_PROGRESS"
+  ) {
+    booking.status = "Active";
+
+    if (result?.retrievalStartedAt) {
+      booking.retrievalStartedAt =
+        bookingDetailFormatApiDateTime(
+          result.retrievalStartedAt,
+        );
+    }
+  }
+
+  if (
+    nextStatus ===
+    "READY_FOR_HANDOVER"
+  ) {
+    booking.status = "Active";
+
+    if (result?.readyForHandoverAt) {
+      booking.readyForHandoverAt =
+        bookingDetailFormatApiDateTime(
+          result.readyForHandoverAt,
+        );
+    }
+  }
+
+  if (nextStatus === "COMPLETED") {
+    booking.status = "Completed";
+
+    if (result?.completedAt) {
+      booking.completedAt =
+        bookingDetailFormatApiDateTime(
+          result.completedAt,
+        );
+    }
+  }
+
+  bookingDetailSet(
+    "[data-booking-summary-status]",
+    nextStatus === "COMPLETED"
+      ? "Collected"
+      : booking.status,
+  );
+
+  const statusElement = root.querySelector(
+    "[data-booking-summary-status]",
+  );
+
+  if (statusElement) {
+    statusElement.className =
+      `booking-status-detail ${normalizeBookingStatus(booking.status)}`;
+  }
+
+  const timeline = root.querySelector(
+    "[data-booking-timeline]",
+  );
+
+  if (timeline) {
+    timeline.innerHTML =
+      bookingDetailTimeline(booking);
+  }
+
+  renderBookingReceiptAction(
+    root,
+    booking,
+  );
+
+  renderBookingWorkflowAction(
+    root,
+    booking,
+  );
+}
+
+function renderBookingWorkflowAction(
+  root,
+  booking,
+) {
+  const actions = root.querySelector(
+    ".booking-details-actions",
+  );
+
+  const existing = actions?.querySelector(
+    "[data-booking-workflow]",
+  );
+
+  existing?.remove();
+
+  if (!actions || !booking) {
+    return;
+  }
+
+  const config =
+    bookingWorkflowActionConfig(
+      booking.rawStatus,
+    );
+
+  if (!config) {
+    return;
+  }
+
+  const button =
+    document.createElement("button");
+
+  button.type = "button";
+  button.className =
+    "booking-workflow-action";
+
+  button.dataset.bookingWorkflow =
+    config.actionPath;
+
+  button.innerHTML =
+    `<i class="fa-solid ${config.icon}" aria-hidden="true"></i>` +
+    `<span>${bookingDetailEscape(config.label)}</span>`;
+
+  const shareButton = actions.querySelector(
+    "[data-booking-share]",
+  );
+
+  actions.insertBefore(
+    button,
+    shareButton || null,
+  );
+
+  button.addEventListener(
+    "click",
+    async () => {
+      if (button.disabled) return;
+
+      const bookingReference =
+        booking.plate &&
+        booking.plate !== "—"
+          ? booking.plate
+          : booking.id;
+
+      const confirmed =
+        window.confirm(
+          `${config.confirmTitle}\n\n${bookingReference}\n\n${config.confirmMessage}`,
+        );
+
+      if (!confirmed) return;
+
+      const originalHtml =
+        button.innerHTML;
+
+      button.disabled = true;
+
+      button.innerHTML =
+        '<i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i>' +
+        "<span>Updating...</span>";
+
+      try {
+        const result =
+          await updateBookingWorkflowApi(
+            booking,
+            config.actionPath,
+          );
+
+        applyBookingWorkflowResult(
+          root,
+          booking,
+          result,
+        );
+
+        showBookingDetailNotice(
+          bookingWorkflowSuccessMessage(
+            config.actionPath,
+            result,
+          ),
+        );
+      } catch (error) {
+        button.disabled = false;
+        button.innerHTML =
+          originalHtml;
+
+        showBookingDetailNotice(
+          error?.message ||
+            "Unable to update the booking.",
+        );
+      }
+    },
+  );
+}
+
 function renderBookingReceiptAction(root, booking) {
   const actions = root.querySelector(".booking-details-actions");
   const existing = actions?.querySelector("[data-booking-print]");
@@ -262,6 +613,7 @@ function initializeBookingDetailsPage() {
   const content = root.querySelector("[data-booking-content]");
   const notFound = root.querySelector("[data-booking-not-found]");
   renderBookingReceiptAction(root, booking);
+  renderBookingWorkflowAction(root, booking);
   if (!booking) {
     content?.classList.add("hidden");
     notFound?.classList.remove("hidden");
@@ -269,7 +621,12 @@ function initializeBookingDetailsPage() {
     bookingDetailSet("[data-booking-id]", booking.id);
     bookingDetailSet("[data-booking-customer]", booking.customer);
     bookingDetailSet("[data-booking-phone]", booking.phone);
-    bookingDetailSet("[data-booking-summary-status]", booking.status);
+    bookingDetailSet(
+      "[data-booking-summary-status]",
+      booking.status === "Completed"
+        ? "Collected"
+        : booking.status,
+    );
     bookingDetailSet(
       "[data-booking-summary-source]",
       `Booked via ${booking.source}`,
@@ -315,7 +672,7 @@ function initializeBookingDetailsPage() {
       brandLogo.alt = brand;
     }
     root.querySelector("[data-booking-summary-status]").className =
-      `booking-status-detail ${booking.status.toLowerCase()}`;
+      `booking-status-detail ${normalizeBookingStatus(booking.status)}`;
     root.querySelector("[data-booking-summary-source]").innerHTML =
       `<i class="fa-solid ${booking.source === "Customer App" ? "fa-mobile-screen-button" : "fa-car"}" aria-hidden="true"></i> Booked via ${bookingDetailEscape(booking.source)}`;
     root.querySelector("[data-booking-timeline]").innerHTML =

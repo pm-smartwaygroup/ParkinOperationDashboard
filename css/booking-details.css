@@ -984,3 +984,32 @@
     break-inside: avoid;
   }
 }
+
+/* Booking workflow action */
+#booking-details-view
+  .booking-details-actions
+  button.booking-workflow-action {
+  width: auto;
+  min-width: 154px;
+  padding: 0 14px;
+  border-color: var(--booking-detail-green);
+  background: var(--booking-detail-green);
+  color: #fff;
+  white-space: nowrap;
+}
+
+#booking-details-view
+  .booking-details-actions
+  .booking-workflow-action:hover {
+  border-color: var(--booking-detail-green);
+  background: var(--booking-detail-green);
+  color: #fff;
+  filter: brightness(0.95);
+}
+
+#booking-details-view
+  .booking-details-actions
+  .booking-workflow-action:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
