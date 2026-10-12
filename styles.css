@@ -5707,3 +5707,89 @@ html[data-theme="dark"] .dashboard-alert-secondary:hover {
   border-color: rgb(255 255 255 / 16%);
   background: var(--dash-row-hover);
 }
+
+
+/* PARKIN TOUCH TABLET SHELL 2026 */
+
+@media
+  (hover: none)
+  and (pointer: coarse)
+  and (min-width: 700px)
+  and (max-width: 1400px) {
+
+  .dashboard-page {
+    display: block !important;
+  }
+
+  .dashboard-sidebar {
+    position: sticky !important;
+    top: 0;
+    z-index: 100;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    padding: 12px 16px !important;
+    overflow: hidden !important;
+  }
+
+  .dashboard-sidebar::after,
+  .today-summary,
+  .manager-card,
+  .dashboard-nav > p {
+    display: none !important;
+  }
+
+  .sidebar-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 9px !important;
+  }
+
+  .dashboard-logo {
+    width: 112px !important;
+    height: auto !important;
+  }
+
+  .sidebar-collapse {
+    width: 36px !important;
+    height: 36px !important;
+  }
+
+  .dashboard-nav {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 7px !important;
+    width: 100%;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    padding: 0 0 3px !important;
+    scrollbar-width: none;
+    overscroll-behavior-inline: contain;
+  }
+
+  .dashboard-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .dashboard-nav a {
+    flex: 0 0 auto;
+    min-width: max-content !important;
+    min-height: 42px !important;
+    grid-template-columns: 20px auto auto !important;
+    padding: 9px 13px !important;
+    white-space: nowrap;
+  }
+
+  .dashboard-main {
+    width: 100% !important;
+    max-width: none !important;
+    margin-left: 0 !important;
+    padding: 18px !important;
+  }
+
+  .dashboard-header {
+    width: 100%;
+  }
+}

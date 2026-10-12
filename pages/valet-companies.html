@@ -2,8 +2,8 @@
   <section class="companies-actions" aria-label="Company actions">
     <div class="companies-mobile-heading">
       <p class="companies-eyebrow">Business</p>
-      <h2>Valet Companies</h2>
-      <p>Manage companies, accounts, locations and driver capacity.</p>
+      <h2>Companies</h2>
+      <p>Manage companies, operational services, accounts, locations and customer access.</p>
     </div>
 
     <div class="companies-action-buttons">
@@ -37,6 +37,66 @@
     </article>
   </section>
 
+  <section class="company-service-summary" aria-label="Operational service statistics">
+    <div class="company-service-summary-heading">
+      <div>
+        <p class="companies-eyebrow">Operational Services</p>
+        <h3>Service Overview</h3>
+      </div>
+
+      <p>
+        Companies and customers enabled for restricted mobile services.
+      </p>
+    </div>
+
+    <div class="company-service-summary-grid">
+      <article class="company-service-summary-card">
+        <span class="company-service-icon">
+          <i class="fa-solid fa-square-parking" aria-hidden="true"></i>
+        </span>
+
+        <div>
+          <p>Valet Parking</p>
+          <strong id="companies-valet-companies">0</strong>
+          <small>
+            <b id="companies-valet-customers">0</b>
+            operational customers
+          </small>
+        </div>
+      </article>
+
+      <article class="company-service-summary-card">
+        <span class="company-service-icon">
+          <i class="fa-solid fa-calendar-check" aria-hidden="true"></i>
+        </span>
+
+        <div>
+          <p>Event Management</p>
+          <strong id="companies-event-companies">0</strong>
+          <small>
+            <b id="companies-event-customers">0</b>
+            operational customers
+          </small>
+        </div>
+      </article>
+
+      <article class="company-service-summary-card">
+        <span class="company-service-icon">
+          <i class="fa-solid fa-car-side" aria-hidden="true"></i>
+        </span>
+
+        <div>
+          <p>Rental Parking</p>
+          <strong id="companies-rental-companies">0</strong>
+          <small>
+            <b id="companies-rental-customers">0</b>
+            operational customers
+          </small>
+        </div>
+      </article>
+    </div>
+  </section>
+
   <section class="companies-directory-card">
     <div class="companies-filter-bar">
       <label class="companies-search">
@@ -60,6 +120,17 @@
         </select>
       </label>
 
+      <label class="companies-select-filter">
+        <span class="sr-only">Filter by operational service</span>
+
+        <select id="company-service-filter">
+          <option value="">All Services</option>
+          <option value="VALET_PARKING">Valet Parking</option>
+          <option value="EVENT_MANAGEMENT">Event Management</option>
+          <option value="RENTAL_PARKING">Rental Parking</option>
+        </select>
+      </label>
+
       <button class="companies-button filter-reset" id="reset-company-filters" type="button">
         <i class="fa-solid fa-filter-circle-xmark" aria-hidden="true"></i>
         <span>Reset</span>
@@ -72,14 +143,16 @@
     </div>
 
     <div class="companies-table-scroll">
-      <div class="companies-table" role="table" aria-label="Valet companies">
+      <div class="companies-table" role="table" aria-label="Companies">
         <div class="companies-row companies-head" role="row">
           <span role="columnheader">Company</span>
           <span role="columnheader">Contact</span>
           <span role="columnheader">Location</span>
           <span role="columnheader">Category</span>
+          <span role="columnheader">Service</span>
           <span role="columnheader">Drivers</span>
           <span role="columnheader">Accounts</span>
+          <span role="columnheader">Customers</span>
           <span role="columnheader">Status</span>
           <span role="columnheader">Actions</span>
         </div>
@@ -89,7 +162,7 @@
 
     <div class="companies-empty hidden" id="companies-empty">
       <span><i class="fa-solid fa-building-circle-xmark" aria-hidden="true"></i></span>
-      <h3>No valet companies found</h3>
+      <h3>No companies found</h3>
       <p>Create the first company or adjust the current filters.</p>
       <button class="companies-button primary" type="button" data-open-company-drawer>Add Company</button>
     </div>
@@ -132,7 +205,7 @@
     <header class="company-drawer-header">
       <div>
         <p class="companies-eyebrow" id="company-drawer-eyebrow">New tenant</p>
-        <h2 id="company-drawer-title">Add Valet Company</h2>
+        <h2 id="company-drawer-title">Add Company</h2>
         <p>Set up company details and operational access.</p>
       </div>
       <button class="company-drawer-close" type="button" data-close-company-drawer aria-label="Close company form">
@@ -153,6 +226,20 @@
           <label><span>Commercial Registration</span><input id="company-registration" name="commercialRegistrationNumber" inputmode="numeric" maxlength="10" placeholder="10 digits" /></label>
           <label><span>VAT Number</span><input id="company-vat" name="vatNumber" inputmode="numeric" maxlength="15" placeholder="15 digits" /></label>
           <label class="span-two"><span>Category <b>*</b></span><select id="company-category" name="category" required><option value="VALET_PARKING">Valet Parking</option><option value="B2B">B2B</option><option value="B2C">B2C</option><option value="PRIVATE_PARKING">Private Parking</option><option value="GOVERNMENT_PARKING">Government Parking</option></select></label>
+          <label class="span-two">
+            <span>Operational Service</span>
+
+            <select
+              id="company-operational-service"
+              name="operationalService"
+            >
+              <option value="">None / General Company</option>
+              <option value="VALET_PARKING">Valet Parking</option>
+              <option value="EVENT_MANAGEMENT">Event Management</option>
+              <option value="RENTAL_PARKING">Rental Parking</option>
+            </select>
+          </label>
+
           <label><span>Status <b>*</b></span><select id="company-status" name="status" required><option value="ACTIVE">Active</option><option value="INACTIVE">Inactive</option><option value="SUSPENDED">Suspended</option></select></label>
           <label><span>City</span><input id="company-city" name="city" type="text" maxlength="100" placeholder="Riyadh" /></label>
           <label class="span-two"><span>Address</span><input id="company-address" name="address" type="text" maxlength="300" placeholder="Building, street and district" /></label>

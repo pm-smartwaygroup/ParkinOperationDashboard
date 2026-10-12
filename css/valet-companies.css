@@ -2109,3 +2109,1590 @@ body.company-drawer-open {
 }
 
 /* === COMPANY DIRECTORY RESPONSIVE ALIGNMENT END === */
+
+/* OPERATIONAL COMPANY SERVICES */
+
+.company-service-summary {
+  margin-bottom: 18px;
+  padding: 18px;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  background: #ffffff;
+}
+
+.company-service-summary-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 14px;
+}
+
+.company-service-summary-heading h3,
+.company-service-summary-heading p {
+  margin: 0;
+}
+
+.company-service-summary-heading h3 {
+  margin-top: 3px;
+  color: #0f172a;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.company-service-summary-heading > p {
+  max-width: 520px;
+  color: #64748b;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  text-align: right;
+}
+
+.company-service-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.company-service-summary-card {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid #e7edf2;
+  border-radius: 14px;
+  background: #f8fafc;
+}
+
+.company-service-icon {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: #e9f7ef;
+  color: #12804f;
+  font-size: 1rem;
+}
+
+.company-service-summary-card > div {
+  min-width: 0;
+}
+
+.company-service-summary-card p,
+.company-service-summary-card small {
+  margin: 0;
+}
+
+.company-service-summary-card p {
+  color: #64748b;
+  font-size: 0.72rem;
+  font-weight: 750;
+}
+
+.company-service-summary-card strong {
+  display: block;
+  margin: 3px 0;
+  color: #0f172a;
+  font-size: 1.35rem;
+  font-weight: 850;
+  line-height: 1.1;
+}
+
+.company-service-summary-card small {
+  color: #64748b;
+  font-size: 0.72rem;
+}
+
+.company-service-summary-card small b {
+  color: #0f172a;
+  font-weight: 800;
+}
+
+.company-service-cell {
+  min-width: 0;
+}
+
+.company-service-badge {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  min-height: 28px;
+  padding: 5px 9px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.company-service-badge.enabled {
+  background: #e8f5ee;
+  color: #117847;
+}
+
+.company-service-badge.none {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+
+/* Desktop:
+   Company | Contact | Location | Category | Service |
+   Drivers | Accounts | Customers | Status | Actions
+*/
+
+@media (min-width: 821px) {
+  .companies-table {
+    min-width: 1420px;
+  }
+
+  .companies-row {
+    grid-template-columns:
+      minmax(190px, 1.25fr)
+      minmax(170px, 1fr)
+      minmax(155px, 0.95fr)
+      120px
+      135px
+      82px
+      88px
+      95px
+      100px
+      64px;
+  }
+}
+
+
+/* Tablet */
+
+@media (max-width: 1000px) {
+  .company-service-summary-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .company-service-summary-heading > p {
+    max-width: none;
+    text-align: left;
+  }
+
+  .company-service-summary-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* Existing mobile company rows switch to card layout.
+   Add a visible field label for Operational Service.
+*/
+
+@media (max-width: 820px) {
+  .company-service-summary {
+    padding: 14px;
+  }
+
+  .company-service-cell::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 5px;
+    color: var(--company-muted);
+    font-size: 0.65rem;
+    font-weight: 750;
+    text-transform: uppercase;
+  }
+
+  .company-service-cell {
+    min-width: 0;
+  }
+}
+
+
+/* Small mobile */
+
+@media (max-width: 560px) {
+  .company-service-summary-grid {
+    gap: 10px;
+  }
+
+  .company-service-summary-card {
+    padding: 14px;
+  }
+
+  .company-service-summary-heading h3 {
+    font-size: 0.95rem;
+  }
+}
+
+/* ==========================================================
+   COMPANIES RESPONSIVE MATRIX 2026
+
+   Desktop       >= 1400
+   Laptop        1100 - 1399
+   Tablet        700 - 1099
+   Mobile        421 - 699
+   Small mobile  320 - 420
+========================================================== */
+
+.companies-page-shell {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: clip;
+}
+
+.companies-page-shell *,
+.companies-page-shell *::before,
+.companies-page-shell *::after {
+  box-sizing: border-box;
+}
+
+.companies-directory-card,
+.company-service-summary,
+.company-insight-card {
+  min-width: 0;
+}
+
+.companies-filter-bar input,
+.companies-filter-bar select,
+.company-form-grid input,
+.company-form-grid select,
+.company-form-grid textarea {
+  max-width: 100%;
+}
+
+
+/* ==========================================================
+   LARGE DESKTOP / DESKTOP BROWSERS
+   1400px+
+========================================================== */
+
+@media (min-width: 1400px) {
+  .companies-kpi-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .company-service-summary-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .companies-filter-bar {
+    display: grid;
+    grid-template-columns:
+      minmax(300px, 2fr)
+      minmax(140px, 0.75fr)
+      minmax(140px, 0.75fr)
+      minmax(150px, 0.8fr)
+      auto;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .companies-search,
+  .companies-button.filter-reset {
+    grid-column: auto;
+  }
+
+  .companies-button.filter-reset {
+    width: auto;
+    min-width: 92px;
+  }
+
+  /*
+   * 10 columns:
+   * Company / Contact / Location / Category / Service /
+   * Drivers / Accounts / Customers / Status / Actions
+   */
+  .companies-table {
+    width: 100%;
+    min-width: 1180px;
+  }
+
+  .companies-row {
+    grid-template-columns:
+      minmax(175px, 1.35fr)
+      minmax(150px, 1.1fr)
+      minmax(145px, 1fr)
+      minmax(95px, 0.75fr)
+      minmax(110px, 0.8fr)
+      minmax(70px, 0.55fr)
+      minmax(72px, 0.55fr)
+      minmax(78px, 0.6fr)
+      minmax(82px, 0.65fr)
+      52px;
+    gap: 8px;
+  }
+}
+
+
+/* ==========================================================
+   LAPTOPS
+   1100px - 1399px
+
+   A 10-column table is no longer useful here.
+   Switch each company into a structured information card.
+========================================================== */
+
+@media (max-width: 1399px) {
+  .companies-kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .company-service-summary-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .companies-filter-bar {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .companies-search {
+    grid-column: 1 / -1;
+  }
+
+  .companies-button.filter-reset {
+    width: 100%;
+  }
+
+  .companies-table-scroll {
+    overflow: visible;
+  }
+
+  .companies-table {
+    width: 100%;
+    min-width: 0 !important;
+  }
+
+  .companies-head {
+    display: none !important;
+  }
+
+  #companies-list {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+    padding: 14px;
+  }
+
+  .companies-row {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px 18px;
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    padding: 18px 58px 18px 18px;
+    border: 1px solid #e4e9ee;
+    border-radius: 15px;
+    background: #fff;
+    box-shadow: 0 7px 20px rgba(15, 23, 42, 0.045);
+  }
+
+  .company-identity {
+    grid-column: span 2;
+  }
+
+  .company-contact {
+    grid-column: span 2;
+  }
+
+  .company-location-cell {
+    grid-column: span 2;
+  }
+
+  .company-category-cell,
+  .company-service-cell {
+    grid-column: span 1;
+  }
+
+  .company-identity,
+  .company-contact,
+  .company-location-cell {
+    min-width: 0;
+  }
+
+  .company-contact,
+  .company-location-cell {
+    display: grid;
+    grid-template-columns: 78px minmax(0, 1fr);
+    align-items: start;
+    gap: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #edf1f5;
+  }
+
+  .company-contact::before,
+  .company-location-cell::before,
+  .company-category-cell::before,
+  .company-service-cell::before,
+  .company-metric-cell::before,
+  .company-status-pill::before {
+    display: block;
+    margin-bottom: 4px;
+    color: var(--company-muted);
+    font-size: 0.63rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  .company-contact::before {
+    content: attr(data-label);
+  }
+
+  .company-location-cell::before {
+    content: attr(data-label);
+  }
+
+  .company-category-cell::before,
+  .company-service-cell::before,
+  .company-metric-cell::before,
+  .company-status-pill::before {
+    content: attr(data-label);
+  }
+
+  .company-category-cell,
+  .company-service-cell,
+  .company-metric-cell {
+    min-width: 0;
+  }
+
+  .company-status-pill {
+    align-self: start;
+    justify-self: start;
+  }
+
+  .company-status-pill::before {
+    color: #64748b;
+  }
+
+  .company-action-menu {
+    position: absolute !important;
+    top: 16px;
+    right: 16px;
+    z-index: 3;
+  }
+
+  .company-action-popover {
+    z-index: 50;
+  }
+
+  .company-insights-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .company-insight-card:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+
+/* ==========================================================
+   SMALL LAPTOP / LARGE TABLET
+   900px - 1099px
+========================================================== */
+
+@media (max-width: 1099px) {
+  .companies-actions {
+    align-items: flex-start;
+  }
+
+  .company-service-summary-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .company-service-summary-heading > p {
+    max-width: none;
+    text-align: left;
+  }
+
+  .company-service-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .company-service-summary-card:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .companies-directory-header {
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .companies-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .company-identity,
+  .company-contact,
+  .company-location-cell {
+    grid-column: 1 / -1;
+  }
+
+  .company-contact,
+  .company-location-cell {
+    grid-template-columns: 90px minmax(0, 1fr);
+  }
+
+  .company-category-cell,
+  .company-service-cell,
+  .company-metric-cell,
+  .company-status-pill {
+    grid-column: span 1;
+  }
+
+  .company-insights-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .company-insight-card:last-child {
+    grid-column: auto;
+  }
+
+  .company-drawer {
+    width: min(92vw, 680px) !important;
+    max-width: 680px;
+  }
+}
+
+
+/* ==========================================================
+   iPAD / TABLETS
+   700px - 899px
+========================================================== */
+
+@media (max-width: 899px) {
+  .companies-page-shell {
+    gap: 14px;
+  }
+
+  .companies-kpi-grid {
+    gap: 10px;
+  }
+
+  .company-kpi-card {
+    min-width: 0;
+    min-height: 92px;
+    padding: 14px;
+  }
+
+  .company-kpi-icon {
+    flex: 0 0 42px;
+    width: 42px;
+    height: 42px;
+  }
+
+  .company-service-summary {
+    padding: 14px;
+  }
+
+  .company-service-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .companies-filter-bar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding: 12px;
+  }
+
+  .companies-search {
+    grid-column: 1 / -1;
+  }
+
+  .companies-button.filter-reset {
+    grid-column: 1 / -1;
+  }
+
+  .companies-directory-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  #companies-list {
+    padding: 12px;
+  }
+
+  .companies-row {
+    gap: 12px;
+    padding: 16px 54px 16px 16px;
+  }
+
+  .company-drawer-header,
+  .company-drawer-body,
+  .company-drawer-footer {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .company-form-grid.two {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+
+/* ==========================================================
+   MOBILE / iPHONE / ANDROID
+   <= 699px
+========================================================== */
+
+@media (max-width: 699px) {
+  .companies-page-shell {
+    gap: 12px;
+  }
+
+  .companies-actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .companies-action-buttons {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+    gap: 8px;
+  }
+
+  .companies-action-buttons .companies-button {
+    justify-content: center;
+    width: 100%;
+    min-width: 0;
+    min-height: 44px;
+  }
+
+  .companies-kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-auto-flow: row !important;
+    grid-auto-columns: auto !important;
+    overflow: visible !important;
+    gap: 9px;
+    padding-bottom: 0;
+  }
+
+  .company-kpi-card {
+    min-width: 0;
+    min-height: 100px;
+    padding: 13px 11px;
+    gap: 10px;
+  }
+
+  .company-kpi-card strong {
+    font-size: 1.2rem;
+  }
+
+  .company-kpi-card p {
+    font-size: 0.67rem;
+  }
+
+  .company-kpi-card small {
+    font-size: 0.64rem;
+  }
+
+  .company-kpi-icon {
+    width: 38px;
+    height: 38px;
+    flex-basis: 38px;
+    font-size: 0.88rem;
+  }
+
+  .company-service-summary {
+    margin-bottom: 12px;
+    padding: 12px;
+    border-radius: 14px;
+  }
+
+  .company-service-summary-heading {
+    margin-bottom: 11px;
+  }
+
+  .company-service-summary-heading > p {
+    font-size: 0.72rem;
+  }
+
+  .company-service-summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .company-service-summary-card,
+  .company-service-summary-card:last-child {
+    grid-column: auto;
+    padding: 13px;
+  }
+
+  .companies-directory-card {
+    border-radius: 14px;
+  }
+
+  .companies-filter-bar {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .companies-search,
+  .companies-select-filter,
+  .companies-button.filter-reset {
+    grid-column: auto;
+    width: 100%;
+  }
+
+  .companies-search input,
+  .companies-select-filter select,
+  .companies-button.filter-reset {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  .companies-directory-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+    padding-inline: 12px;
+  }
+
+  #companies-list {
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .companies-row {
+    grid-template-columns: 1fr;
+    gap: 11px;
+    padding: 15px 52px 15px 14px;
+    border-radius: 13px;
+  }
+
+  .company-identity,
+  .company-contact,
+  .company-location-cell,
+  .company-category-cell,
+  .company-service-cell,
+  .company-metric-cell,
+  .company-status-pill {
+    grid-column: 1 / -1;
+  }
+
+  .company-contact,
+  .company-location-cell {
+    grid-template-columns: 72px minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .company-category-cell,
+  .company-service-cell,
+  .company-metric-cell {
+    padding-top: 9px;
+    border-top: 1px solid #edf1f5;
+  }
+
+  .company-metric-cell {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .company-metric-cell::before {
+    margin: 0;
+  }
+
+  .company-metric-cell small {
+    grid-column: 2;
+  }
+
+  .company-status-pill {
+    margin-top: 4px;
+  }
+
+  .company-action-menu {
+    top: 13px;
+    right: 13px;
+  }
+
+  .company-row-action {
+    width: 38px;
+    height: 38px;
+  }
+
+  .company-action-popover {
+    min-width: 190px;
+  }
+
+  .companies-pagination {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .company-insights-grid {
+    gap: 10px;
+  }
+
+  .company-insight-card {
+    min-width: 0;
+    padding: 14px;
+  }
+
+  .company-drawer {
+    top: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    max-width: none !important;
+    height: 100vh;
+    height: 100dvh;
+    border-radius: 0 !important;
+  }
+
+  .company-drawer-header,
+  .company-drawer-body,
+  .company-drawer-footer {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .company-drawer-body {
+    overscroll-behavior: contain;
+  }
+
+  .company-drawer-footer {
+    padding-bottom:
+      calc(14px + env(safe-area-inset-bottom));
+  }
+
+  .company-drawer-footer {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .company-drawer-footer .companies-button {
+    width: 100%;
+    min-width: 0;
+    min-height: 46px;
+  }
+
+  .company-form-grid.two,
+  .company-form-grid.three,
+  .company-assignment-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .company-form-grid .span-two,
+  .company-form-grid .span-three {
+    grid-column: auto !important;
+  }
+
+  .company-form-section {
+    padding: 14px;
+  }
+
+  .company-assignment-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .company-assignment-search {
+    width: 100%;
+  }
+}
+
+
+/* ==========================================================
+   SMALL iPHONE / SMALL ANDROID
+   <= 420px
+========================================================== */
+
+@media (max-width: 420px) {
+  .companies-action-buttons {
+    grid-template-columns: 1fr;
+  }
+
+  .companies-kpi-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .company-kpi-card {
+    min-height: 82px;
+  }
+
+  .company-service-summary-heading h3 {
+    font-size: 0.95rem;
+  }
+
+  .company-contact,
+  .company-location-cell {
+    grid-template-columns: 1fr;
+  }
+
+  .company-contact::before,
+  .company-location-cell::before {
+    margin-bottom: 0;
+  }
+
+  .company-drawer-footer {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ==========================================================
+   LANDSCAPE MOBILE
+========================================================== */
+
+@media (
+  max-width: 900px
+) and (
+  orientation: landscape
+) and (
+  max-height: 560px
+) {
+  .companies-kpi-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+
+  .company-service-summary-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .company-service-summary-card:last-child {
+    grid-column: auto;
+  }
+
+  .company-drawer-body {
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+}
+
+
+/* ==========================================================
+   TOUCH DEVICES
+========================================================== */
+
+@media (hover: none) and (pointer: coarse) {
+  .companies-button,
+  .company-row-action,
+  .companies-pagination button,
+  .company-drawer button,
+  .companies-filter-bar select,
+  .companies-filter-bar input {
+    min-height: 44px;
+  }
+
+  .company-action-popover button {
+    min-height: 46px;
+  }
+}
+
+
+/* COMPANIES IPAD REFINEMENT 2026 */
+
+.company-status-cell {
+  min-width: 0;
+}
+
+@media (min-width: 1400px) {
+  .company-status-cell {
+    display: flex;
+    align-items: center;
+  }
+}
+
+
+/* Touch tablets including iPad Safari / Chrome */
+
+@media
+  (hover: none)
+  and (pointer: coarse)
+  and (min-width: 700px)
+  and (max-width: 1400px) {
+
+  .companies-page-shell {
+    gap: 14px;
+  }
+
+  .companies-kpi-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 10px;
+  }
+
+  .company-kpi-card {
+    min-height: 88px;
+    padding: 13px;
+  }
+
+  .company-service-summary-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .company-service-summary-card:last-child {
+    grid-column: auto !important;
+  }
+
+  .companies-filter-bar {
+    grid-template-columns:
+      minmax(240px, 2fr)
+      repeat(3, minmax(130px, 1fr)) !important;
+  }
+
+  .companies-search {
+    grid-column: auto !important;
+  }
+
+  .companies-button.filter-reset {
+    grid-column: 1 / -1;
+  }
+
+  #companies-list {
+    gap: 11px;
+  }
+
+  .companies-row {
+    grid-template-columns:
+      repeat(4, minmax(0, 1fr)) !important;
+    gap: 11px 16px;
+    padding: 15px 54px 15px 16px;
+  }
+
+  .company-identity {
+    grid-column: span 2 !important;
+  }
+
+  .company-contact {
+    grid-column: span 2 !important;
+  }
+
+  .company-location-cell {
+    grid-column: span 2 !important;
+  }
+
+  .company-category-cell,
+  .company-service-cell {
+    grid-column: span 1 !important;
+  }
+
+  .company-metric-cell,
+  .company-status-cell {
+    grid-column: span 1 !important;
+  }
+
+  .company-status-cell::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 5px;
+    color: var(--company-muted);
+    font-size: 0.63rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .company-status-pill::before {
+    display: none !important;
+    content: none !important;
+  }
+
+  .company-insights-grid {
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr)) !important;
+    gap: 12px;
+  }
+
+  .company-insight-card:last-child {
+    grid-column: auto !important;
+  }
+
+  .company-insight-card {
+    min-width: 0;
+  }
+}
+
+
+/* iPad portrait / narrower tablets */
+
+@media
+  (hover: none)
+  and (pointer: coarse)
+  and (min-width: 700px)
+  and (max-width: 900px) {
+
+  .companies-kpi-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .company-service-summary-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .company-service-summary-card:last-child {
+    grid-column: 1 / -1 !important;
+  }
+
+  .companies-filter-bar {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .companies-search {
+    grid-column: 1 / -1 !important;
+  }
+
+  .companies-row {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .company-identity,
+  .company-contact,
+  .company-location-cell {
+    grid-column: 1 / -1 !important;
+  }
+
+  .company-insights-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ==========================================================
+   COMPANIES CARD LAYOUT REFINEMENT 2026
+========================================================== */
+
+/*
+ * Laptop / tablet card mode
+ *
+ * Company identity
+ * ----------------------------------------------------------
+ * Contact | Location | Category | Service
+ * ----------------------------------------------------------
+ * Drivers | Accounts | Customers | Status
+ */
+
+@media (max-width: 1399px) {
+
+  #companies-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .companies-row {
+    position: relative;
+    display: grid !important;
+
+    grid-template-columns:
+      repeat(4, minmax(0, 1fr)) !important;
+
+    grid-template-areas:
+      "identity identity identity identity"
+      "contact location category service"
+      "drivers accounts customers status";
+
+    gap: 0 22px;
+
+    width: 100%;
+    min-width: 0 !important;
+    min-height: 0 !important;
+
+    padding: 16px 18px 15px;
+
+    border: 1px solid #dfe6ec;
+    border-radius: 15px;
+
+    background: #ffffff;
+
+    box-shadow:
+      0 4px 14px rgba(15, 23, 42, 0.035);
+  }
+
+
+  /* ========================================================
+     HEADER
+  ======================================================== */
+
+  .companies-row .company-identity {
+    grid-area: identity !important;
+
+    display: flex !important;
+    align-items: center;
+
+    min-width: 0;
+
+    padding: 0 54px 14px 0;
+    margin-bottom: 13px;
+
+    border-bottom: 1px solid #e8edf1;
+  }
+
+  .companies-row .company-avatar {
+    flex: 0 0 auto;
+  }
+
+  .companies-row .company-cell-copy {
+    min-width: 0;
+  }
+
+  .companies-row .company-cell-copy strong,
+  .companies-row .company-cell-copy small {
+    overflow-wrap: anywhere;
+  }
+
+
+  /* ========================================================
+     DETAIL AREAS
+  ======================================================== */
+
+  .companies-row .company-contact {
+    grid-area: contact !important;
+  }
+
+  .companies-row .company-location-cell {
+    grid-area: location !important;
+  }
+
+  .companies-row .company-category-cell {
+    grid-area: category !important;
+  }
+
+  .companies-row .company-service-cell {
+    grid-area: service !important;
+  }
+
+  .companies-row
+    .company-metric-cell[data-label="Drivers"] {
+    grid-area: drivers !important;
+  }
+
+  .companies-row
+    .company-metric-cell[data-label="Accounts"] {
+    grid-area: accounts !important;
+  }
+
+  .companies-row
+    .company-metric-cell[data-label="Customers"] {
+    grid-area: customers !important;
+  }
+
+  .companies-row .company-status-cell {
+    grid-area: status !important;
+  }
+
+
+  /* ========================================================
+     CONSISTENT DETAIL CELL
+  ======================================================== */
+
+  .companies-row .company-contact,
+  .companies-row .company-location-cell,
+  .companies-row .company-category-cell,
+  .companies-row .company-service-cell,
+  .companies-row .company-metric-cell,
+  .companies-row .company-status-cell {
+    display: block !important;
+
+    min-width: 0;
+
+    padding: 0;
+    margin: 0;
+
+    border: 0 !important;
+
+    background: transparent;
+  }
+
+
+  /* labels */
+
+  .companies-row .company-contact::before,
+  .companies-row .company-location-cell::before,
+  .companies-row .company-category-cell::before,
+  .companies-row .company-service-cell::before,
+  .companies-row .company-metric-cell::before,
+  .companies-row .company-status-cell::before {
+    content: attr(data-label);
+
+    display: block;
+
+    margin: 0 0 7px;
+
+    color: #718096;
+
+    font-size: 0.64rem;
+    font-weight: 800;
+    line-height: 1.15;
+
+    letter-spacing: 0.065em;
+    text-transform: uppercase;
+  }
+
+
+  /* ensure old status pseudo-label is removed */
+
+  .companies-row .company-status-pill::before {
+    display: none !important;
+    content: none !important;
+  }
+
+
+  /* ========================================================
+     SECOND ROW
+  ======================================================== */
+
+  .companies-row .company-contact,
+  .companies-row .company-location-cell,
+  .companies-row .company-category-cell,
+  .companies-row .company-service-cell {
+    min-height: 62px;
+    padding-bottom: 13px;
+  }
+
+  .companies-row .company-contact,
+  .companies-row .company-location-cell {
+    align-items: initial !important;
+  }
+
+
+  /* ========================================================
+     METRIC FOOTER
+  ======================================================== */
+
+  .companies-row .company-metric-cell,
+  .companies-row .company-status-cell {
+    min-height: 58px;
+
+    padding-top: 12px;
+
+    border-top:
+      1px solid #edf1f4 !important;
+  }
+
+  .companies-row .company-metric-cell {
+    color: #111827;
+
+    font-size: 0.88rem;
+    font-weight: 850;
+  }
+
+  .companies-row .company-metric-cell small {
+    display: block;
+
+    margin-top: 4px;
+
+    color: #718096;
+
+    font-size: 0.69rem;
+    font-weight: 600;
+  }
+
+  .companies-row .company-status-cell {
+    align-self: stretch;
+    justify-self: stretch;
+  }
+
+  .companies-row .company-status-pill {
+    display: inline-flex;
+
+    width: auto;
+    max-width: 100%;
+
+    margin: 0;
+  }
+
+
+  /* ========================================================
+     ACTION
+  ======================================================== */
+
+  .companies-row .company-action-menu {
+    position: absolute !important;
+
+    top: 14px;
+    right: 14px;
+
+    z-index: 5;
+  }
+
+  .companies-row .company-row-action {
+    width: 38px;
+    height: 38px;
+
+    border-radius: 9px;
+  }
+
+}
+
+
+/* ==========================================================
+   TABLET PORTRAIT
+========================================================== */
+
+@media (max-width: 899px) {
+
+  .companies-row {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr)) !important;
+
+    grid-template-areas:
+      "identity identity"
+      "contact location"
+      "category service"
+      "drivers accounts"
+      "customers status";
+
+    gap: 0 18px;
+  }
+
+  .companies-row .company-contact,
+  .companies-row .company-location-cell,
+  .companies-row .company-category-cell,
+  .companies-row .company-service-cell {
+    min-height: 66px;
+  }
+
+  .companies-row .company-category-cell,
+  .companies-row .company-service-cell {
+    padding-top: 11px;
+
+    border-top:
+      1px solid #edf1f4 !important;
+  }
+}
+
+
+/* ==========================================================
+   MOBILE
+========================================================== */
+
+@media (max-width: 699px) {
+
+  #companies-list {
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .companies-row {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr)) !important;
+
+    grid-template-areas:
+      "identity identity"
+      "contact contact"
+      "location location"
+      "category service"
+      "drivers accounts"
+      "customers status";
+
+    gap: 0 13px;
+
+    padding:
+      14px 13px 13px;
+  }
+
+  .companies-row .company-identity {
+    padding-right: 46px;
+  }
+
+  .companies-row .company-contact,
+  .companies-row .company-location-cell {
+    min-height: 0;
+
+    padding:
+      10px 0 11px;
+
+    border-top:
+      1px solid #edf1f4 !important;
+  }
+
+  .companies-row .company-category-cell,
+  .companies-row .company-service-cell {
+    min-height: 62px;
+  }
+
+  .companies-row .company-metric-cell,
+  .companies-row .company-status-cell {
+    min-height: 60px;
+  }
+
+  .companies-row .company-action-menu {
+    top: 12px;
+    right: 12px;
+  }
+}
+
+
+/* ==========================================================
+   SMALL PHONES
+========================================================== */
+
+@media (max-width: 420px) {
+
+  .companies-row {
+    grid-template-areas:
+      "identity identity"
+      "contact contact"
+      "location location"
+      "category category"
+      "service service"
+      "drivers accounts"
+      "customers status";
+  }
+
+  .companies-row .company-category-cell,
+  .companies-row .company-service-cell {
+    min-height: 0;
+
+    padding:
+      10px 0 11px;
+  }
+
+  .company-category-badge,
+  .company-service-badge {
+    max-width: 100%;
+  }
+}
+
+/* ==========================================================
+   COMPANY CARD MODE HEADER CLEANUP
+========================================================== */
+
+@media (max-width: 1399px) {
+  .companies-table > .companies-head,
+  .companies-table .companies-row.companies-head {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    max-height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .companies-table-scroll {
+    padding-top: 0 !important;
+  }
+
+  .companies-table {
+    min-width: 0 !important;
+  }
+
+  #companies-list {
+    border-top: 0 !important;
+  }
+}

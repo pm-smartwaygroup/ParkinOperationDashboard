@@ -1773,11 +1773,11 @@ async function showCompaniesView() {
   const subtitle = document.querySelector(".dashboard-title p");
 
   if (title) {
-    title.textContent = "Valet Companies";
+    title.textContent = "Companies";
   }
 
   if (subtitle) {
-    subtitle.textContent = "Manage valet companies, accounts and locations";
+    subtitle.textContent = "Manage companies, operational services, accounts, locations and customer access";
   }
 
   setActiveNav("#companies");

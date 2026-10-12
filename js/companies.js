@@ -4,6 +4,7 @@ const companyPageState = {
   search: "",
   city: "",
   status: "",
+  operationalService: "",
   items: [],
   meta: null,
   statistics: null,
@@ -95,6 +96,16 @@ function formatCompanyCategory(category) {
   return labels[category] || formatCompanyStatus(category || "VALET_PARKING");
 }
 
+function formatCompanyOperationalService(service) {
+  const labels = {
+    VALET_PARKING: "Valet Parking",
+    EVENT_MANAGEMENT: "Event Management",
+    RENTAL_PARKING: "Rental Parking",
+  };
+
+  return labels[service] || "None";
+}
+
 function setCompaniesLoading(isLoading) {
   document.querySelector("#companies-loading")?.classList.toggle("hidden", !isLoading);
 
@@ -129,6 +140,13 @@ function buildCompanyQuery({ page = companyPageState.page, limit = companyPageSt
   if (companyPageState.search) params.set("search", companyPageState.search);
   if (companyPageState.city) params.set("city", companyPageState.city);
   if (companyPageState.status) params.set("status", companyPageState.status);
+
+  if (companyPageState.operationalService) {
+    params.set(
+      "operationalService",
+      companyPageState.operationalService,
+    );
+  }
 
   return params;
 }
@@ -167,6 +185,54 @@ function renderCompanyKpis(statistics) {
   document.querySelector("#companies-locations").textContent = (
     Number(statistics?.assignedLocations) || 0
   ).toLocaleString();
+
+  const operationalServices =
+    statistics?.operationalServices || {};
+
+  const updateServiceSummary = (
+    key,
+    companySelector,
+    customerSelector,
+  ) => {
+    const service =
+      operationalServices[key] || {};
+
+    const companyElement =
+      document.querySelector(companySelector);
+
+    const customerElement =
+      document.querySelector(customerSelector);
+
+    if (companyElement) {
+      companyElement.textContent = (
+        Number(service.companies) || 0
+      ).toLocaleString();
+    }
+
+    if (customerElement) {
+      customerElement.textContent = (
+        Number(service.customers) || 0
+      ).toLocaleString();
+    }
+  };
+
+  updateServiceSummary(
+    "valetParking",
+    "#companies-valet-companies",
+    "#companies-valet-customers",
+  );
+
+  updateServiceSummary(
+    "eventManagement",
+    "#companies-event-companies",
+    "#companies-event-customers",
+  );
+
+  updateServiceSummary(
+    "rentalParking",
+    "#companies-rental-companies",
+    "#companies-rental-customers",
+  );
 }
 
 function renderCompanyDirectory(items, meta) {
@@ -204,13 +270,13 @@ function renderCompanyDirectory(items, meta) {
                 <small>${escapeCompanyHtml(company.code)}</small>
               </span>
             </div>
-            <div class="company-contact" role="cell">
+            <div class="company-contact" data-label="Contact" role="cell">
               <span class="company-cell-copy">
                 <strong>${escapeCompanyHtml(company.contactPerson || "Not assigned")}</strong>
                 <small>${escapeCompanyHtml(company.phone || company.email || "No contact details")}</small>
               </span>
             </div>
-            <div class="company-location-cell" role="cell">
+            <div class="company-location-cell" data-label="Location" role="cell">
               <span class="company-cell-copy">
                 <strong>${escapeCompanyHtml(primaryLocation?.name || company.city || "No location")}</strong>
                 <small>${escapeCompanyHtml(
@@ -225,6 +291,19 @@ function renderCompanyDirectory(items, meta) {
                 formatCompanyCategory(company.category),
               )}</span>
             </span>
+
+            <span class="company-service-cell" data-label="Service" role="cell">
+              <span class="company-service-badge ${
+                company.operationalService
+                  ? "enabled"
+                  : "none"
+              }">${escapeCompanyHtml(
+                formatCompanyOperationalService(
+                  company.operationalService,
+                ),
+              )}</span>
+            </span>
+
             <span class="company-metric-cell" data-label="Drivers" role="cell">
               ${Number(company.totalDrivers || 0).toLocaleString()}
               <small>${Number(company.activeDrivers || 0).toLocaleString()} active</small>
@@ -232,10 +311,19 @@ function renderCompanyDirectory(items, meta) {
             <span class="company-metric-cell" data-label="Accounts" role="cell">${Number(
               company.assignedAccounts || 0,
             ).toLocaleString()}</span>
-            <span class="company-status-pill ${statusClass}" role="cell">${escapeCompanyHtml(
-              formatCompanyStatus(company.status),
-            )}</span>
-            <div class="company-action-menu" role="cell">
+
+            <span class="company-metric-cell" data-label="Customers" role="cell">${Number(
+              company.totalCustomers ??
+                company.operationalCustomers ??
+                0,
+            ).toLocaleString()}</span>
+
+            <div class="company-status-cell" data-label="Status" role="cell">
+              <span class="company-status-pill ${statusClass}">${escapeCompanyHtml(
+                formatCompanyStatus(company.status),
+              )}</span>
+            </div>
+            <div class="company-action-menu" data-label="Actions" role="cell">
               <button class="company-row-action" type="button" aria-label="Company actions" aria-expanded="false">
                 <i class="fa-solid fa-ellipsis-vertical" aria-hidden="true"></i>
               </button>
@@ -410,8 +498,8 @@ async function refreshCompaniesPage() {
     renderCompanyDirectory(companyPageState.items, companyPageState.meta);
     renderCompanyInsights(statistics);
   } catch (error) {
-    console.error("Unable to load valet companies:", error);
-    showCompanyToast(error.message || "Unable to load valet companies.", "error");
+    console.error("Unable to load companies:", error);
+    showCompanyToast(error.message || "Unable to load companies.", "error");
 
     const empty = document.querySelector("#companies-empty");
     if (empty) {
@@ -459,6 +547,7 @@ function resetCompanyForm() {
   document.querySelector("#company-record-id").value = "";
   document.querySelector("#company-status").value = "ACTIVE";
   document.querySelector("#company-category").value = "VALET_PARKING";
+  document.querySelector("#company-operational-service").value = "";
   document.querySelector("#company-notes-count").textContent = "0";
   companyAssignmentState.accounts = [];
   companyAssignmentState.locations = [];
@@ -488,6 +577,12 @@ function populateCompanyForm(company) {
     "company-category",
     company.category || "VALET_PARKING",
   );
+
+  setCompanyFormValue(
+    "company-operational-service",
+    company.operationalService || "",
+  );
+
   setCompanyFormValue("company-city", company.city);
   setCompanyFormValue("company-address", company.address);
   setCompanyFormValue("company-contact-person", company.contactPerson);
@@ -609,8 +704,8 @@ async function openCompanyDrawer(companyId = null, mode = "edit") {
     title.textContent = isViewMode
       ? "View Company"
       : companyId
-        ? "Edit Valet Company"
-        : "Add Valet Company";
+        ? "Edit Company"
+        : "Add Company";
   }
 
   if (eyebrow) {
@@ -681,6 +776,10 @@ function collectCompanyFormPayload() {
     commercialRegistrationNumber: value("company-registration") || undefined,
     vatNumber: value("company-vat") || undefined,
     category: value("company-category") || "VALET_PARKING",
+
+    operationalService:
+      value("company-operational-service") || null,
+
     status: value("company-status"),
     city: value("company-city") || undefined,
     address: value("company-address") || undefined,
@@ -814,7 +913,7 @@ async function exportCompaniesCsv() {
     const rows = directory.items || [];
     const csvEscape = (value) => `"${String(value ?? "").replaceAll('"', '""')}"`;
     const csv = [
-      ["Code", "Company", "Contact Person", "Email", "Phone", "City", "Drivers", "Active Drivers", "Locations", "Accounts", "Status"],
+      ["Code", "Company", "Contact Person", "Email", "Phone", "City", "Category", "Operational Service", "Drivers", "Active Drivers", "Locations", "Accounts", "Operational Customers", "Status"],
       ...rows.map((company) => [
         company.code,
         company.name,
@@ -822,10 +921,19 @@ async function exportCompaniesCsv() {
         company.email,
         company.phone,
         company.city,
+        formatCompanyCategory(
+          company.category,
+        ),
+        formatCompanyOperationalService(
+          company.operationalService,
+        ),
         company.totalDrivers,
         company.activeDrivers,
         company.assignedLocations,
         company.assignedAccounts,
+        company.totalCustomers ??
+          company.operationalCustomers ??
+          0,
         company.status,
       ]),
     ]
@@ -836,7 +944,7 @@ async function exportCompaniesCsv() {
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = url;
-    anchor.download = `parkin-valet-companies-${new Date().toISOString().slice(0, 10)}.csv`;
+    anchor.download = `parkin-companies-${new Date().toISOString().slice(0, 10)}.csv`;
     anchor.click();
     URL.revokeObjectURL(url);
   } catch (error) {
@@ -847,51 +955,250 @@ async function exportCompaniesCsv() {
 }
 
 function bindCompanyPageEvents(container) {
-  if (container.dataset.eventsBound === "true") return;
+  if (!container || container.dataset.eventsBound === "true") {
+    return;
+  }
+
   container.dataset.eventsBound = "true";
 
+  /*
+   * Keep Companies page events delegated to the persistent
+   * #companies-container.
+   *
+   * The page markup can be replaced during SPA navigation.
+   * Direct listeners attached to drawer buttons, filters or
+   * forms would then be lost.
+   */
   container.addEventListener("click", async (event) => {
-    const openButton = event.target.closest("#add-company, [data-open-company-drawer]");
-    if (openButton) {
+    const target =
+      event.target instanceof Element
+        ? event.target
+        : null;
+
+    if (!target) return;
+
+
+    // --------------------------------------------------------
+    // DRAWER CLOSE
+    // Handles:
+    // - top X
+    // - footer Cancel
+    // - backdrop
+    // --------------------------------------------------------
+
+    const closeDrawer =
+      target.closest("[data-close-company-drawer]");
+
+    if (
+      closeDrawer &&
+      container.contains(closeDrawer)
+    ) {
+      event.preventDefault();
+
+      setCompanyDrawerOpen(false);
+
+      return;
+    }
+
+
+    // --------------------------------------------------------
+    // DRAWER OPEN
+    // --------------------------------------------------------
+
+    const openButton =
+      target.closest(
+        "#add-company, [data-open-company-drawer]",
+      );
+
+    if (
+      openButton &&
+      container.contains(openButton)
+    ) {
+      event.preventDefault();
+
       await openCompanyDrawer();
+
       return;
     }
 
-    const pageButton = event.target.closest("[data-company-page]");
-    if (pageButton && !pageButton.disabled) {
-      companyPageState.page = Number(pageButton.dataset.companyPage) || 1;
+
+    // --------------------------------------------------------
+    // EXPORT
+    // --------------------------------------------------------
+
+    const exportButton =
+      target.closest("#export-companies");
+
+    if (
+      exportButton &&
+      container.contains(exportButton)
+    ) {
+      event.preventDefault();
+
+      await exportCompaniesCsv();
+
+      return;
+    }
+
+
+    // --------------------------------------------------------
+    // RESET FILTERS
+    // --------------------------------------------------------
+
+    const resetFilters =
+      target.closest("#reset-company-filters");
+
+    if (
+      resetFilters &&
+      container.contains(resetFilters)
+    ) {
+      event.preventDefault();
+
+      companyPageState.search = "";
+      companyPageState.city = "";
+      companyPageState.status = "";
+      companyPageState.operationalService = "";
+      companyPageState.page = 1;
+
+      const search =
+        container.querySelector("#company-search");
+
+      const city =
+        container.querySelector("#company-city-filter");
+
+      const status =
+        container.querySelector(
+          "#company-status-filter",
+        );
+
+      const service =
+        container.querySelector(
+          "#company-service-filter",
+        );
+
+      if (search) search.value = "";
+      if (city) city.value = "";
+      if (status) status.value = "";
+      if (service) service.value = "";
+
       await refreshCompaniesPage();
+
       return;
     }
 
-    const actionToggle = event.target.closest(".company-row-action");
-    if (actionToggle) {
-      const popover = actionToggle.parentElement.querySelector(".company-action-popover");
-      document.querySelectorAll(".company-action-popover").forEach((menu) => {
-        if (menu !== popover) menu.classList.add("hidden");
-      });
+
+    // --------------------------------------------------------
+    // PAGINATION
+    // --------------------------------------------------------
+
+    const pageButton =
+      target.closest("[data-company-page]");
+
+    if (
+      pageButton &&
+      container.contains(pageButton) &&
+      !pageButton.disabled
+    ) {
+      companyPageState.page =
+        Number(pageButton.dataset.companyPage) || 1;
+
+      await refreshCompaniesPage();
+
+      return;
+    }
+
+
+    // --------------------------------------------------------
+    // ROW ACTION MENU
+    // --------------------------------------------------------
+
+    const actionToggle =
+      target.closest(".company-row-action");
+
+    if (
+      actionToggle &&
+      container.contains(actionToggle)
+    ) {
+      const popover =
+        actionToggle.parentElement?.querySelector(
+          ".company-action-popover",
+        );
+
+      container
+        .querySelectorAll(
+          ".company-action-popover",
+        )
+        .forEach((menu) => {
+          if (menu !== popover) {
+            menu.classList.add("hidden");
+          }
+        });
+
       popover?.classList.toggle("hidden");
+
       actionToggle.setAttribute(
         "aria-expanded",
-        String(!popover?.classList.contains("hidden")),
+        String(
+          !popover?.classList.contains("hidden"),
+        ),
       );
+
       return;
     }
 
-    const viewButton = event.target.closest("[data-view-company]");
-    if (viewButton) {
-      await openCompanyDrawer(viewButton.dataset.viewCompany, "view");
+
+    // --------------------------------------------------------
+    // VIEW COMPANY
+    // --------------------------------------------------------
+
+    const viewButton =
+      target.closest("[data-view-company]");
+
+    if (
+      viewButton &&
+      container.contains(viewButton)
+    ) {
+      await openCompanyDrawer(
+        viewButton.dataset.viewCompany,
+        "view",
+      );
+
       return;
     }
 
-    const editButton = event.target.closest("[data-edit-company]");
-    if (editButton) {
-      await openCompanyDrawer(editButton.dataset.editCompany);
+
+    // --------------------------------------------------------
+    // EDIT COMPANY
+    // --------------------------------------------------------
+
+    const editButton =
+      target.closest("[data-edit-company]");
+
+    if (
+      editButton &&
+      container.contains(editButton)
+    ) {
+      await openCompanyDrawer(
+        editButton.dataset.editCompany,
+      );
+
       return;
     }
 
-    const statusButton = event.target.closest("[data-company-status-id]");
-    if (statusButton) {
+
+    // --------------------------------------------------------
+    // CHANGE STATUS
+    // --------------------------------------------------------
+
+    const statusButton =
+      target.closest(
+        "[data-company-status-id]",
+      );
+
+    if (
+      statusButton &&
+      container.contains(statusButton)
+    ) {
       await updateCompanyStatus(
         statusButton.dataset.companyStatusId,
         statusButton.dataset.companyNextStatus,
@@ -899,85 +1206,256 @@ function bindCompanyPageEvents(container) {
     }
   });
 
-  document.querySelectorAll("[data-close-company-drawer]").forEach((button) => {
-    button.addEventListener("click", () => setCompanyDrawerOpen(false));
-  });
 
-  document.querySelector("#company-form")?.addEventListener("submit", saveCompanyForm);
-  document.querySelector("#export-companies")?.addEventListener("click", exportCompaniesCsv);
+  // ==========================================================
+  // DELEGATED FORM SUBMIT
+  // ==========================================================
 
-  document.querySelector("#company-search")?.addEventListener("input", (event) => {
-    window.clearTimeout(companyPageState.searchTimer);
-    companyPageState.searchTimer = window.setTimeout(async () => {
-      companyPageState.search = event.target.value.trim();
-      companyPageState.page = 1;
-      await refreshCompaniesPage();
-    }, 350);
-  });
+  container.addEventListener(
+    "submit",
+    async (event) => {
+      if (event.target?.id !== "company-form") {
+        return;
+      }
 
-  document.querySelector("#company-city-filter")?.addEventListener("change", async (event) => {
-    companyPageState.city = event.target.value;
-    companyPageState.page = 1;
-    await refreshCompaniesPage();
-  });
+      event.preventDefault();
 
-  document.querySelector("#company-status-filter")?.addEventListener("change", async (event) => {
-    companyPageState.status = event.target.value;
-    companyPageState.page = 1;
-    await refreshCompaniesPage();
-  });
+      await saveCompanyForm(event);
+    },
+  );
 
-  document.querySelector("#reset-company-filters")?.addEventListener("click", async () => {
-    companyPageState.search = "";
-    companyPageState.city = "";
-    companyPageState.status = "";
-    companyPageState.page = 1;
-    document.querySelector("#company-search").value = "";
-    document.querySelector("#company-city-filter").value = "";
-    document.querySelector("#company-status-filter").value = "";
-    await refreshCompaniesPage();
-  });
 
-  document.querySelector("#company-notes")?.addEventListener("input", (event) => {
-    document.querySelector("#company-notes-count").textContent = String(
-      event.target.value.length,
-    );
-  });
+  // ==========================================================
+  // DELEGATED INPUT EVENTS
+  // ==========================================================
 
-  container.addEventListener("change", (event) => {
-    const accountInput = event.target.closest('input[name="accountIds"]');
-    const locationInput = event.target.closest('input[name="locationIds"]');
+  container.addEventListener(
+    "input",
+    (event) => {
+      const target =
+        event.target instanceof Element
+          ? event.target
+          : null;
 
-    if (accountInput) {
-      if (accountInput.checked) companyAssignmentState.selectedAccountIds.add(accountInput.value);
-      else companyAssignmentState.selectedAccountIds.delete(accountInput.value);
-      renderCompanyAssignmentOptions();
-      return;
-    }
+      if (!target) return;
 
-    if (locationInput) {
-      if (locationInput.checked) companyAssignmentState.selectedLocationIds.add(locationInput.value);
-      else companyAssignmentState.selectedLocationIds.delete(locationInput.value);
-      renderCompanyAssignmentOptions();
-    }
-  });
 
-  document.querySelector("#company-account-search")?.addEventListener("input", (event) => {
-    companyAssignmentState.accountSearch = event.target.value.trim();
-    renderCompanyAssignmentOptions();
-  });
+      // Company directory search
 
-  document.querySelector("#company-location-search")?.addEventListener("input", (event) => {
-    companyAssignmentState.locationSearch = event.target.value.trim();
-    renderCompanyAssignmentOptions();
-  });
+      if (target.matches("#company-search")) {
+        const value =
+          target.value.trim();
 
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && !document.querySelector("#company-drawer")?.classList.contains("hidden")) {
-      setCompanyDrawerOpen(false);
-    }
-  });
+        window.clearTimeout(
+          companyPageState.searchTimer,
+        );
+
+        companyPageState.searchTimer =
+          window.setTimeout(async () => {
+            companyPageState.search = value;
+            companyPageState.page = 1;
+
+            await refreshCompaniesPage();
+          }, 350);
+
+        return;
+      }
+
+
+      // Notes counter
+
+      if (target.matches("#company-notes")) {
+        const counter =
+          container.querySelector(
+            "#company-notes-count",
+          );
+
+        if (counter) {
+          counter.textContent =
+            String(target.value.length);
+        }
+
+        return;
+      }
+
+
+      // Account assignment search
+
+      if (
+        target.matches(
+          "#company-account-search",
+        )
+      ) {
+        companyAssignmentState.accountSearch =
+          target.value.trim();
+
+        renderCompanyAssignmentOptions();
+
+        return;
+      }
+
+
+      // Location assignment search
+
+      if (
+        target.matches(
+          "#company-location-search",
+        )
+      ) {
+        companyAssignmentState.locationSearch =
+          target.value.trim();
+
+        renderCompanyAssignmentOptions();
+      }
+    },
+  );
+
+
+  // ==========================================================
+  // DELEGATED CHANGE EVENTS
+  // ==========================================================
+
+  container.addEventListener(
+    "change",
+    async (event) => {
+      const target =
+        event.target instanceof Element
+          ? event.target
+          : null;
+
+      if (!target) return;
+
+
+      // ------------------------------------------------------
+      // DIRECTORY FILTERS
+      // ------------------------------------------------------
+
+      if (
+        target.matches(
+          "#company-city-filter",
+        )
+      ) {
+        companyPageState.city =
+          target.value;
+
+        companyPageState.page = 1;
+
+        await refreshCompaniesPage();
+
+        return;
+      }
+
+
+      if (
+        target.matches(
+          "#company-status-filter",
+        )
+      ) {
+        companyPageState.status =
+          target.value;
+
+        companyPageState.page = 1;
+
+        await refreshCompaniesPage();
+
+        return;
+      }
+
+
+      if (
+        target.matches(
+          "#company-service-filter",
+        )
+      ) {
+        companyPageState.operationalService =
+          target.value;
+
+        companyPageState.page = 1;
+
+        await refreshCompaniesPage();
+
+        return;
+      }
+
+
+      // ------------------------------------------------------
+      // ACCOUNT ASSIGNMENT
+      // ------------------------------------------------------
+
+      const accountInput =
+        target.closest(
+          'input[name="accountIds"]',
+        );
+
+      if (accountInput) {
+        if (accountInput.checked) {
+          companyAssignmentState
+            .selectedAccountIds
+            .add(accountInput.value);
+        } else {
+          companyAssignmentState
+            .selectedAccountIds
+            .delete(accountInput.value);
+        }
+
+        renderCompanyAssignmentOptions();
+
+        return;
+      }
+
+
+      // ------------------------------------------------------
+      // LOCATION ASSIGNMENT
+      // ------------------------------------------------------
+
+      const locationInput =
+        target.closest(
+          'input[name="locationIds"]',
+        );
+
+      if (locationInput) {
+        if (locationInput.checked) {
+          companyAssignmentState
+            .selectedLocationIds
+            .add(locationInput.value);
+        } else {
+          companyAssignmentState
+            .selectedLocationIds
+            .delete(locationInput.value);
+        }
+
+        renderCompanyAssignmentOptions();
+      }
+    },
+  );
+
+
+  // ==========================================================
+  // ESCAPE KEY
+  // ==========================================================
+
+  document.addEventListener(
+    "keydown",
+    (event) => {
+      if (event.key !== "Escape") {
+        return;
+      }
+
+      const drawer =
+        container.querySelector(
+          "#company-drawer",
+        );
+
+      if (
+        drawer &&
+        !drawer.classList.contains("hidden")
+      ) {
+        setCompanyDrawerOpen(false);
+      }
+    },
+  );
 }
+
 
 async function loadCompaniesPage() {
   const container = document.querySelector("#companies-container");
@@ -992,7 +1470,7 @@ async function loadCompaniesPage() {
       const response = await fetch("/pages/valet-companies.html");
 
       if (!response.ok) {
-        throw new Error(`Unable to load Valet Companies page: ${response.status}`);
+        throw new Error(`Unable to load Companies page: ${response.status}`);
       }
 
       container.innerHTML = await response.text();
@@ -1002,12 +1480,12 @@ async function loadCompaniesPage() {
     bindCompanyPageEvents(container);
     await refreshCompaniesPage();
   } catch (error) {
-    console.error("Unable to initialize Valet Companies:", error);
+    console.error("Unable to initialize Companies:", error);
     container.dataset.loaded = "false";
     container.innerHTML = `
       <section class="page-load-error">
         <i class="fa-solid fa-triangle-exclamation"></i>
-        <h2>Unable to load Valet Companies</h2>
+        <h2>Unable to load Companies</h2>
         <p>${escapeCompanyHtml(error.message || "Please refresh and try again.")}</p>
         <button type="button" class="btn-primary" onclick="loadCompaniesPage()">Try Again</button>
       </section>
