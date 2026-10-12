@@ -945,3 +945,46 @@
     align-items: flex-start;
   }
 }
+
+/* ==========================================================
+   CUSTOMER KPI LIVE STATISTICS 2026
+========================================================== */
+
+.customer-kpi-right .trend.down {
+  color: #dc2626;
+}
+
+.customer-kpi-right .trend.neutral {
+  color: #64748b;
+}
+
+.customer-kpi-right .trend {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+/* ==========================================================
+   CUSTOMER LIST TOOLBAR FILTER 2026
+========================================================== */
+
+#customers-filter-panel {
+  opacity: 0.72;
+  transition:
+    opacity 160ms ease,
+    box-shadow 160ms ease;
+}
+
+#customers-filter-panel.customer-filter-open {
+  opacity: 1;
+  padding: 8px;
+  border-radius: 10px;
+  box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.12);
+}
+
+#customers-filter-toggle[aria-expanded="true"] {
+  border-color: #16a34a;
+  color: #15803d;
+  background: #f0fdf4;
+}

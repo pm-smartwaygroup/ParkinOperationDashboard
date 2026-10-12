@@ -294,6 +294,10 @@ window.applyDashboardPermissionVisibility = applyDashboardPermissionVisibility;
 window.getParkinCurrentPermissions = () =>
   dashboardAccessState.ready ? [...dashboardAccessState.permissions] : [];
 window.getParkinCurrentUserRole = getCurrentDashboardUserRole;
+window.getParkinCurrentUser = () =>
+  dashboardAccessState.ready && dashboardAccessState.user
+    ? { ...dashboardAccessState.user }
+    : null;
 window.getParkinCurrentUserId = () =>
   dashboardAccessState.ready ? dashboardAccessState.user?.id || null : null;
 window.refreshParkinDashboardAccess = async () => {

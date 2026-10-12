@@ -12,6 +12,7 @@ const customerListState = {
   search: "",
   status: "",
   customerType: "",
+  createdSource: "",
   sort: "createdAt_desc",
   controlsBound: false,
 };
@@ -264,6 +265,318 @@ async function parseCustomerVehicleResponse(response) {
   return result?.data ?? result;
 }
 
+async function fetchCustomerStatistics(signal) {
+  const response = await fetch(
+    `${getCustomerManagementApiBaseUrl()}/customers/statistics`,
+    {
+      headers: getCustomerManagementAuthHeaders(),
+      signal,
+    },
+  );
+
+  const body =
+    await response.json().catch(() => null);
+
+  if (!response.ok) {
+    const message =
+      Array.isArray(body?.message)
+        ? body.message.join(" ")
+        : body?.message ||
+          body?.error ||
+          "Unable to load customer statistics.";
+
+    const error = new Error(message);
+    error.status = response.status;
+
+    throw error;
+  }
+
+  return body?.data ?? body;
+}
+
+
+function formatCustomerKpiNumber(value) {
+  const number = Number(value);
+
+  if (!Number.isFinite(number)) {
+    return "—";
+  }
+
+  return number.toLocaleString("en-US");
+}
+
+
+function setCustomerKpiTrend(
+  container,
+  selector,
+  metric,
+) {
+  const element =
+    container.querySelector(selector);
+
+  if (!element) return;
+
+  const icon =
+    element.querySelector("i");
+
+  const label =
+    element.querySelector("span");
+
+  const change =
+    metric?.changePercent;
+
+  element.classList.remove(
+    "up",
+    "down",
+    "neutral",
+  );
+
+  if (change === null) {
+    const current =
+      Number(metric?.value);
+
+    const previous =
+      Number(metric?.previous);
+
+    if (
+      Number.isFinite(current) &&
+      Number.isFinite(previous) &&
+      previous === 0 &&
+      current > 0
+    ) {
+      element.classList.add("up");
+
+      if (icon) {
+        icon.className =
+          "fa-solid fa-caret-up";
+      }
+
+      if (label) {
+        label.textContent = "New";
+      }
+
+      return;
+    }
+
+    element.classList.add("neutral");
+
+    if (icon) {
+      icon.className =
+        "fa-solid fa-minus";
+    }
+
+    if (label) {
+      label.textContent = "—";
+    }
+
+    return;
+  }
+
+  const number =
+    Number(change);
+
+  if (!Number.isFinite(number)) {
+    element.classList.add("neutral");
+
+    if (icon) {
+      icon.className =
+        "fa-solid fa-minus";
+    }
+
+    if (label) {
+      label.textContent = "—";
+    }
+
+    return;
+  }
+
+  if (number > 0) {
+    element.classList.add("up");
+
+    if (icon) {
+      icon.className =
+        "fa-solid fa-caret-up";
+    }
+  } else if (number < 0) {
+    element.classList.add("down");
+
+    if (icon) {
+      icon.className =
+        "fa-solid fa-caret-down";
+    }
+  } else {
+    element.classList.add("neutral");
+
+    if (icon) {
+      icon.className =
+        "fa-solid fa-minus";
+    }
+  }
+
+  if (label) {
+    label.textContent =
+      `${Math.abs(number).toFixed(1)}%`;
+  }
+}
+
+
+function renderCustomerStatistics(
+  container,
+  statistics,
+) {
+  const setText = (
+    selector,
+    value,
+  ) => {
+    const element =
+      container.querySelector(selector);
+
+    if (element) {
+      element.textContent = value;
+    }
+  };
+
+  const total =
+    statistics?.totalCustomers;
+
+  const mobile =
+    statistics?.mobileAppCustomers;
+
+  const newCustomers =
+    statistics?.newCustomers;
+
+  const returning =
+    statistics?.returningCustomers;
+
+  setText(
+    "#customers-kpi-total",
+    formatCustomerKpiNumber(
+      total?.value,
+    ),
+  );
+
+  setText(
+    "#customers-kpi-mobile",
+    formatCustomerKpiNumber(
+      mobile?.value,
+    ),
+  );
+
+  setText(
+    "#customers-kpi-new",
+    formatCustomerKpiNumber(
+      newCustomers?.value,
+    ),
+  );
+
+  setText(
+    "#customers-kpi-returning",
+    formatCustomerKpiNumber(
+      returning?.value,
+    ),
+  );
+
+  const share =
+    Number(mobile?.sharePercent);
+
+  setText(
+    "#customers-kpi-mobile-share",
+    Number.isFinite(share)
+      ? `${share.toFixed(1)}% of total customers`
+      : "— of total customers",
+  );
+
+  setCustomerKpiTrend(
+    container,
+    "#customers-kpi-total-trend",
+    total,
+  );
+
+  setCustomerKpiTrend(
+    container,
+    "#customers-kpi-mobile-trend",
+    mobile,
+  );
+
+  setCustomerKpiTrend(
+    container,
+    "#customers-kpi-new-trend",
+    newCustomers,
+  );
+
+  setCustomerKpiTrend(
+    container,
+    "#customers-kpi-returning-trend",
+    returning,
+  );
+}
+
+
+function renderCustomerStatisticsUnavailable(
+  container,
+) {
+  [
+    "#customers-kpi-total",
+    "#customers-kpi-mobile",
+    "#customers-kpi-new",
+    "#customers-kpi-returning",
+  ].forEach((selector) => {
+    const element =
+      container.querySelector(selector);
+
+    if (element) {
+      element.textContent = "—";
+    }
+  });
+
+  const share =
+    container.querySelector(
+      "#customers-kpi-mobile-share",
+    );
+
+  if (share) {
+    share.textContent =
+      "Statistics unavailable";
+  }
+
+  [
+    "#customers-kpi-total-trend",
+    "#customers-kpi-mobile-trend",
+    "#customers-kpi-new-trend",
+    "#customers-kpi-returning-trend",
+  ].forEach((selector) => {
+    const trend =
+      container.querySelector(selector);
+
+    if (!trend) return;
+
+    trend.classList.remove(
+      "up",
+      "down",
+    );
+
+    trend.classList.add(
+      "neutral",
+    );
+
+    const icon =
+      trend.querySelector("i");
+
+    const label =
+      trend.querySelector("span");
+
+    if (icon) {
+      icon.className =
+        "fa-solid fa-minus";
+    }
+
+    if (label) {
+      label.textContent = "—";
+    }
+  });
+}
+
+
 async function loadCustomersPage(page = customerListState.page) {
   const view = document.querySelector("#customers-view");
 
@@ -344,6 +657,13 @@ async function loadCustomersPage(page = customerListState.page) {
       query.set("customerType", customerListState.customerType);
     }
 
+    if (customerListState.createdSource) {
+      query.set(
+        "createdSource",
+        customerListState.createdSource,
+      );
+    }
+
     const response = await fetch(
       `${getCustomerManagementApiBaseUrl()}/customers?${query.toString()}`,
       {
@@ -358,6 +678,7 @@ async function loadCustomersPage(page = customerListState.page) {
       throw error;
     }
     const result = body?.data || body;
+
     if (
       listController.signal.aborted ||
       listRequestId !== customerListRequestId ||
@@ -366,14 +687,60 @@ async function loadCustomersPage(page = customerListState.page) {
       return;
     }
 
-    renderCustomerList(container, result?.customers || [], result?.pagination);
+    let statistics = null;
+
+    try {
+      statistics =
+        await fetchCustomerStatistics(
+          listController.signal,
+        );
+    } catch (statisticsError) {
+      if (
+        statisticsError?.name ===
+        "AbortError"
+      ) {
+        throw statisticsError;
+      }
+
+      console.error(
+        "Unable to load customer statistics:",
+        statisticsError,
+      );
+    }
+
+    if (
+      listController.signal.aborted ||
+      listRequestId !== customerListRequestId ||
+      getDashboardRoute().name !== "customers"
+    ) {
+      return;
+    }
+
+    renderCustomerList(
+      container,
+      result?.customers || [],
+      result?.pagination,
+    );
+
+    if (statistics) {
+      renderCustomerStatistics(
+        container,
+        statistics,
+      );
+    } else {
+      renderCustomerStatisticsUnavailable(
+        container,
+      );
+    }
     bindCustomerActions();
     bindCustomerTableSelection();
     bindCustomerActionMenus();
     window.applyDashboardPermissionVisibility?.(container);
 
     setTimeout(() => {
-      initCustomerTrendCharts();
+      initCustomerTrendCharts(
+        statistics,
+      );
     }, 100);
   } catch (error) {
     if (
@@ -623,6 +990,123 @@ function bindCustomerListControls(container) {
   const sortFilter = container.querySelector(
     "#customers-sort, .customers-table-controls select[aria-label*='sort' i]",
   );
+
+  const mobileToggle =
+    container.querySelector(
+      "#customers-mobile-toggle",
+    );
+
+  const allToggle =
+    container.querySelector(
+      "#customers-all-toggle",
+    );
+
+  const filterToggle =
+    container.querySelector(
+      "#customers-filter-toggle",
+    );
+
+  const filterPanel =
+    container.querySelector(
+      "#customers-filter-panel",
+    );
+
+  const updateCustomerSourceToggle = () => {
+    const mobileActive =
+      customerListState.createdSource ===
+      "MOBILE";
+
+    mobileToggle?.classList.toggle(
+      "active",
+      mobileActive,
+    );
+
+    allToggle?.classList.toggle(
+      "active",
+      !mobileActive,
+    );
+
+    mobileToggle?.setAttribute(
+      "aria-pressed",
+      String(mobileActive),
+    );
+
+    allToggle?.setAttribute(
+      "aria-pressed",
+      String(!mobileActive),
+    );
+  };
+
+  mobileToggle?.addEventListener(
+    "click",
+    () => {
+      if (
+        customerListState.createdSource ===
+        "MOBILE"
+      ) {
+        return;
+      }
+
+      customerListState.createdSource =
+        "MOBILE";
+
+      customerListState.page = 1;
+
+      updateCustomerSourceToggle();
+
+      loadCustomersPage(1);
+    },
+  );
+
+  allToggle?.addEventListener(
+    "click",
+    () => {
+      if (
+        customerListState.createdSource ===
+        ""
+      ) {
+        return;
+      }
+
+      customerListState.createdSource = "";
+      customerListState.page = 1;
+
+      updateCustomerSourceToggle();
+
+      loadCustomersPage(1);
+    },
+  );
+
+  filterToggle?.addEventListener(
+    "click",
+    () => {
+      if (!filterPanel) return;
+
+      const open =
+        !filterPanel.classList.contains(
+          "customer-filter-open",
+        );
+
+      filterPanel.classList.toggle(
+        "customer-filter-open",
+        open,
+      );
+
+      filterToggle.setAttribute(
+        "aria-expanded",
+        String(open),
+      );
+
+      if (open) {
+        filterPanel.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+        });
+      }
+    },
+  );
+
+  updateCustomerSourceToggle();
   searchInput?.addEventListener("input", (event) => {
     customerListState.search = event.target.value.trim();
     customerListState.page = 1;
@@ -866,6 +1350,1095 @@ function createCustomerTrendChart(canvasId, data, color) {
   });
 }
 
+const addCustomerCompanyState = {
+  companies: [],
+
+  mobileLookup: {
+    key: "",
+    result: null,
+    checking: false,
+  },
+};
+
+
+function formatAddCustomerOperationalService(service) {
+  const labels = {
+    VALET_PARKING: "Valet Parking",
+    EVENT_MANAGEMENT: "Event Management",
+    RENTAL_PARKING: "Rental Parking",
+  };
+
+  return labels[service] || "No Operational Service";
+}
+
+
+async function fetchAddCustomerCompanyOptions() {
+  const response = await fetch(
+    `${getCustomerVehicleApiBaseUrl()}/companies/options`,
+    {
+      headers: getCustomerManagementAuthHeaders(),
+    },
+  );
+
+  const body =
+    await response.json().catch(() => null);
+
+  if (!response.ok) {
+    const message =
+      Array.isArray(body?.message)
+        ? body.message.join(" ")
+        : body?.message ||
+          body?.error ||
+          "Unable to load company options.";
+
+    throw new Error(message);
+  }
+
+  const data = body?.data ?? body;
+
+  const companies =
+    Array.isArray(data)
+      ? data
+      : Array.isArray(data?.companies)
+        ? data.companies
+        : Array.isArray(data?.items)
+          ? data.items
+          : Array.isArray(data?.options)
+            ? data.options
+            : [];
+
+  return companies
+    .filter(
+      (company) =>
+        company &&
+        company.id &&
+        company.name,
+    )
+    .sort((first, second) =>
+      String(first.name).localeCompare(
+        String(second.name),
+      ),
+    );
+}
+
+
+function getSelectedAddCustomerCompany() {
+  const select =
+    document.querySelector(
+      "#customer-company-id",
+    );
+
+  const companyId =
+    select?.value || "";
+
+  return (
+    addCustomerCompanyState.companies.find(
+      (company) =>
+        String(company.id) ===
+        String(companyId),
+    ) || null
+  );
+}
+
+
+function setAddCustomerCompanyAlert(
+  message = "",
+  type = "info",
+) {
+  const alert =
+    document.querySelector(
+      "#customer-company-context-alert",
+    );
+
+  if (!alert) return;
+
+  alert.textContent = message;
+
+  alert.classList.toggle(
+    "hidden",
+    !message,
+  );
+
+  alert.classList.toggle(
+    "error",
+    type === "error",
+  );
+}
+
+
+function updateAddCustomerCompanyContext() {
+  const company =
+    getSelectedAddCustomerCompany();
+
+  const serviceInput =
+    document.querySelector(
+      "#customer-operational-service",
+    );
+
+  const serviceHelp =
+    document.querySelector(
+      "#customer-operational-service-help",
+    );
+
+  const summaryCompany =
+    document.querySelector(
+      "#summary-customer-company",
+    );
+
+  const summaryService =
+    document.querySelector(
+      "#summary-customer-service",
+    );
+
+  const serviceLabel =
+    formatAddCustomerOperationalService(
+      company?.operationalService,
+    );
+
+  if (serviceInput) {
+    serviceInput.value =
+      company
+        ? serviceLabel
+        : "No Operational Service";
+  }
+
+  if (summaryCompany) {
+    summaryCompany.textContent =
+      company?.name || "Not selected";
+  }
+
+  if (summaryService) {
+    summaryService.textContent =
+      company
+        ? serviceLabel
+        : "No Operational Service";
+  }
+
+  if (serviceHelp) {
+    if (!company) {
+      serviceHelp.textContent =
+        "Select a company to determine operational service access.";
+    } else if (company.operationalService) {
+      serviceHelp.textContent =
+        "Operational service is derived automatically from the selected company.";
+    } else {
+      serviceHelp.textContent =
+        "This company has no restricted operational service.";
+    }
+  }
+
+  updateAddCustomerMobileLookupVisibility();
+}
+
+
+function getAddCustomerPhoneValue() {
+  return (
+    document
+      .querySelector("#customer-phone")
+      ?.value.trim() || ""
+  );
+}
+
+
+function getAddCustomerMobileLookupKey() {
+  const company =
+    getSelectedAddCustomerCompany();
+
+  const phone =
+    getAddCustomerPhoneValue()
+      .replace(/[^\d]/g, "");
+
+  if (!company?.id || !phone) {
+    return "";
+  }
+
+  return `${company.id}:${phone}`;
+}
+
+
+function canCurrentUserCreateAddCustomer() {
+  const currentUser =
+    window.getParkinCurrentUser?.() ||
+    null;
+
+  const company =
+    getSelectedAddCustomerCompany();
+
+  if (!currentUser || !company) {
+    return false;
+  }
+
+  if (
+    currentUser.role === "SUPER_ADMIN" &&
+    currentUser.accessScope === "GLOBAL"
+  ) {
+    return true;
+  }
+
+  if (
+    currentUser.accessScope === "COMPANY" &&
+    currentUser.companyId &&
+    String(currentUser.companyId) ===
+      String(company.id)
+  ) {
+    return true;
+  }
+
+  return false;
+}
+
+
+function restoreAddCustomerCreateButton() {
+  const submitButton =
+    document.querySelector(
+      ".add-customer-submit",
+    );
+
+  if (!submitButton) return;
+
+  submitButton.disabled =
+    !canCurrentUserCreateAddCustomer();
+}
+
+
+function setAddCustomerMobileLookupStatus(
+  message = "",
+  type = "info",
+) {
+  const status =
+    document.querySelector(
+      "#customer-mobile-lookup-status",
+    );
+
+  if (!status) return;
+
+  status.textContent = message;
+
+  status.classList.toggle(
+    "hidden",
+    !message,
+  );
+
+  status.classList.remove(
+    "success",
+    "warning",
+    "error",
+  );
+
+  if (
+    message &&
+    ["success", "warning", "error"].includes(
+      type,
+    )
+  ) {
+    status.classList.add(type);
+  }
+}
+
+
+function resetAddCustomerMobileLookup() {
+  addCustomerCompanyState.mobileLookup.key =
+    "";
+
+  addCustomerCompanyState.mobileLookup.result =
+    null;
+
+  addCustomerCompanyState.mobileLookup.checking =
+    false;
+
+  const associationCard =
+    document.querySelector(
+      "#customer-mobile-association-card",
+    );
+
+  associationCard?.classList.add(
+    "hidden",
+  );
+
+  setAddCustomerMobileLookupStatus("");
+
+  const confirmButton =
+    document.querySelector(
+      "#customer-mobile-confirm-association",
+    );
+
+  if (confirmButton) {
+    confirmButton.disabled = false;
+
+    confirmButton.innerHTML =
+      '<i class="fa-solid fa-link"></i> Confirm Association';
+  }
+
+  const lookupButton =
+    document.querySelector(
+      "#customer-mobile-lookup-button",
+    );
+
+  if (lookupButton) {
+    lookupButton.disabled = false;
+
+    lookupButton.innerHTML =
+      '<i class="fa-solid fa-magnifying-glass"></i> Check Mobile Customer';
+  }
+
+  restoreAddCustomerCreateButton();
+}
+
+
+function updateAddCustomerMobileLookupVisibility() {
+  const panel =
+    document.querySelector(
+      "#customer-mobile-lookup-panel",
+    );
+
+  if (!panel) return;
+
+  const company =
+    getSelectedAddCustomerCompany();
+
+  const enabled =
+    Boolean(company?.operationalService);
+
+  panel.classList.toggle(
+    "hidden",
+    !enabled,
+  );
+
+  if (!enabled) {
+    resetAddCustomerMobileLookup();
+  }
+}
+
+
+function getAddCustomerAssociationReasonMessage(
+  reason,
+  targetCompany,
+) {
+  const companyName =
+    targetCompany?.name ||
+    "the selected company";
+
+  const messages = {
+    CUSTOMER_NOT_FOUND:
+      "No existing ParkIn mobile customer was found for this phone number. You can continue creating a new customer.",
+
+    CUSTOMER_UNAVAILABLE:
+      "A customer record exists for this phone number, but it is unavailable. A duplicate customer cannot be created.",
+
+    CUSTOMER_ALREADY_MANAGED:
+      "This phone number already belongs to a Dashboard-managed customer. A duplicate customer cannot be created.",
+
+    CUSTOMER_NOT_ACTIVE:
+      "This mobile customer is not active and cannot be associated with an operational service.",
+
+    ASSOCIATED_WITH_ANOTHER_OPERATIONAL_COMPANY:
+      "This mobile customer is already associated with another operational company.",
+
+    ALREADY_ASSOCIATED:
+      `This mobile customer is already associated with ${companyName}.`,
+  };
+
+  return (
+    messages[reason] ||
+    "This customer cannot be associated with the selected operational company."
+  );
+}
+
+
+function renderAddCustomerMobileAssociation(
+  result,
+) {
+  const card =
+    document.querySelector(
+      "#customer-mobile-association-card",
+    );
+
+  const confirmButton =
+    document.querySelector(
+      "#customer-mobile-confirm-association",
+    );
+
+  const existing =
+    result?.existingCustomer;
+
+  if (!card || !existing) {
+    card?.classList.add("hidden");
+    return;
+  }
+
+  const targetCompany =
+    result?.targetCompany ||
+    getSelectedAddCustomerCompany();
+
+  const service =
+    formatAddCustomerOperationalService(
+      targetCompany?.operationalService,
+    );
+
+  const setText = (
+    selector,
+    value,
+  ) => {
+    const element =
+      document.querySelector(selector);
+
+    if (element) {
+      element.textContent =
+        value || "—";
+    }
+  };
+
+  setText(
+    "#customer-mobile-existing-name",
+    existing.fullName,
+  );
+
+  setText(
+    "#customer-mobile-existing-phone",
+    existing.phoneE164,
+  );
+
+  setText(
+    "#customer-mobile-existing-status",
+    existing.status,
+  );
+
+  setText(
+    "#customer-mobile-target-company",
+    targetCompany?.name,
+  );
+
+  setText(
+    "#customer-mobile-target-service",
+    service,
+  );
+
+  card.classList.remove("hidden");
+
+  if (confirmButton) {
+    confirmButton.disabled =
+      !result.eligibleForAssociation;
+  }
+}
+
+
+async function lookupAddCustomerMobileCustomer() {
+  const company =
+    getSelectedAddCustomerCompany();
+
+  const phone =
+    getAddCustomerPhoneValue();
+
+  const lookupButton =
+    document.querySelector(
+      "#customer-mobile-lookup-button",
+    );
+
+  const submitButton =
+    document.querySelector(
+      ".add-customer-submit",
+    );
+
+  if (!company?.operationalService) {
+    resetAddCustomerMobileLookup();
+
+    return {
+      exists: false,
+      operationalLookupRequired: false,
+    };
+  }
+
+  if (!phone) {
+    setAddCustomerMobileLookupStatus(
+      "Enter the customer's mobile number before checking for an existing ParkIn account.",
+      "warning",
+    );
+
+    document
+      .querySelector("#customer-phone")
+      ?.focus();
+
+    return null;
+  }
+
+  const key =
+    getAddCustomerMobileLookupKey();
+
+  if (!key) {
+    setAddCustomerMobileLookupStatus(
+      "Enter a valid mobile number before checking.",
+      "warning",
+    );
+
+    return null;
+  }
+
+  addCustomerCompanyState.mobileLookup.checking =
+    true;
+
+  if (lookupButton) {
+    lookupButton.disabled = true;
+
+    lookupButton.innerHTML =
+      '<i class="fa-solid fa-spinner fa-spin"></i> Checking...';
+  }
+
+  if (submitButton) {
+    submitButton.disabled = true;
+  }
+
+  setAddCustomerMobileLookupStatus(
+    "Checking ParkIn mobile customer records...",
+  );
+
+  document
+    .querySelector(
+      "#customer-mobile-association-card",
+    )
+    ?.classList.add("hidden");
+
+  try {
+    const response = await fetch(
+      `${getCustomerManagementApiBaseUrl()}/customers/operational-association/lookup`,
+      {
+        method: "POST",
+        headers:
+          getCustomerManagementAuthHeaders(),
+        body: JSON.stringify({
+          phoneCountryCode: "+966",
+          phoneNumber: phone,
+          companyId: String(company.id),
+        }),
+      },
+    );
+
+    const body =
+      await response.json().catch(
+        () => null,
+      );
+
+    if (!response.ok) {
+      const message =
+        Array.isArray(body?.message)
+          ? body.message.join(" ")
+          : body?.message ||
+            body?.error ||
+            "Unable to check mobile customer.";
+
+      throw new Error(message);
+    }
+
+    const result =
+      body?.data ?? body;
+
+    addCustomerCompanyState.mobileLookup.key =
+      key;
+
+    addCustomerCompanyState.mobileLookup.result =
+      result;
+
+    if (!result?.exists) {
+      setAddCustomerMobileLookupStatus(
+        getAddCustomerAssociationReasonMessage(
+          result?.reason ||
+            "CUSTOMER_NOT_FOUND",
+          result?.targetCompany,
+        ),
+        "success",
+      );
+
+      restoreAddCustomerCreateButton();
+
+      return result;
+    }
+
+    renderAddCustomerMobileAssociation(
+      result,
+    );
+
+    if (result.eligibleForAssociation) {
+      setAddCustomerMobileLookupStatus(
+        "An existing active ParkIn mobile customer was found. Confirm the association instead of creating a duplicate customer.",
+        "success",
+      );
+    } else {
+      setAddCustomerMobileLookupStatus(
+        getAddCustomerAssociationReasonMessage(
+          result.reason,
+          result.targetCompany,
+        ),
+        result.reason ===
+          "ALREADY_ASSOCIATED"
+          ? "warning"
+          : "error",
+      );
+    }
+
+    /*
+     * Any existing customer blocks the normal
+     * Create Customer path.
+     */
+    if (submitButton) {
+      submitButton.disabled = true;
+    }
+
+    return result;
+  } catch (error) {
+    console.error(
+      "Unable to check mobile customer:",
+      error,
+    );
+
+    addCustomerCompanyState.mobileLookup.key =
+      "";
+
+    addCustomerCompanyState.mobileLookup.result =
+      null;
+
+    setAddCustomerMobileLookupStatus(
+      error?.message ||
+        "Unable to check mobile customer.",
+      "error",
+    );
+
+    /*
+     * Fail closed. Do not create an operational
+     * customer while duplicate detection is unavailable.
+     */
+    if (submitButton) {
+      submitButton.disabled = true;
+    }
+
+    throw error;
+  } finally {
+    addCustomerCompanyState.mobileLookup.checking =
+      false;
+
+    if (lookupButton) {
+      lookupButton.disabled = false;
+
+      lookupButton.innerHTML =
+        '<i class="fa-solid fa-magnifying-glass"></i> Check Mobile Customer';
+    }
+  }
+}
+
+
+async function associateExistingAddCustomerMobileCustomer() {
+  const state =
+    addCustomerCompanyState.mobileLookup;
+
+  const result =
+    state.result;
+
+  const company =
+    getSelectedAddCustomerCompany();
+
+  const phone =
+    getAddCustomerPhoneValue();
+
+  const confirmButton =
+    document.querySelector(
+      "#customer-mobile-confirm-association",
+    );
+
+  const submitButton =
+    document.querySelector(
+      ".add-customer-submit",
+    );
+
+  const existingCustomer =
+    result?.existingCustomer;
+
+  if (
+    !result?.eligibleForAssociation ||
+    !existingCustomer?.id ||
+    !company?.id
+  ) {
+    setAddCustomerMobileLookupStatus(
+      "Run the mobile customer check again before confirming the association.",
+      "warning",
+    );
+
+    return;
+  }
+
+  if (
+    state.key !==
+    getAddCustomerMobileLookupKey()
+  ) {
+    resetAddCustomerMobileLookup();
+
+    setAddCustomerMobileLookupStatus(
+      "The company or mobile number changed. Check the mobile customer again.",
+      "warning",
+    );
+
+    return;
+  }
+
+  if (confirmButton) {
+    confirmButton.disabled = true;
+
+    confirmButton.innerHTML =
+      '<i class="fa-solid fa-spinner fa-spin"></i> Associating...';
+  }
+
+  if (submitButton) {
+    submitButton.disabled = true;
+  }
+
+  try {
+    const response = await fetch(
+      `${getCustomerManagementApiBaseUrl()}/customers/operational-association`,
+      {
+        method: "POST",
+        headers:
+          getCustomerManagementAuthHeaders(),
+        body: JSON.stringify({
+          phoneCountryCode: "+966",
+          phoneNumber: phone,
+          companyId: String(company.id),
+        }),
+      },
+    );
+
+    const body =
+      await response.json().catch(
+        () => null,
+      );
+
+    if (!response.ok) {
+      const message =
+        Array.isArray(body?.message)
+          ? body.message.join(" ")
+          : body?.message?.message ||
+            body?.message ||
+            body?.error ||
+            "Unable to associate mobile customer.";
+
+      throw new Error(message);
+    }
+
+    setAddCustomerMobileLookupStatus(
+      "Mobile customer associated successfully.",
+      "success",
+    );
+
+    customerListState.page = 1;
+
+    window.showDashboardAlert?.(
+      `${existingCustomer.fullName || "Mobile customer"} is now associated with ${company.name}.`,
+      {
+        title: "Customer associated",
+        type: "success",
+      },
+    );
+
+    window.location.hash =
+      `customer-details?id=${encodeURIComponent(existingCustomer.id)}`;
+  } catch (error) {
+    console.error(
+      "Unable to associate mobile customer:",
+      error,
+    );
+
+    setAddCustomerMobileLookupStatus(
+      error?.message ||
+        "Unable to associate mobile customer.",
+      "error",
+    );
+
+    if (confirmButton) {
+      confirmButton.disabled = false;
+
+      confirmButton.innerHTML =
+        '<i class="fa-solid fa-link"></i> Confirm Association';
+    }
+  }
+}
+
+
+async function initializeAddCustomerCompanyContext() {
+  const select =
+    document.querySelector(
+      "#customer-company-id",
+    );
+
+  const selectField =
+    document.querySelector(
+      "#customer-company-select-field",
+    );
+
+  const fixedField =
+    document.querySelector(
+      "#customer-company-fixed-field",
+    );
+
+  const fixedInput =
+    document.querySelector(
+      "#customer-company-fixed",
+    );
+
+  const submitButton =
+    document.querySelector(
+      ".add-customer-submit",
+    );
+
+  if (
+    !select ||
+    !selectField ||
+    !fixedField ||
+    !fixedInput
+  ) {
+    return;
+  }
+
+  setAddCustomerCompanyAlert("");
+
+  select.disabled = true;
+
+  select.replaceChildren(
+    new Option(
+      "Loading companies...",
+      "",
+    ),
+  );
+
+  if (submitButton) {
+    submitButton.disabled = true;
+  }
+
+  try {
+    const companies =
+      await fetchAddCustomerCompanyOptions();
+
+    addCustomerCompanyState.companies =
+      companies;
+
+    const currentUser =
+      window.getParkinCurrentUser?.() ||
+      null;
+
+    const role =
+      currentUser?.role || "";
+
+    const accessScope =
+      currentUser?.accessScope || "";
+
+    const requesterCompanyId =
+      currentUser?.companyId
+        ? String(currentUser.companyId)
+        : "";
+
+    const isSuperAdminGlobal =
+      role === "SUPER_ADMIN" &&
+      accessScope === "GLOBAL";
+
+    const isCompanyScoped =
+      accessScope === "COMPANY" &&
+      Boolean(requesterCompanyId);
+
+
+    // ========================================================
+    // SUPER ADMIN / GLOBAL
+    // May select any active company.
+    // ========================================================
+
+    if (isSuperAdminGlobal) {
+      selectField.classList.remove(
+        "hidden",
+      );
+
+      fixedField.classList.add(
+        "hidden",
+      );
+
+      select.replaceChildren(
+        new Option(
+          "Select company",
+          "",
+        ),
+      );
+
+      companies.forEach((company) => {
+        const label =
+          company.code
+            ? `${company.name} (${company.code})`
+            : company.name;
+
+        select.add(
+          new Option(
+            label,
+            String(company.id),
+          ),
+        );
+      });
+
+      select.disabled =
+        companies.length === 0;
+
+      select.required = true;
+      select.value = "";
+      fixedInput.value = "";
+
+      if (!companies.length) {
+        setAddCustomerCompanyAlert(
+          "No active company is available. Create or activate a company before adding a customer.",
+          "error",
+        );
+      }
+
+      if (submitButton) {
+        submitButton.disabled =
+          companies.length === 0;
+      }
+    }
+
+
+    // ========================================================
+    // COMPANY SCOPE
+    // Must use the exact company assigned to the
+    // authenticated dashboard account.
+    // ========================================================
+
+    else if (isCompanyScoped) {
+      selectField.classList.add(
+        "hidden",
+      );
+
+      fixedField.classList.remove(
+        "hidden",
+      );
+
+      select.required = false;
+      select.replaceChildren();
+
+      const company =
+        companies.find(
+          (item) =>
+            String(item.id) ===
+            requesterCompanyId,
+        ) || null;
+
+      if (company) {
+        select.add(
+          new Option(
+            company.name,
+            String(company.id),
+          ),
+        );
+
+        select.value =
+          String(company.id);
+
+        fixedInput.value =
+          company.code
+            ? `${company.name} (${company.code})`
+            : company.name;
+
+        if (submitButton) {
+          submitButton.disabled = false;
+        }
+      } else {
+        select.add(
+          new Option(
+            "Assigned company unavailable",
+            "",
+          ),
+        );
+
+        select.value = "";
+
+        fixedInput.value =
+          "Assigned company unavailable";
+
+        setAddCustomerCompanyAlert(
+          "Your assigned company is not active or is unavailable. Contact a Super Admin before creating customers.",
+          "error",
+        );
+
+        if (submitButton) {
+          submitButton.disabled = true;
+        }
+      }
+    }
+
+
+    // ========================================================
+    // UNSUPPORTED REQUESTER SCOPE
+    // LOCATION / OWN / malformed access configuration.
+    // Backend rejects customer creation for these scopes.
+    // ========================================================
+
+    else {
+      selectField.classList.add(
+        "hidden",
+      );
+
+      fixedField.classList.remove(
+        "hidden",
+      );
+
+      select.required = false;
+      select.replaceChildren(
+        new Option(
+          "Customer creation unavailable",
+          "",
+        ),
+      );
+
+      select.value = "";
+      fixedInput.value =
+        "Customer creation unavailable";
+
+      setAddCustomerCompanyAlert(
+        "Your current access scope does not allow customer creation. Contact a Super Admin if customer management access is required.",
+        "error",
+      );
+
+      if (submitButton) {
+        submitButton.disabled = true;
+      }
+    }
+
+    updateAddCustomerCompanyContext();
+  } catch (error) {
+    console.error(
+      "Unable to initialize customer company context:",
+      error,
+    );
+
+    addCustomerCompanyState.companies =
+      [];
+
+    select.replaceChildren(
+      new Option(
+        "Unable to load companies",
+        "",
+      ),
+    );
+
+    select.disabled = true;
+
+    fixedInput.value =
+      "Company unavailable";
+
+    updateAddCustomerCompanyContext();
+
+    setAddCustomerCompanyAlert(
+      error?.message ||
+        "Unable to load company information.",
+      "error",
+    );
+
+    if (submitButton) {
+      submitButton.disabled = true;
+    }
+  }
+}
+
+
 async function loadAddCustomerPage() {
   const container = document.querySelector("#add-customer-container");
   if (!container) return;
@@ -887,6 +2460,8 @@ async function loadAddCustomerPage() {
     memberSince.value = new Date().toISOString().split("T")[0];
   }
 
+  await initializeAddCustomerCompanyContext();
+
   bindAddCustomerForm();
 }
 
@@ -904,6 +2479,7 @@ function bindAddCustomerForm() {
   const language = document.querySelector("#customer-language");
   const communication = document.querySelector("#customer-communication");
   const notes = document.querySelector("#customer-notes");
+  const companySelect = document.querySelector("#customer-company-id");
 
   const summaryName = document.querySelector("#summary-customer-name");
   const summaryEmail = document.querySelector("#summary-customer-email");
@@ -983,6 +2559,70 @@ function bindAddCustomerForm() {
     field?.addEventListener("change", updateSummary);
   });
 
+  companySelect?.addEventListener(
+    "change",
+    () => {
+      setAddCustomerCompanyAlert("");
+      resetAddCustomerMobileLookup();
+      updateAddCustomerCompanyContext();
+    },
+  );
+
+  const customerPhone =
+    document.querySelector(
+      "#customer-phone",
+    );
+
+  customerPhone?.addEventListener(
+    "input",
+    () => {
+      if (
+        addCustomerCompanyState
+          .mobileLookup.key ||
+        addCustomerCompanyState
+          .mobileLookup.result
+      ) {
+        resetAddCustomerMobileLookup();
+      }
+    },
+  );
+
+  document
+    .querySelector(
+      "#customer-mobile-lookup-button",
+    )
+    ?.addEventListener(
+      "click",
+      async () => {
+        try {
+          await lookupAddCustomerMobileCustomer();
+        } catch {
+          // Error state is rendered in the lookup panel.
+        }
+      },
+    );
+
+  document
+    .querySelector(
+      "#customer-mobile-clear-result",
+    )
+    ?.addEventListener(
+      "click",
+      () => {
+        resetAddCustomerMobileLookup();
+        updateAddCustomerMobileLookupVisibility();
+      },
+    );
+
+  document
+    .querySelector(
+      "#customer-mobile-confirm-association",
+    )
+    ?.addEventListener(
+      "click",
+      associateExistingAddCustomerMobileCustomer,
+    );
+
   document
     .querySelector("#back-to-customers")
     ?.addEventListener("click", () => {
@@ -998,15 +2638,80 @@ function bindAddCustomerForm() {
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
+    const companyId =
+      companySelect?.value.trim() || "";
+
+    if (!companyId) {
+      setAddCustomerCompanyAlert(
+        "Select an active company before creating the customer.",
+        "error",
+      );
+
+      companySelect?.focus();
+
+      return;
+    }
+
+    setAddCustomerCompanyAlert("");
+
     if (!form.checkValidity()) {
       form.reportValidity();
       return;
+    }
+
+    const selectedCompany =
+      getSelectedAddCustomerCompany();
+
+    if (selectedCompany?.operationalService) {
+      const lookupKey =
+        getAddCustomerMobileLookupKey();
+
+      let lookupResult =
+        addCustomerCompanyState
+          .mobileLookup.key === lookupKey
+          ? addCustomerCompanyState
+              .mobileLookup.result
+          : null;
+
+      if (!lookupResult) {
+        try {
+          lookupResult =
+            await lookupAddCustomerMobileCustomer();
+        } catch {
+          return;
+        }
+      }
+
+      /*
+       * Existing records must never enter the
+       * normal customer-create path.
+       */
+      if (lookupResult?.exists) {
+        document
+          .querySelector(
+            "#customer-mobile-lookup-panel",
+          )
+          ?.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
+
+        return;
+      }
+
+      /*
+       * If lookup could not complete, fail closed.
+       */
+      if (!lookupResult) {
+        return;
+      }
     }
 
     const submitButton = form.querySelector(".add-customer-submit");
     const originalButtonHtml = submitButton?.innerHTML || "";
 
     const payload = {
+      companyId,
       fullName: fullName?.value.trim() || "",
       email: email?.value.trim() || "",
       phoneCountryCode: "+966",
@@ -1077,7 +2782,172 @@ function bindAddCustomerForm() {
   });
 
   updateSummary();
+  updateAddCustomerCompanyContext();
 }
+
+function formatCustomerDetailsSource(value) {
+  const labels = {
+    MOBILE: "Mobile App",
+    DASHBOARD: "Dashboard",
+    IMPORT: "Import",
+    SYSTEM: "System",
+  };
+
+  return labels[value] || value || "—";
+}
+
+
+function formatCustomerDetailsOperationalService(
+  value,
+) {
+  const labels = {
+    VALET_PARKING: "Valet Parking",
+    EVENT_MANAGEMENT: "Event Management",
+    RENTAL_PARKING: "Rental Parking",
+  };
+
+  return labels[value] || value || "No operational service";
+}
+
+
+function renderCustomerOperationalAccess(
+  customer,
+) {
+  const page =
+    document.querySelector(
+      ".customer-details-page",
+    );
+
+  if (!page || !customer) return;
+
+  const homeCompany =
+    customer.company || null;
+
+  /*
+   * Normal associated mobile customers use
+   * operationalCompany.
+   *
+   * The fallback also supports operational customers
+   * whose home company itself provides the service.
+   */
+  const operationalCompany =
+    customer.operationalCompany ||
+    (
+      customer.operationalAccessEnabled &&
+      homeCompany?.operationalService
+        ? homeCompany
+        : null
+    );
+
+  const operationalService =
+    operationalCompany?.operationalService ||
+    (
+      customer.operationalAccessEnabled
+        ? homeCompany?.operationalService
+        : null
+    );
+
+  const accessEnabled =
+    customer.operationalAccessEnabled === true;
+
+  setCustomerDetailText(
+    page,
+    "[data-operational-home-company]",
+    homeCompany?.name || "—",
+  );
+
+  setCustomerDetailText(
+    page,
+    "[data-operational-customer-source]",
+    formatCustomerDetailsSource(
+      customer.createdSource,
+    ),
+  );
+
+  setCustomerDetailText(
+    page,
+    "[data-operational-company]",
+    operationalCompany?.name ||
+      "Not assigned",
+  );
+
+  setCustomerDetailText(
+    page,
+    "[data-operational-service]",
+    operationalService
+      ? formatCustomerDetailsOperationalService(
+          operationalService,
+        )
+      : "No operational service",
+  );
+
+  setCustomerDetailText(
+    page,
+    "[data-operational-granted-at]",
+    accessEnabled
+      ? formatCustomerDetailDateTime(
+          customer.operationalAccessGrantedAt,
+        )
+      : "—",
+  );
+
+  const status =
+    page.querySelector(
+      "[data-operational-access-status]",
+    );
+
+  if (status) {
+    status.textContent =
+      accessEnabled
+        ? "Enabled"
+        : "Disabled";
+
+    status.classList.toggle(
+      "enabled",
+      accessEnabled,
+    );
+
+    status.classList.toggle(
+      "disabled",
+      !accessEnabled,
+    );
+  }
+
+  const note =
+    page.querySelector(
+      "[data-operational-access-note]",
+    );
+
+  if (note) {
+    const text =
+      note.querySelector("span");
+
+    note.classList.toggle(
+      "active",
+      accessEnabled,
+    );
+
+    if (text) {
+      if (accessEnabled) {
+        const companyName =
+          operationalCompany?.name ||
+          "the assigned operational company";
+
+        const serviceName =
+          formatCustomerDetailsOperationalService(
+            operationalService,
+          );
+
+        text.textContent =
+          `${serviceName} access is enabled through ${companyName}. The customer's home company remains unchanged.`;
+      } else {
+        text.textContent =
+          "No special operational service access is assigned.";
+      }
+    }
+  }
+}
+
 
 async function loadCustomerDetailsPage(
   initialTab = "overview",
@@ -1166,6 +3036,7 @@ async function loadCustomerDetailsPage(
       return;
     }
     populateCustomerDetails(customer);
+    renderCustomerOperationalAccess(customer);
     renderCustomerVehicles(customer, vehicles, vehiclesResult.reason);
     renderCustomerActivity(customer, vehicles || []);
     renderUnavailableCustomerBookings();
@@ -3879,14 +5750,45 @@ function updateEditBookingSummary(container) {
   );
 }
 
-function initCustomerTrendCharts() {
-  customerTrendCharts.forEach((chart) => chart?.destroy());
+function initCustomerTrendCharts(
+  statistics = null,
+) {
+  customerTrendCharts.forEach(
+    (chart) => chart?.destroy(),
+  );
+
   customerTrendCharts = [];
+
+  if (!statistics) {
+    return;
+  }
+
+  const metricData = (metric) => {
+    const previous =
+      Number(metric?.previous);
+
+    const current =
+      Number(metric?.value);
+
+    if (
+      !Number.isFinite(previous) ||
+      !Number.isFinite(current)
+    ) {
+      return [0, 0];
+    }
+
+    return [
+      previous,
+      current,
+    ];
+  };
 
   customerTrendCharts.push(
     createCustomerTrendChart(
       "#customersTrend",
-      [12, 15, 13, 18, 14, 24, 20, 28, 31],
+      metricData(
+        statistics.totalCustomers,
+      ),
       "#16a34a",
     ),
   );
@@ -3894,7 +5796,9 @@ function initCustomerTrendCharts() {
   customerTrendCharts.push(
     createCustomerTrendChart(
       "#mobileTrend",
-      [10, 13, 11, 16, 14, 23, 18, 27, 30],
+      metricData(
+        statistics.mobileAppCustomers,
+      ),
       "#2563eb",
     ),
   );
@@ -3902,7 +5806,9 @@ function initCustomerTrendCharts() {
   customerTrendCharts.push(
     createCustomerTrendChart(
       "#newTrend",
-      [8, 11, 9, 14, 10, 19, 16, 24, 29],
+      metricData(
+        statistics.newCustomers,
+      ),
       "#9333ea",
     ),
   );
@@ -3910,10 +5816,13 @@ function initCustomerTrendCharts() {
   customerTrendCharts.push(
     createCustomerTrendChart(
       "#returnTrend",
-      [9, 12, 10, 15, 13, 21, 19, 27, 32],
+      metricData(
+        statistics.returningCustomers,
+      ),
       "#f97316",
     ),
   );
 
-  customerTrendCharts = customerTrendCharts.filter(Boolean);
+  customerTrendCharts =
+    customerTrendCharts.filter(Boolean);
 }

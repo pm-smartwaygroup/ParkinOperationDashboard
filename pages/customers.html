@@ -11,15 +11,15 @@
 
         <div>
           <p>Total Customers</p>
-          <h2>2,548</h2>
+          <h2 id="customers-kpi-total">—</h2>
           <small>Across all locations</small>
         </div>
       </div>
 
       <div class="customer-kpi-right">
-        <span class="trend up">
-          <i class="fa-solid fa-caret-up"></i>
-          8.5%
+        <span class="trend neutral" id="customers-kpi-total-trend">
+          <i class="fa-solid fa-minus" aria-hidden="true"></i>
+          <span>—</span>
         </span>
 
         <small>vs last month</small>
@@ -35,15 +35,15 @@
 
         <div>
           <p>Mobile App Customers</p>
-          <h2>1,942</h2>
-          <small>76% of total customers</small>
+          <h2 id="customers-kpi-mobile">—</h2>
+          <small id="customers-kpi-mobile-share">— of total customers</small>
         </div>
       </div>
 
       <div class="customer-kpi-right">
-        <span class="trend up">
-          <i class="fa-solid fa-caret-up"></i>
-          10.3%
+        <span class="trend neutral" id="customers-kpi-mobile-trend">
+          <i class="fa-solid fa-minus" aria-hidden="true"></i>
+          <span>—</span>
         </span>
 
         <small>vs last month</small>
@@ -59,15 +59,15 @@
 
         <div>
           <p>New Customers</p>
-          <h2>124</h2>
+          <h2 id="customers-kpi-new">—</h2>
           <small>This month</small>
         </div>
       </div>
 
       <div class="customer-kpi-right">
-        <span class="trend up">
-          <i class="fa-solid fa-caret-up"></i>
-          12.7%
+        <span class="trend neutral" id="customers-kpi-new-trend">
+          <i class="fa-solid fa-minus" aria-hidden="true"></i>
+          <span>—</span>
         </span>
 
         <small>vs last month</small>
@@ -83,15 +83,15 @@
 
         <div>
           <p>Returning Customers</p>
-          <h2>1,876</h2>
+          <h2 id="customers-kpi-returning">—</h2>
           <small>This month</small>
         </div>
       </div>
 
       <div class="customer-kpi-right">
-        <span class="trend up">
-          <i class="fa-solid fa-caret-up"></i>
-          7.2%
+        <span class="trend neutral" id="customers-kpi-returning-trend">
+          <i class="fa-solid fa-minus" aria-hidden="true"></i>
+          <span>—</span>
         </span>
 
         <small>vs last month</small>
@@ -115,19 +115,34 @@
         />
       </div>
 
-      <button type="button" class="customer-toggle active">
+      <button
+        type="button"
+        class="customer-toggle"
+        id="customers-mobile-toggle"
+        aria-pressed="false"
+      >
         <i class="fa-solid fa-mobile-screen-button"></i>
         Mobile App Customers
       </button>
 
-      <button type="button" class="customer-toggle">
+      <button
+        type="button"
+        class="customer-toggle active"
+        id="customers-all-toggle"
+        aria-pressed="true"
+      >
         <i class="fa-solid fa-users"></i>
         All Customers
       </button>
     </div>
 
     <div class="customers-toolbar-right">
-      <button type="button" class="customer-toolbar-btn">
+      <button
+        type="button"
+        class="customer-toolbar-btn"
+        id="customers-filter-toggle"
+        aria-expanded="false"
+      >
         <i class="fa-solid fa-filter"></i>
         Filter
       </button>
@@ -158,7 +173,10 @@
         <p id="customers-result-count">Loading customers...</p>
       </div>
 
-      <div class="customers-table-controls">
+      <div
+        class="customers-table-controls"
+        id="customers-filter-panel"
+      >
         <select id="customers-status-filter" aria-label="Filter customers by status">
           <option value="">All Status</option>
           <option value="ACTIVE">Active</option>

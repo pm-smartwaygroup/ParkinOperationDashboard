@@ -10,6 +10,69 @@
       <section class="add-customer-card">
         <div class="add-customer-section-title">
           <span>
+            <i class="fa-solid fa-building"></i>
+          </span>
+
+          <h2>Customer Assignment</h2>
+        </div>
+
+        <div class="add-customer-grid two-columns add-customer-company-grid">
+          <label id="customer-company-select-field">
+            <span>Company <b>*</b></span>
+
+            <select id="customer-company-id" required>
+              <option value="">Loading companies...</option>
+            </select>
+
+            <small>Select the company responsible for this customer.</small>
+          </label>
+
+          <label
+            id="customer-company-fixed-field"
+            class="hidden"
+          >
+            <span>Company</span>
+
+            <input
+              type="text"
+              id="customer-company-fixed"
+              readonly
+              aria-readonly="true"
+            />
+
+            <small>
+              Your account can create customers only for this company.
+            </small>
+          </label>
+
+          <label>
+            <span>Operational Service</span>
+
+            <input
+              type="text"
+              id="customer-operational-service"
+              value="No Operational Service"
+              readonly
+              aria-readonly="true"
+            />
+
+            <small id="customer-operational-service-help">
+              Service is derived automatically from the selected company.
+            </small>
+          </label>
+        </div>
+
+        <div
+          class="add-customer-context-alert hidden"
+          id="customer-company-context-alert"
+          role="status"
+          aria-live="polite"
+        ></div>
+
+        <div class="add-customer-divider"></div>
+
+        <div class="add-customer-section-title">
+          <span>
             <i class="fa-solid fa-users"></i>
           </span>
 
@@ -72,6 +135,112 @@
               required
             />
           </label>
+        </div>
+
+        <div
+          class="add-customer-mobile-lookup hidden"
+          id="customer-mobile-lookup-panel"
+        >
+          <div class="add-customer-mobile-lookup-head">
+            <div class="add-customer-mobile-lookup-icon">
+              <i class="fa-solid fa-mobile-screen-button"></i>
+            </div>
+
+            <div class="add-customer-mobile-lookup-copy">
+              <strong>Existing Mobile Customer</strong>
+
+              <p>
+                Check whether this phone number already belongs to a ParkIn
+                mobile customer before creating a new operational customer.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              class="add-customer-mobile-lookup-button"
+              id="customer-mobile-lookup-button"
+            >
+              <i class="fa-solid fa-magnifying-glass"></i>
+              Check Mobile Customer
+            </button>
+          </div>
+
+          <div
+            class="add-customer-mobile-lookup-status hidden"
+            id="customer-mobile-lookup-status"
+            role="status"
+            aria-live="polite"
+          ></div>
+
+          <div
+            class="add-customer-mobile-association hidden"
+            id="customer-mobile-association-card"
+          >
+            <div class="add-customer-mobile-association-title">
+              <div>
+                <span class="add-customer-mobile-badge">
+                  Mobile Customer Found
+                </span>
+
+                <h3 id="customer-mobile-existing-name">
+                  Existing Customer
+                </h3>
+              </div>
+
+              <span
+                class="add-customer-mobile-status"
+                id="customer-mobile-existing-status"
+              >
+                Active
+              </span>
+            </div>
+
+            <div class="add-customer-mobile-association-grid">
+              <div>
+                <span>Mobile Number</span>
+                <strong id="customer-mobile-existing-phone">—</strong>
+              </div>
+
+              <div>
+                <span>Assign To Company</span>
+                <strong id="customer-mobile-target-company">—</strong>
+              </div>
+
+              <div>
+                <span>Operational Service</span>
+                <strong id="customer-mobile-target-service">—</strong>
+              </div>
+            </div>
+
+            <div class="add-customer-mobile-association-note">
+              <i class="fa-solid fa-circle-info"></i>
+
+              <p>
+                This will not create a duplicate customer and will not change
+                the customer's existing ParkIn home company. Only operational
+                access to the selected service company will be granted.
+              </p>
+            </div>
+
+            <div class="add-customer-mobile-association-actions">
+              <button
+                type="button"
+                class="add-customer-mobile-clear"
+                id="customer-mobile-clear-result"
+              >
+                Clear Result
+              </button>
+
+              <button
+                type="button"
+                class="add-customer-mobile-confirm"
+                id="customer-mobile-confirm-association"
+              >
+                <i class="fa-solid fa-link"></i>
+                Confirm Association
+              </button>
+            </div>
+          </div>
         </div>
 
         <div class="add-customer-grid three-columns">
@@ -275,7 +444,25 @@
           </div>
         </div>
 
-        <div class="customer-summary-item">
+                  <div class="customer-summary-item">
+            <i class="fa-solid fa-building"></i>
+
+            <div>
+              <span>Company</span>
+              <b id="summary-customer-company">Not selected</b>
+            </div>
+          </div>
+
+          <div class="customer-summary-item">
+            <i class="fa-solid fa-square-parking"></i>
+
+            <div>
+              <span>Operational Service</span>
+              <b id="summary-customer-service">No Operational Service</b>
+            </div>
+          </div>
+
+<div class="customer-summary-item">
           <i class="fa-regular fa-calendar"></i>
 
           <div>
