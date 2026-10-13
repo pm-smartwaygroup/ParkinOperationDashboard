@@ -5793,3 +5793,44 @@ html[data-theme="dark"] .dashboard-alert-secondary:hover {
     width: 100%;
   }
 }
+
+
+/* LOCATIONS EMPTY STATE 2026 */
+
+.locations-empty-state {
+  display: flex;
+  min-height: 290px;
+  width: 100%;
+  box-sizing: border-box;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 42px 24px 48px;
+  text-align: center;
+}
+
+.locations-empty-state-image {
+  display: block;
+  width: min(180px, 48vw);
+  height: auto;
+  margin: 0 auto 18px;
+}
+
+.locations-empty-state h3 {
+  margin: 0;
+  color: #172033;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.locations-empty-state p {
+  max-width: 430px;
+  margin: 7px auto 0;
+  color: #718096;
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+
+.locations-pagination[hidden] {
+  display: none !important;
+}

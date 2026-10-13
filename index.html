@@ -34,7 +34,10 @@
       type="font/ttf"
       crossorigin
     />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
     <link rel="stylesheet" href="/styles.css" />
     <link rel="stylesheet" href="/css/valet.css" />
     <link rel="stylesheet" href="/css/drivers.css" />
@@ -607,15 +610,27 @@
                     <i class="fa-regular fa-user" aria-hidden="true"></i>
                     <span>My Profile</span>
                   </button>
-                  <button class="profile-menu-item" type="button" role="menuitem">
+                  <button
+                    class="profile-menu-item"
+                    type="button"
+                    role="menuitem"
+                  >
                     <i class="fa-solid fa-gear" aria-hidden="true"></i>
                     <span>Account Settings</span>
                   </button>
-                  <button class="profile-menu-item" type="button" role="menuitem">
+                  <button
+                    class="profile-menu-item"
+                    type="button"
+                    role="menuitem"
+                  >
                     <i class="fa-regular fa-bell" aria-hidden="true"></i>
                     <span>Notifications</span>
                   </button>
-                  <button class="profile-menu-item" type="button" role="menuitem">
+                  <button
+                    class="profile-menu-item"
+                    type="button"
+                    role="menuitem"
+                  >
                     <i class="fa-solid fa-lock" aria-hidden="true"></i>
                     <span>Change Password</span>
                   </button>
@@ -638,8 +653,15 @@
                 </div>
 
                 <div class="profile-dropdown-group">
-                  <button class="profile-menu-item" type="button" role="menuitem">
-                    <i class="fa-regular fa-circle-question" aria-hidden="true"></i>
+                  <button
+                    class="profile-menu-item"
+                    type="button"
+                    role="menuitem"
+                  >
+                    <i
+                      class="fa-regular fa-circle-question"
+                      aria-hidden="true"
+                    ></i>
                     <span>Help &amp; Support</span>
                   </button>
                   <button
@@ -648,7 +670,10 @@
                     role="menuitem"
                     data-profile-logout
                   >
-                    <i class="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i>
+                    <i
+                      class="fa-solid fa-arrow-right-from-bracket"
+                      aria-hidden="true"
+                    ></i>
                     <span>Logout</span>
                   </button>
                 </div>
@@ -1225,7 +1250,11 @@
               <span>⌕</span>
             </label>
 
-            <button class="add-location-btn" type="button" data-required-permission="locations.create">
+            <button
+              class="add-location-btn"
+              type="button"
+              data-required-permission="locations.create"
+            >
               + Add New Location
             </button>
 
@@ -1256,8 +1285,8 @@
               </span>
               <div>
                 <p>Total Locations</p>
-                <strong>18</strong>
-                <small class="up">↑ 2 new this month</small>
+                <strong>0</strong>
+                <small>Current access scope</small>
               </div>
             </article>
 
@@ -1272,8 +1301,8 @@
               </span>
               <div>
                 <p>Active Locations</p>
-                <strong>16</strong>
-                <small class="up">88.9% of total</small>
+                <strong>0</strong>
+                <small>0% of total</small>
               </div>
             </article>
 
@@ -1289,8 +1318,8 @@
               </span>
               <div>
                 <p>Inactive Locations</p>
-                <strong>2</strong>
-                <small>11.1% of total</small>
+                <strong>0</strong>
+                <small>0% of total</small>
               </div>
             </article>
 
@@ -1303,8 +1332,8 @@
               </span>
               <div>
                 <p>Average Occupancy</p>
-                <strong>76%</strong>
-                <small class="up">↑ 6.4% vs last month</small>
+                <strong>0%</strong>
+                <small>Current occupancy</small>
               </div>
             </article>
 
@@ -1320,8 +1349,8 @@
               </span>
               <div>
                 <p>Revenue</p>
-                <strong>SAR 94,580</strong>
-                <small class="up">↑ 18.6% vs last month</small>
+                <strong>SAR 0</strong>
+                <small>Today</small>
               </div>
             </article>
           </section>
@@ -1329,9 +1358,7 @@
           <section class="locations-table-card">
             <div class="locations-table-title">
               <h2>All Locations</h2>
-              <span id="locations-result-count"
-                >Showing 1 to 8 of 18 locations</span
-              >
+              <span id="locations-result-count">0 locations found</span>
             </div>
 
             <div class="locations-table">
@@ -1350,13 +1377,11 @@
               <div id="locations-table-body"></div>
             </div>
 
-            <div class="locations-pagination">
-              <button type="button">‹</button>
-              <button class="active" type="button">1</button>
-              <button type="button">2</button>
-              <button type="button">3</button>
-              <button type="button">›</button>
-            </div>
+            <div
+              class="locations-pagination"
+              id="locations-pagination"
+              hidden
+            ></div>
           </section>
         </section>
         <section
@@ -1695,10 +1720,7 @@
     <script src="/js/runtime-config.js" defer></script>
     <script src="/public/assets/qr/qrcode.js" defer></script>
 
-    <script
-      src="https://cdn.socket.io/4.8.3/socket.io.min.js"
-      defer
-    ></script>
+    <script src="https://cdn.socket.io/4.8.3/socket.io.min.js" defer></script>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
 

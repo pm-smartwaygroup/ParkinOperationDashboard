@@ -123,8 +123,7 @@ cleanLegacyAddUserQueryString();
 const API_BASE_URL =
   window.PARKIN_CONFIG?.apiBaseUrl || "https://api.parkin.com.sa";
 const USER_MANAGEMENT_API_BASE_URL =
-  window.PARKIN_CONFIG?.userManagementApiBaseUrl ||
-  "https://api.parkin.com.sa";
+  window.PARKIN_CONFIG?.userManagementApiBaseUrl || "https://api.parkin.com.sa";
 
 const dashboardAccessState = {
   ready: false,
@@ -195,18 +194,13 @@ function canAccessDashboardRequirement(permission) {
 
   if (permission === null) return true;
 
-  return (
-    typeof permission === "string" &&
-    hasDashboardPermission(permission)
-  );
+  return typeof permission === "string" && hasDashboardPermission(permission);
 }
 
 function getFirstAccessibleDashboardRoute() {
   return (
     DASHBOARD_LANDING_ROUTE_PRIORITY.find((route) =>
-      canAccessDashboardRequirement(
-        DASHBOARD_PERMISSION_BY_ROUTE[route],
-      ),
+      canAccessDashboardRequirement(DASHBOARD_PERMISSION_BY_ROUTE[route]),
     ) || null
   );
 }
@@ -263,9 +257,12 @@ async function loadDashboardAccess() {
   if (!token) return false;
 
   try {
-    const response = await fetch(`${getDashboardAccessApiBaseUrl()}/auth/me/access`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const response = await fetch(
+      `${getDashboardAccessApiBaseUrl()}/auth/me/access`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      },
+    );
     const body = await response.json().catch(() => null);
     if (response.status === 401) {
       dashboardAccessState.authFailed = true;
@@ -277,7 +274,9 @@ async function loadDashboardAccess() {
     dashboardAccessState.user = data?.user || null;
     dashboardAccessState.permissions = new Set(
       Array.isArray(data?.permissions)
-        ? data.permissions.filter((permission) => typeof permission === "string")
+        ? data.permissions.filter(
+            (permission) => typeof permission === "string",
+          )
         : [],
     );
     dashboardAccessState.ready = true;
@@ -481,7 +480,7 @@ function restoreDashboardTitleMarkup() {
   const title = document.querySelector(".dashboard-title");
   if (!title || title.querySelector("h1")) return;
   title.innerHTML =
-    '<h1>Dashboard</h1><p>Real-time overview of your valet parking operations</p>';
+    "<h1>Dashboard</h1><p>Real-time overview of your valet parking operations</p>";
 }
 
 function getCurrentCustomerId() {
@@ -681,12 +680,9 @@ async function showDashboard({ preserveRoute = false } = {}) {
   hydrateDashboardProfile();
 
   if (!preserveRoute) {
-    const initialRoute =
-      getFirstAccessibleDashboardRoute();
+    const initialRoute = getFirstAccessibleDashboardRoute();
 
-    replaceDashboardRoute(
-      initialRoute || "#dashboard",
-    );
+    replaceDashboardRoute(initialRoute || "#dashboard");
   }
 
   /*
@@ -714,8 +710,7 @@ function applyPermissionNavigationVisibility() {
     const route = link.getAttribute("href");
     if (!Object.hasOwn(DASHBOARD_PERMISSION_BY_ROUTE, route)) return;
     const permission = DASHBOARD_PERMISSION_BY_ROUTE[route];
-    const visible =
-      canAccessDashboardRequirement(permission);
+    const visible = canAccessDashboardRequirement(permission);
     link.hidden = !visible;
     link.classList.toggle("hidden", !visible);
     link.setAttribute("aria-hidden", String(!visible));
@@ -833,8 +828,13 @@ function syncDashboardProfile(user) {
   );
   credential
     ?.querySelector(".profile-photo")
-    ?.setAttribute("aria-label", photoUrl ? `${name} profile photo` : `${name} initials`);
-  credential?.querySelector(".profile-credential-copy h3")?.replaceChildren(name);
+    ?.setAttribute(
+      "aria-label",
+      photoUrl ? `${name} profile photo` : `${name} initials`,
+    );
+  credential
+    ?.querySelector(".profile-credential-copy h3")
+    ?.replaceChildren(name);
   credential
     ?.querySelector(".profile-credential-copy p:first-of-type")
     ?.replaceChildren(role);
@@ -947,11 +947,14 @@ async function checkSession() {
   }
 
   try {
-    const response = await fetch(`${USER_MANAGEMENT_API_BASE_URL}/auth/session`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
+    const response = await fetch(
+      `${USER_MANAGEMENT_API_BASE_URL}/auth/session`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       },
-    });
+    );
 
     if (!response.ok) {
       throw new Error();
@@ -1258,10 +1261,7 @@ window.addEventListener("resize", () => {
 
 window.addEventListener("hashchange", () => closeProfileMenu());
 
-setProfileDarkToggleState(
-  getStoredDarkModePreference(),
-  { persist: false },
-);
+setProfileDarkToggleState(getStoredDarkModePreference(), { persist: false });
 
 dashboardLogout?.addEventListener("click", requestDashboardLogoutConfirmation);
 
@@ -1292,11 +1292,14 @@ async function restoreSession() {
   }
 
   try {
-    const response = await fetch(`${USER_MANAGEMENT_API_BASE_URL}/auth/session`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
+    const response = await fetch(
+      `${USER_MANAGEMENT_API_BASE_URL}/auth/session`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       },
-    });
+    );
 
     if (!response.ok) {
       throw new Error();
@@ -1517,10 +1520,14 @@ function showDashboardAccessDenied() {
     dashboardMain.append(state);
   }
   state.classList.remove("hidden");
-  document.querySelector(".dashboard-title h1")?.replaceChildren("Access Denied");
+  document
+    .querySelector(".dashboard-title h1")
+    ?.replaceChildren("Access Denied");
   document
     .querySelector(".dashboard-title p")
-    ?.replaceChildren("Your current account permissions do not include this area.");
+    ?.replaceChildren(
+      "Your current account permissions do not include this area.",
+    );
   setActiveNav("");
 }
 
@@ -1781,7 +1788,8 @@ async function showCompaniesView() {
   }
 
   if (subtitle) {
-    subtitle.textContent = "Manage companies, operational services, accounts, locations and customer access";
+    subtitle.textContent =
+      "Manage companies, operational services, accounts, locations and customer access";
   }
 
   setActiveNav("#companies");
@@ -2103,17 +2111,11 @@ function handleDashboardRoute() {
   const requiredPermission = getDashboardRoutePermission(window.location.hash);
   if (
     requiredPermission !== undefined &&
-    !canAccessDashboardRequirement(
-      requiredPermission,
-    )
+    !canAccessDashboardRequirement(requiredPermission)
   ) {
-    const fallbackRoute =
-      getFirstAccessibleDashboardRoute();
+    const fallbackRoute = getFirstAccessibleDashboardRoute();
 
-    if (
-      fallbackRoute &&
-      fallbackRoute !== window.location.hash
-    ) {
+    if (fallbackRoute && fallbackRoute !== window.location.hash) {
       replaceDashboardRoute(fallbackRoute);
       handleDashboardRoute();
       return;
@@ -2265,13 +2267,9 @@ function handleDashboardRoute() {
     return;
   }
 
-  const fallbackRoute =
-    getFirstAccessibleDashboardRoute();
+  const fallbackRoute = getFirstAccessibleDashboardRoute();
 
-  if (
-    fallbackRoute &&
-    fallbackRoute !== window.location.hash
-  ) {
+  if (fallbackRoute && fallbackRoute !== window.location.hash) {
     replaceDashboardRoute(fallbackRoute);
     handleDashboardRoute();
     return;
@@ -2427,21 +2425,110 @@ async function showCustomerCreateBookingView() {
   await loadCustomerCreateBookingPage(customerId);
 }
 
+function getCurrentLocationRows() {
+  return document.querySelectorAll("#locations-table-body .location-item");
+}
+
+function renderLocationsEmptyState(
+  tbody,
+  title = "No locations found",
+  message = "There are currently no locations assigned to this account.",
+) {
+  tbody.innerHTML = `
+    <div class="locations-empty-state">
+      <img
+        src="/assets/location-empty-state.svg"
+        alt=""
+        class="locations-empty-state-image"
+      />
+      <h3>${title}</h3>
+      <p>${message}</p>
+    </div>
+  `;
+}
+
+function renderLocationPagination(page, totalPages) {
+  const pagination = document.getElementById("locations-pagination");
+
+  if (!pagination) return;
+
+  pagination.replaceChildren();
+
+  if (totalPages <= 1) {
+    pagination.hidden = true;
+    return;
+  }
+
+  pagination.hidden = false;
+
+  const addButton = (
+    label,
+    targetPage,
+    { disabled = false, active = false, ariaLabel = "" } = {},
+  ) => {
+    const button = document.createElement("button");
+
+    button.type = "button";
+    button.textContent = label;
+
+    if (active) {
+      button.classList.add("active");
+    }
+
+    button.disabled = disabled;
+
+    if (ariaLabel) {
+      button.setAttribute("aria-label", ariaLabel);
+    }
+
+    if (!disabled && !active) {
+      button.addEventListener("click", () => loadLocations(targetPage));
+    }
+
+    pagination.appendChild(button);
+  };
+
+  addButton("‹", page - 1, {
+    disabled: page <= 1,
+    ariaLabel: "Previous page",
+  });
+
+  for (let current = 1; current <= totalPages; current += 1) {
+    addButton(String(current), current, {
+      active: current === page,
+      ariaLabel: `Page ${current}`,
+    });
+  }
+
+  addButton("›", page + 1, {
+    disabled: page >= totalPages,
+    ariaLabel: "Next page",
+  });
+}
+
 function filterLocations() {
   const searchValue = locationSearch?.value.trim().toLowerCase() || "";
+
   const statusValue = locationStatusFilter?.value || "all";
+
   const cityValue = locationCityFilter?.value || "all";
+
+  const items = getCurrentLocationRows();
 
   let visibleCount = 0;
 
-  locationItems.forEach((item) => {
+  items.forEach((item) => {
     const name = item.dataset.name || "";
+
     const city = item.dataset.city || "";
+
     const status = item.dataset.status || "";
 
     const matchesSearch =
       !searchValue || name.includes(searchValue) || city.includes(searchValue);
+
     const matchesStatus = statusValue === "all" || status === statusValue;
+
     const matchesCity = cityValue === "all" || city === cityValue;
 
     const isVisible = matchesSearch && matchesStatus && matchesCity;
@@ -2453,18 +2540,31 @@ function filterLocations() {
     }
   });
 
-  if (locationsResultCount) {
-    locationsResultCount.textContent = `Showing ${visibleCount} of 18 locations`;
+  if (locationsResultCount && items.length > 0) {
+    const hasFilters =
+      Boolean(searchValue) || statusValue !== "all" || cityValue !== "all";
+
+    if (hasFilters) {
+      locationsResultCount.textContent = `${visibleCount} matching ${
+        visibleCount === 1 ? "location" : "locations"
+      }`;
+    }
   }
 }
 
 async function loadLocations(page = 1) {
+  const tbody = document.getElementById("locations-table-body");
+
+  if (!tbody) return;
+
   try {
     const response = await fetch(
-      `${API_BASE_URL}/locations?page=${page}&limit=20`,
+      `${API_BASE_URL}/locations?page=${page}&limit=50`,
       {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("parkin_access_token")}`,
+          Authorization: `Bearer ${localStorage.getItem(
+            "parkin_access_token",
+          )}`,
         },
       },
     );
@@ -2475,52 +2575,106 @@ async function loadLocations(page = 1) {
       throw new Error(result.message || "Unable to load locations.");
     }
 
-    const tbody = document.getElementById("locations-table-body");
-    if (!tbody) return;
+    const payload = result.data || result;
+
+    const locations = payload?.items || payload?.data?.items || [];
+
+    const meta = payload?.meta || {};
+
+    const total = Number(meta.total) || locations.length;
+
+    const currentPage = Number(meta.page) || page;
+
+    const limit = Number(meta.limit) || 50;
+
+    const totalPages = Number(meta.totalPages) || Math.ceil(total / limit);
 
     tbody.innerHTML = "";
 
-    console.log("Locations API result:", result);
+    if (locations.length === 0) {
+      renderLocationsEmptyState(tbody);
 
-    const locations =
-      result.data?.items || result.items || result.data?.data?.items || [];
+      if (locationsResultCount) {
+        locationsResultCount.textContent = "0 locations found";
+      }
 
-    console.log("Locations array:", locations);
+      renderLocationPagination(currentPage, totalPages);
 
-    console.log(result);
-    console.log(locations);
-    console.log(locations.length);
+      return;
+    }
 
     locations.forEach((location) => {
+      const name = location.name || "";
+
+      const city = location.city || "";
+
+      const status = location.status || "";
+
+      const type = location.type ? location.type.replaceAll("_", " ") : "—";
+
       tbody.insertAdjacentHTML(
         "beforeend",
         `
-        <div class="locations-row location-item"
+        <div
+          class="locations-row location-item"
           data-id="${location.id}"
-          data-name="${location.name.toLowerCase()}"
-          data-city="${location.city.toLowerCase()}"
-          data-status="${location.status.toLowerCase()}">
-
+          data-name="${name.toLowerCase()}"
+          data-city="${city.toLowerCase()}"
+          data-status="${status.toLowerCase()}"
+        >
           <span class="location-info">
             <i
               class="location-thumb"
-                style="background:url('${getImageUrl(location.imageUrl)}') center / cover no-repeat"
+              style="background:url('${getImageUrl(
+                location.imageUrl,
+              )}') center / cover no-repeat"
             ></i>
-            <b>${location.name}<small>${location.address}</small></b>
+            <b>
+              ${name}
+              <small>${location.address || "—"}</small>
+            </b>
           </span>
 
-          <span data-label="City">${location.city}</span>
-          <span data-label="Type">${location.type.replaceAll("_", " ")}</span>
-          <span data-label="Occupancy"><i class="ring green" style="--value:0%">0%</i></span>
-          <span data-label="Revenue"><b>SAR 0</b><small class="up">New</small></span>
-          <span data-label="Vehicles">0</span>
-          <span data-label="Wait Time">0 min</span>
-          <span data-label="Status">
-            <em class="loc-status ${location.status.toLowerCase()}">${location.status}</em>
+          <span data-label="City">
+            ${city || "—"}
           </span>
+
+          <span data-label="Type">
+            ${type}
+          </span>
+
+          <span data-label="Occupancy">
+            <i
+              class="ring green"
+              style="--value:0%"
+            >0%</i>
+          </span>
+
+          <span data-label="Revenue">
+            <b>SAR 0</b>
+            <small>Today</small>
+          </span>
+
+          <span data-label="Vehicles">
+            0
+          </span>
+
+          <span data-label="Wait Time">
+            0 min
+          </span>
+
+          <span data-label="Status">
+            <em class="loc-status ${status.toLowerCase()}">
+              ${status}
+            </em>
+          </span>
+
           <span class="loc-actions">
             <button type="button">▥</button>
-            <button class="loc-more" type="button">⋮</button>
+            <button
+              class="loc-more"
+              type="button"
+            >⋮</button>
           </span>
         </div>
         `,
@@ -2528,46 +2682,135 @@ async function loadLocations(page = 1) {
     });
 
     if (locationsResultCount) {
-      const total = result.data?.meta?.total || locations.length;
-      locationsResultCount.textContent = `Showing ${locations.length} of ${total} locations`;
+      const start = total > 0 ? (currentPage - 1) * limit + 1 : 0;
+
+      const end = total > 0 ? Math.min(start + locations.length - 1, total) : 0;
+
+      locationsResultCount.textContent = `Showing ${start} to ${end} of ${total} locations`;
     }
+
+    renderLocationPagination(currentPage, totalPages);
   } catch (error) {
     console.error("Load locations error:", error);
+
+    renderLocationsEmptyState(
+      tbody,
+      "Unable to load locations",
+      "Please refresh the page or try again.",
+    );
+
+    if (locationsResultCount) {
+      locationsResultCount.textContent = "Locations unavailable";
+    }
+
+    renderLocationPagination(1, 0);
   }
 }
 
+function resetLocationStatistics() {
+  const values = ["0", "0", "0", "0%", "SAR 0"];
+
+  const notes = [
+    "Current access scope",
+    "0% of total",
+    "0% of total",
+    "Current occupancy",
+    "Today",
+  ];
+
+  document
+    .querySelectorAll(".locations-kpi-grid article")
+    .forEach((card, index) => {
+      const strong = card.querySelector("strong");
+
+      const small = card.querySelector("small");
+
+      if (strong) {
+        strong.textContent = values[index] || "0";
+      }
+
+      if (small) {
+        small.textContent = notes[index] || "";
+        small.classList.remove("up");
+      }
+    });
+}
+
 async function loadLocationStatistics() {
-  const response = await fetch(`${API_BASE_URL}/locations/statistics`, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("parkin_access_token")}`,
-    },
-  });
+  resetLocationStatistics();
 
-  const result = await response.json();
+  try {
+    const response = await fetch(`${API_BASE_URL}/locations/statistics`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("parkin_access_token")}`,
+      },
+    });
 
-  if (!response.ok) return;
+    const result = await response.json();
 
-  const stats = result.data || result;
+    if (!response.ok) {
+      return;
+    }
 
-  document.querySelector(
-    ".locations-kpi-grid article:nth-child(1) strong",
-  ).textContent = stats.total ?? 0;
+    const stats = result.data || result;
 
-  document.querySelector(
-    ".locations-kpi-grid article:nth-child(2) strong",
-  ).textContent = stats.active ?? 0;
+    const total = Number(stats.total) || 0;
 
-  document.querySelector(
-    ".locations-kpi-grid article:nth-child(3) strong",
-  ).textContent = stats.inactive ?? 0;
+    const active = Number(stats.active) || 0;
 
-  document.querySelector(
-    ".locations-kpi-grid article:nth-child(4) strong",
-  ).textContent = `${stats.averageOccupancy ?? 0}%`;
+    const inactive = Number(stats.inactive) || 0;
 
-  document.querySelector(
-    ".locations-kpi-grid article:nth-child(5) strong",
-  ).textContent = `SAR ${(stats.totalRevenueToday ?? 0).toLocaleString()}`;
+    const activePercent =
+      total > 0 ? ((active / total) * 100).toFixed(1) : "0.0";
+
+    const inactivePercent =
+      total > 0 ? ((inactive / total) * 100).toFixed(1) : "0.0";
+
+    const cards = document.querySelectorAll(".locations-kpi-grid article");
+
+    const setCard = (index, value, note) => {
+      const card = cards[index];
+
+      if (!card) return;
+
+      const strong = card.querySelector("strong");
+
+      const small = card.querySelector("small");
+
+      if (strong) {
+        strong.textContent = value;
+      }
+
+      if (small) {
+        small.textContent = note;
+        small.classList.remove("up");
+      }
+    };
+
+    setCard(0, String(total), "Current access scope");
+
+    setCard(
+      1,
+      String(active),
+      total ? `${activePercent}% of total` : "0% of total",
+    );
+
+    setCard(
+      2,
+      String(inactive),
+      total ? `${inactivePercent}% of total` : "0% of total",
+    );
+
+    setCard(3, `${Number(stats.averageOccupancy) || 0}%`, "Current occupancy");
+
+    setCard(
+      4,
+      `SAR ${(Number(stats.totalRevenueToday) || 0).toLocaleString()}`,
+      "Today",
+    );
+  } catch (error) {
+    console.error("Load location statistics error:", error);
+  }
 }
 
 async function getLocationById(id) {
