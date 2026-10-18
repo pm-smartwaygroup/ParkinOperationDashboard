@@ -1080,3 +1080,76 @@
 .add-customer-mobile-lookup-icon > i {
   color: #2563eb;
 }
+
+/* ==========================================================
+   AUTOMATIC CUSTOMER ACCOUNT SUSPENSION
+   Scoped to the customer pages; no shared dashboard overrides.
+========================================================== */
+.customer-suspension {
+  margin-top: 24px;
+  padding: 20px;
+  border: 1px solid #d9e5df;
+  border-radius: 14px;
+  background: linear-gradient(160deg, #f8fcfa 0%, #fff 75%);
+}
+.customer-suspension [hidden] { display: none !important; }
+.customer-suspension-heading,
+.customer-suspension-title,
+.customer-suspension-status { display: flex; align-items: center; }
+.customer-suspension-heading { justify-content: space-between; gap: 16px; }
+.customer-suspension-title { gap: 12px; min-width: 0; }
+.customer-suspension-icon {
+  width: 38px; height: 38px; display: grid; place-items: center;
+  flex: 0 0 38px; border-radius: 11px; background: #e3f5eb; color: #147a46;
+}
+.customer-suspension-title h3 { margin: 0; font-size: .94rem; font-weight: 800; color: #17362a; }
+.customer-suspension-title p { margin: 5px 0 0; color: #61756b; font-size: .76rem; line-height: 1.5; }
+.add-customer-page .customer-suspension-toggle,
+.edit-customer-page .customer-suspension-toggle {
+  display: inline-flex; flex-direction: row; align-items: center;
+  flex: 0 0 auto; gap: 9px; cursor: pointer; font-size: .8rem;
+  color: #17643d; font-weight: 800;
+}
+.add-customer-page .customer-suspension-toggle input[type="checkbox"],
+.edit-customer-page .customer-suspension-toggle input[type="checkbox"] {
+  width: 19px !important; height: 19px !important; min-width: 19px;
+  padding: 0 !important; margin: 0; accent-color: #0f8b4c; cursor: pointer;
+}
+.customer-suspension-body { padding-top: 20px; }
+.customer-suspension-grid {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px; align-items: start;
+}
+.add-customer-page .customer-suspension-grid > label,
+.edit-customer-page .customer-suspension-grid > label,
+.add-customer-page .customer-suspension-reason,
+.edit-customer-page .customer-suspension-reason { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.customer-suspension-grid label > span,
+.customer-suspension-reason > span { color: #4a5d53; font-size: .8rem; font-weight: 700; }
+.customer-suspension-grid label > span b { color: #dc2626; }
+.customer-suspension-reason { margin-top: 16px; }
+.customer-suspension-reason small { color: #829087; font-weight: 500; }
+.add-customer-page .customer-suspension-reason textarea,
+.edit-customer-page .customer-suspension-reason textarea { min-height: 70px; }
+.customer-suspension-hint {
+  margin: 12px 0 0; color: #667f71; font-size: .73rem; line-height: 1.55;
+}
+.customer-suspension-hint i { margin-right: 5px; }
+.customer-suspension-status {
+  justify-content: space-between; gap: 12px; margin-top: 18px;
+  padding-top: 14px; border-top: 1px solid #e4eee7;
+  font-size: .8rem; color: #56665c; font-weight: 700;
+}
+.customer-suspension-status output {
+  display: inline-flex; align-items: center; padding: 5px 10px;
+  border-radius: 999px; background: #e9eef3; color: #475569;
+  font-size: .72rem; font-weight: 800;
+}
+.customer-suspension-status output[data-state="SCHEDULED"] { background: #eaf2fe; color: #215aa4; }
+.customer-suspension-status output[data-state="SUSPENDED"] { background: #fff0dc; color: #99540c; }
+.customer-suspension-status output[data-state="COMPLETED"] { background: #e9f8ef; color: #166534; }
+@media (max-width: 650px) {
+  .customer-suspension { padding: 16px; }
+  .customer-suspension-heading { align-items: flex-start; flex-direction: column; }
+  .customer-suspension-grid { grid-template-columns: minmax(0, 1fr); }
+}

@@ -2439,6 +2439,174 @@ async function initializeAddCustomerCompanyContext() {
 }
 
 
+
+/* Automatic suspension settings shared by Add and Edit Customer.
+ * Browser local datetime inputs are converted to ISO UTC for the API.
+ * Manual status (ACTIVE / INACTIVE / BLOCKED) is kept independent. */
+function getCustomerSuspensionRoot(form) {
+  return form?.querySelector('[data-customer-suspension]') || null;
+}
+
+function getCustomerSuspensionControl(root, field) {
+  return root?.querySelector(`[data-suspension-field="${field}"]`) || null;
+}
+
+function suspensionLocalDatetime(iso) {
+  if (!iso) return "";
+  const value = new Date(iso);
+  if (Number.isNaN(value.getTime())) return "";
+  const pad = (number) => String(number).padStart(2, "0");
+  return `${value.getFullYear()}-${pad(value.getMonth() + 1)}-${pad(value.getDate())}T${pad(value.getHours())}:${pad(value.getMinutes())}`;
+}
+
+function getCustomerSuspensionFormValues(form) {
+  const root = getCustomerSuspensionRoot(form);
+  if (!root || !getCustomerSuspensionControl(root, "enabled")?.checked) {
+    return { enabled: false };
+  }
+  const type = getCustomerSuspensionControl(root, "type")?.value || "LIMITED";
+  const startMode = getCustomerSuspensionControl(root, "startMode")?.value || "immediate";
+  return {
+    enabled: true,
+    type,
+    startMode,
+    startsAt: startMode === "scheduled" ? getCustomerSuspensionControl(root, "startsAt")?.value || "" : "",
+    endsAt: type === "LIMITED" ? getCustomerSuspensionControl(root, "endsAt")?.value || "" : "",
+    reason: getCustomerSuspensionControl(root, "reason")?.value.trim() || "",
+  };
+}
+
+function updateCustomerSuspensionControls(root) {
+  if (!root) return;
+  const enabled = Boolean(getCustomerSuspensionControl(root, "enabled")?.checked);
+  const type = getCustomerSuspensionControl(root, "type")?.value || "LIMITED";
+  const startMode = getCustomerSuspensionControl(root, "startMode")?.value || "immediate";
+  const startsAt = getCustomerSuspensionControl(root, "startsAt");
+  const endsAt = getCustomerSuspensionControl(root, "endsAt");
+  const options = root.querySelector('[data-suspension-options]');
+  const startGroup = root.querySelector('[data-suspension-start]');
+  const endGroup = root.querySelector('[data-suspension-end]');
+  if (options) options.hidden = !enabled;
+  if (startGroup) startGroup.hidden = !enabled || startMode !== "scheduled";
+  if (endGroup) endGroup.hidden = !enabled || type !== "LIMITED";
+
+  for (const field of ["type", "startMode", "reason"]) {
+    const control = getCustomerSuspensionControl(root, field);
+    if (control) control.disabled = !enabled;
+  }
+  if (startsAt) {
+    startsAt.disabled = !enabled || startMode !== "scheduled";
+    startsAt.required = enabled && startMode === "scheduled";
+  }
+  if (endsAt) {
+    endsAt.disabled = !enabled || type !== "LIMITED";
+    endsAt.required = enabled && type === "LIMITED";
+  }
+
+  let state = "NOT_SCHEDULED";
+  if (enabled) {
+    const start = startMode === "scheduled" ? new Date(startsAt?.value || "") : new Date();
+    const end = type === "LIMITED" ? new Date(endsAt?.value || "") : null;
+    if (Number.isNaN(start.getTime()) || (type === "LIMITED" && (!endsAt?.value || Number.isNaN(end.getTime())))) {
+      state = "INCOMPLETE";
+    } else if (start > new Date()) {
+      state = "SCHEDULED";
+    } else if (end && end <= new Date()) {
+      state = "COMPLETED";
+    } else {
+      state = "SUSPENDED";
+    }
+  }
+  const labels = {
+    NOT_SCHEDULED: "Not scheduled",
+    INCOMPLETE: "Set required dates",
+    SCHEDULED: "Scheduled",
+    SUSPENDED: "Suspended",
+    COMPLETED: "Completed",
+  };
+  const output = root.querySelector('[data-suspension-state]');
+  if (output) {
+    output.textContent = labels[state];
+    output.dataset.state = state;
+  }
+}
+
+function bindCustomerSuspensionControls(form) {
+  const root = getCustomerSuspensionRoot(form);
+  if (!root || root.dataset.bound === "true") return;
+  root.dataset.bound = "true";
+  root.addEventListener("input", () => updateCustomerSuspensionControls(root));
+  root.addEventListener("change", () => updateCustomerSuspensionControls(root));
+  updateCustomerSuspensionControls(root);
+}
+
+function populateCustomerSuspensionForm(form, suspension) {
+  const root = getCustomerSuspensionRoot(form);
+  if (!root) return;
+  const setField = (name, value) => {
+    const field = getCustomerSuspensionControl(root, name);
+    if (field) field.value = value;
+  };
+  const enabled = Boolean(suspension?.enabled);
+  const checkbox = getCustomerSuspensionControl(root, "enabled");
+  if (checkbox) checkbox.checked = enabled;
+  setField("type", suspension?.type === "UNLIMITED" ? "UNLIMITED" : "LIMITED");
+  setField("startMode", enabled && suspension?.startsAt ? "scheduled" : "immediate");
+  setField("startsAt", suspensionLocalDatetime(suspension?.startsAt));
+  setField("endsAt", suspensionLocalDatetime(suspension?.endsAt));
+  setField("reason", suspension?.reason || "");
+  root.dataset.originalStart = suspensionLocalDatetime(suspension?.startsAt);
+  updateCustomerSuspensionControls(root);
+}
+
+function buildCustomerSuspensionPayload(form) {
+  const settings = getCustomerSuspensionFormValues(form);
+  if (!settings.enabled) return { enabled: false };
+
+  const root = getCustomerSuspensionRoot(form);
+  const now = new Date();
+  let startsAt = null;
+  if (settings.startMode === "scheduled") {
+    const start = new Date(settings.startsAt);
+    if (!settings.startsAt || Number.isNaN(start.getTime())) {
+      throw new Error("Select a valid suspension start date and time.");
+    }
+    // An already-active schedule can retain its original start on edit.
+    if (start <= now && settings.startsAt !== root?.dataset.originalStart) {
+      throw new Error("Choose a future start date/time, or select Immediately.");
+    }
+    startsAt = start.toISOString();
+  }
+
+  let endsAt = null;
+  if (settings.type === "LIMITED") {
+    const end = new Date(settings.endsAt);
+    if (!settings.endsAt || Number.isNaN(end.getTime())) {
+      throw new Error("Select a valid automatic reactivation date and time.");
+    }
+    const start = startsAt ? new Date(startsAt) : now;
+    if (end <= start || end <= now) {
+      throw new Error("Automatic reactivation must be after the start and in the future.");
+    }
+    endsAt = end.toISOString();
+  }
+
+  return {
+    enabled: true,
+    type: settings.type,
+    startsAt,
+    endsAt,
+    reason: settings.reason,
+  };
+}
+
+function notifyCustomerSuspensionError(error) {
+  window.showDashboardAlert?.(error?.message || "Review automatic suspension settings.", {
+    title: "Invalid suspension settings",
+    type: "error",
+  });
+}
+
 async function loadAddCustomerPage() {
   const container = document.querySelector("#add-customer-container");
   if (!container) return;
@@ -2457,7 +2625,14 @@ async function loadAddCustomerPage() {
   const memberSince = document.querySelector("#customer-member-since");
 
   if (memberSince && !memberSince.value) {
-    memberSince.value = new Date().toISOString().split("T")[0];
+    const dateParts = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Asia/Riyadh',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }).formatToParts(new Date());
+    const datePart = (type) => dateParts.find((part) => part.type === type)?.value;
+    memberSince.value = `${datePart('year')}-${datePart('month')}-${datePart('day')}`;
   }
 
   await initializeAddCustomerCompanyContext();
@@ -2470,6 +2645,7 @@ function bindAddCustomerForm() {
   if (!form || form.dataset.bound === "true") return;
 
   form.dataset.bound = "true";
+  bindCustomerSuspensionControls(form);
 
   const fullName = document.querySelector("#customer-full-name");
   const email = document.querySelector("#customer-email");
@@ -2659,6 +2835,16 @@ function bindAddCustomerForm() {
       return;
     }
 
+    let automaticSuspension;
+    if (getCustomerSuspensionFormValues(form).enabled) {
+      try {
+        automaticSuspension = buildCustomerSuspensionPayload(form);
+      } catch (error) {
+        notifyCustomerSuspensionError(error);
+        return;
+      }
+    }
+
     const selectedCompany =
       getSelectedAddCustomerCompany();
 
@@ -2723,6 +2909,7 @@ function bindAddCustomerForm() {
       preferredLanguage: language?.value.trim() || undefined,
       communicationPreference: communication?.value.trim() || undefined,
       notes: notes?.value.trim() || undefined,
+      ...(automaticSuspension ? { automaticSuspension } : {}),
     };
 
     try {
@@ -3192,6 +3379,10 @@ function populateEditCustomerForm(customer) {
   setValue("#edit-language", customer.preferredLanguage || "");
   setValue("#edit-communication", customer.communicationPreference || "");
   setValue("#edit-notes", customer.notes || "");
+  populateCustomerSuspensionForm(
+    document.querySelector("#edit-customer-form"),
+    customer.automaticSuspension,
+  );
 }
 
 function formatCustomerDetailDate(value) {
@@ -3501,6 +3692,7 @@ function getEditCustomerFormValues(form) {
     preferredLanguage: value("#edit-language"),
     communicationPreference: value("#edit-communication"),
     notes: value("#edit-notes"),
+    automaticSuspension: getCustomerSuspensionFormValues(form),
   };
 }
 
@@ -3549,15 +3741,31 @@ async function handleEditCustomerSubmit(event) {
   const original = form.dataset.originalCustomerValues || "";
   if (editCustomerValuesForComparison(values) === original) return;
 
+  // Never resubmit an unchanged schedule, especially one already completed.
+  const suspensionChanged =
+    JSON.stringify(values.automaticSuspension) !==
+    (form.dataset.originalSuspensionValues || "");
+  let suspensionPayload;
+  if (suspensionChanged) {
+    try {
+      suspensionPayload = buildCustomerSuspensionPayload(form);
+    } catch (error) {
+      notifyCustomerSuspensionError(error);
+      return;
+    }
+  }
+
   form.dataset.saving = "true";
   setEditCustomerSaveState(form, true, true);
   const url = `${getCustomerManagementApiBaseUrl()}/customers/${encodeURIComponent(databaseId)}`;
+  const { automaticSuspension: _formSuspension, ...customerValues } = values;
   const payload = {
-    ...values,
+    ...customerValues,
     memberSince: values.memberSince || undefined,
     preferredLanguage: values.preferredLanguage || undefined,
     communicationPreference: values.communicationPreference || undefined,
     notes: values.notes || undefined,
+    ...(suspensionChanged ? { automaticSuspension: suspensionPayload } : {}),
   };
   console.debug("[Customers] PATCH customer", {
     displayId,
@@ -3573,7 +3781,11 @@ async function handleEditCustomerSubmit(event) {
       body: JSON.stringify(payload),
     });
     if (!response.ok) {
-      const error = new Error("Customer update failed.");
+      const body = await response.json().catch(() => null);
+      const message = Array.isArray(body?.message)
+        ? body.message.join(" ")
+        : body?.message || body?.error;
+      const error = new Error(message || "Customer update failed.");
       error.status = response.status;
       throw error;
     }
@@ -3585,6 +3797,9 @@ async function handleEditCustomerSubmit(event) {
 
     form.dataset.originalCustomerValues =
       editCustomerValuesForComparison(values);
+    form.dataset.originalSuspensionValues = JSON.stringify(
+      values.automaticSuspension,
+    );
     form.dataset.saving = "false";
     setEditCustomerSaveState(form, false, false);
     window.showDashboardAlert?.("Customer updated successfully.", {
@@ -3595,10 +3810,15 @@ async function handleEditCustomerSubmit(event) {
   } catch (error) {
     form.dataset.saving = "false";
     setEditCustomerSaveState(form, true, false);
-    window.showDashboardAlert?.(customerUpdateErrorMessage(error?.status), {
-      title: "Unable to save customer",
-      type: "error",
-    });
+    window.showDashboardAlert?.(
+      error?.status === 400 && error?.message && error.message !== "Customer update failed."
+        ? error.message
+        : customerUpdateErrorMessage(error?.status),
+      {
+        title: "Unable to save customer",
+        type: "error",
+      },
+    );
   }
 }
 
@@ -3631,6 +3851,7 @@ function bindEditCustomerActions() {
 
   const form = page.querySelector("#edit-customer-form");
   if (!form) return;
+  bindCustomerSuspensionControls(form);
 
   if (page.dataset.bound !== "true") {
     page.dataset.bound = "true";
@@ -3662,8 +3883,10 @@ function bindEditCustomerActions() {
     form.addEventListener("submit", handleEditCustomerSubmit);
   }
 
-  form.dataset.originalCustomerValues = editCustomerValuesForComparison(
-    getEditCustomerFormValues(form),
+  const initialValues = getEditCustomerFormValues(form);
+  form.dataset.originalCustomerValues = editCustomerValuesForComparison(initialValues);
+  form.dataset.originalSuspensionValues = JSON.stringify(
+    initialValues.automaticSuspension,
   );
   setEditCustomerSaveState(form, false);
 }

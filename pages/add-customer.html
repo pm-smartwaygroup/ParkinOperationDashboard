@@ -368,6 +368,58 @@
           </label>
         </div>
 
+        <!-- Automatic Account Suspension: separate from the manual customer status. -->
+        <section class="customer-suspension" data-customer-suspension aria-label="Automatic Account Suspension">
+          <div class="customer-suspension-heading">
+            <div class="customer-suspension-title">
+              <span class="customer-suspension-icon" aria-hidden="true"><i class="fa-solid fa-shield-halved"></i></span>
+              <div>
+                <h3>Automatic Account Suspension</h3>
+                <p>Set a suspension deadline without changing the manual account status.</p>
+              </div>
+            </div>
+            <label class="customer-suspension-toggle">
+              <input type="checkbox" data-suspension-field="enabled" />
+              <span>Enable</span>
+            </label>
+          </div>
+          <div class="customer-suspension-body" data-suspension-options hidden>
+            <div class="customer-suspension-grid">
+              <label>
+                <span>Suspension Type</span>
+                <select data-suspension-field="type">
+                  <option value="UNLIMITED">Unlimited</option>
+                  <option value="LIMITED" selected>Limited Time</option>
+                </select>
+              </label>
+              <label>
+                <span>Suspension Starts</span>
+                <select data-suspension-field="startMode">
+                  <option value="immediate">Immediately</option>
+                  <option value="scheduled">Scheduled Date &amp; Time</option>
+                </select>
+              </label>
+              <label data-suspension-start hidden>
+                <span>Start Date &amp; Time <b>*</b></span>
+                <input type="datetime-local" step="60" data-suspension-field="startsAt" />
+              </label>
+              <label data-suspension-end>
+                <span>Automatic Reactivation <b>*</b></span>
+                <input type="datetime-local" step="60" data-suspension-field="endsAt" />
+              </label>
+            </div>
+            <label class="customer-suspension-reason">
+              <span>Suspension Reason <small>(optional)</small></span>
+              <textarea maxlength="500" rows="2" data-suspension-field="reason" placeholder="Why is this account being suspended?"></textarea>
+            </label>
+            <p class="customer-suspension-hint"><i class="fa-regular fa-clock" aria-hidden="true"></i> Times use your device's local time zone and are saved in UTC. Manual Inactive/Blocked status always takes priority.</p>
+          </div>
+          <div class="customer-suspension-status" aria-live="polite">
+            <span>Suspension Preview</span>
+            <output data-suspension-state>Not scheduled</output>
+          </div>
+        </section>
+
         <div class="add-customer-divider"></div>
 
         <label class="welcome-message-option">

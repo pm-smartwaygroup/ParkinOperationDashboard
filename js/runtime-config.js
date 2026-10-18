@@ -13,7 +13,7 @@
     : "https://api.parkin.com.sa";
 
   const userManagementApiBaseUrl = isLocalNetwork
-    ? `${protocol}//${hostname}:3002`
+    ? `${protocol}//${hostname}:3001`
     : "https://api.parkin.com.sa";
 
   window.PARKIN_CONFIG = Object.freeze({
