@@ -464,6 +464,7 @@ async function loadProfileFeatureScripts() {
 }
 
 async function loadUserManagementFeatureScripts() {
+  await loadDashboardScript("/js/user-management-suspension.js");
   await loadDashboardScript("/js/user-management.js");
   await loadDashboardScript("/js/user-management-add.js");
 }

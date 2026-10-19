@@ -71,9 +71,12 @@
             ><b>+966</b
             ><input
               name="phoneNumber"
-              inputmode="tel"
+              inputmode="numeric"
               autocomplete="tel-national"
-              placeholder="50 123 4567" /></span
+              maxlength="9"
+              pattern="5[0-9]{8}"
+              title="Enter exactly 9 digits starting with 5, without a leading zero."
+              placeholder="501234567" /></span
           ><small data-error-for="phoneNumber"></small
         ></label>
         <label class="user-management-add-field"
@@ -140,7 +143,7 @@
         <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
         <div>
           <strong>Account status</strong
-          ><span>Active immediately after successful creation</span>
+          ><span>Manual status: Active after creation. A configured suspension can prevent login.</span>
         </div>
       </div>
       <div
@@ -160,6 +163,8 @@
         ></label>
       </div>
     </section>
+
+    <section class="user-management-add-card user-suspension-section" data-user-suspension></section>
 
     <section class="user-management-add-card user-management-add-credentials-card">
       <div class="user-management-add-card-heading">
@@ -236,8 +241,7 @@
         <div>
           <strong>Login ready</strong>
           <span>
-            The account will be active immediately and the user can sign in
-            with the credentials created here.
+            Credentials will be ready after creation. Access is restricted during any active suspension.
           </span>
         </div>
       </div>

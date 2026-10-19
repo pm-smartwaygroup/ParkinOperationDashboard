@@ -349,13 +349,19 @@ function userManagementAddValidate(container) {
     valid = false;
   }
 
-  const phone = userManagementAddValue(form, "phoneNumber").replace(/\D/g, "");
-  if (phone && !(phone.length === 9 && phone.startsWith("5"))) {
+  const phone = userManagementAddValue(form, "phoneNumber").trim();
+  if (phone && !/^5[0-9]{8}$/.test(phone)) {
     userManagementAddSetError(
       form,
       "phoneNumber",
-      "Enter a Saudi mobile number, such as 50 123 4567.",
+      "Enter exactly 9 digits starting with 5 (no leading zero or letters).",
     );
+    valid = false;
+  }
+  try {
+    window.ParkinUserSuspension.payload(form);
+  } catch (error) {
+    userManagementAddDisplayError(container, error.message);
     valid = false;
   }
   return valid;
@@ -380,13 +386,14 @@ function userManagementAddPayload(container) {
   Object.entries(optional).forEach(([key, value]) => {
     if (value) payload[key] = value;
   });
-  const phone = userManagementAddValue(form, "phoneNumber").replace(/\D/g, "");
+  const phone = userManagementAddValue(form, "phoneNumber").trim();
   if (phone) {
     payload.phoneCountryCode = "+966";
     payload.phoneNumber = phone;
   }
   if (payload.accessScope === "LOCATION")
     payload.locationIds = userManagementAddSelectedLocations(form);
+  payload.automaticSuspension = window.ParkinUserSuspension.payload(form);
   return payload;
 }
 
@@ -449,7 +456,7 @@ async function userManagementAddSubmit(container) {
     userManagementAddState.dirty = false;
 
     window.showDashboardAlert?.(
-      "User created successfully. The account is active and ready to sign in.",
+      "User created successfully. Account suspension settings saved.",
       {
         title: "User created",
         type: "success",
@@ -512,6 +519,7 @@ function userManagementAddReset(container) {
   userManagementAddUpdateLocationVisibility(container);
   userManagementAddUpdatePreview(container);
   userManagementAddUpdatePasswordRules(container);
+  window.ParkinUserSuspension.mount(form);
 }
 
 async function userManagementAddLoadOptions(container) {
@@ -555,7 +563,15 @@ function bindUserManagementAddPage(container) {
   const form = container.querySelector("[data-user-add-form]");
   if (!form || form.dataset.eventsBound === "true") return;
   form.dataset.eventsBound = "true";
+  window.ParkinUserSuspension.mount(form);
+  if (!window.hasDashboardPermission?.("users.disable")) {
+    const toggle = form.querySelector('[data-user-suspension-field="enabled"]');
+    if (toggle) toggle.disabled = true;
+  }
   form.addEventListener("input", (event) => {
+    if (event.target?.name === "phoneNumber") {
+      event.target.value = event.target.value.replace(/[^0-9]/g, "").slice(0, 9);
+    }
     userManagementAddState.dirty = true;
     userManagementAddClearFeedback(container);
 

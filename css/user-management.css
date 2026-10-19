@@ -1573,6 +1573,7 @@
 .user-management-edit-dialog {
   width: min(720px, calc(100vw - 32px));
   max-width: 720px;
+  height: min(780px, calc(100dvh - 40px));
   max-height: calc(100dvh - 40px);
   margin: auto;
   padding: 0;
@@ -1598,10 +1599,21 @@
   flex-direction: column;
 
   width: 100%;
+  height: 100%;
   max-height: calc(100dvh - 40px);
+  min-height: 0;
   overflow: hidden;
 }
 
+/* Profile, access scope and suspension must scroll as one unit. */
+.user-management-edit-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
 
 /* Header */
 
@@ -1724,7 +1736,8 @@
 
   padding: 20px 24px 22px;
 
-  overflow-y: auto;
+  /* Scrolling belongs to .user-management-edit-scroll, not this grid. */
+  overflow: visible;
 }
 
 .user-management-edit-grid label {
@@ -2285,6 +2298,7 @@ small {
 @media (max-width: 700px) {
   .user-management-edit-dialog {
     width: calc(100vw - 20px);
+    height: min(780px, calc(100dvh - 20px));
     max-height: calc(100dvh - 20px);
   }
 
@@ -2357,3 +2371,75 @@ small {
 
 /* === USER MANAGEMENT EDIT DIALOG END === */
 
+
+
+/* Automatic account suspension, shared between Add User and Edit User. */
+.user-suspension-section {
+  padding: 22px 24px;
+  border: 1px solid #cfe3d7;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #f5fbf8, #fff);
+  color: #1b3e30;
+}
+.user-suspension-head, .user-suspension-preview {
+  display: flex; justify-content: space-between; align-items: center; gap: 20px;
+}
+.user-suspension-head h3 { margin: 0 0 7px; font-size: 1rem; font-weight: 750; }
+.user-suspension-head h3 i { color: #0a8651; margin-right: 7px; }
+.user-suspension-head p, .user-suspension-help { color: #64796d; font-size: 0.77rem; margin: 0; }
+.user-suspension-toggle { display: inline-flex; align-items: center; gap: 9px; white-space: nowrap; font-weight: 750; }
+.user-suspension-toggle input { width: 18px; height: 18px; accent-color: #09864c; }
+.user-suspension-options { margin-top: 21px; }
+.user-suspension-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 15px; }
+.user-suspension-grid label, .user-suspension-reason { display: flex; flex-direction: column; gap: 8px; font-size: .78rem; font-weight: 700; }
+.user-suspension-grid input, .user-suspension-grid select, .user-suspension-reason textarea {
+  box-sizing: border-box; width: 100%; border: 1px solid #d1dfe6; border-radius: 9px;
+  background: #fff; color: #142b25; padding: 11px 12px; font: inherit; min-height: 43px;
+}
+.user-suspension-reason { margin-top: 16px; }
+.user-suspension-reason textarea { resize: vertical; }
+.user-suspension-help { margin-top: 12px; line-height: 1.5; }
+.user-suspension-preview { margin-top: 19px; padding-top: 14px; border-top: 1px solid #dce8e1; font-size: .82rem; font-weight: 750; }
+.user-suspension-state { border-radius: 999px; padding: 6px 12px; background: #e7ebf0; color: #465468; }
+.user-suspension-state[data-user-suspension-state="SUSPENDED"] { background: #fff0d9; color: #a65d05; }
+.user-suspension-state[data-user-suspension-state="SCHEDULED"] { background: #e8f1ff; color: #235cab; }
+.user-suspension-state[data-user-suspension-state="INCOMPLETE"] { background: #ffeded; color: #aa3030; }
+.user-suspension-state[data-user-suspension-state="INVALID_START"],
+.user-suspension-state[data-user-suspension-state="INVALID_END"] { background: #ffeded; color: #aa3030; }
+.user-management-badge.suspended { color: #a65d05; background: #fff0d9; }
+.user-management-badge.scheduled { color: #235cab; background: #e8f1ff; }
+.user-suspension-edit-section { margin: 0 24px 22px; }
+@media (max-width: 700px) { .user-suspension-edit-section { margin-inline: 18px; } }
+@media(max-width:680px) { .user-suspension-grid { grid-template-columns:1fr; } .user-suspension-head { align-items: flex-start; flex-direction:column; } }
+
+.user-suspension-section [hidden] { display: none !important; }
+
+/* Layout refinements: same suspension field rhythm in Add and Edit User. */
+.user-suspension-head { align-items: flex-start; }
+.user-suspension-head > div { flex: 1 1 auto; min-width: 0; }
+.user-suspension-head h3 { line-height: 1.35; }
+.user-suspension-head p { line-height: 1.5; }
+.user-suspension-toggle { flex: 0 0 auto; min-height: 24px; cursor: pointer; }
+.user-suspension-options { margin-top: 18px; }
+.user-suspension-grid { gap: 16px 18px; align-items: start; }
+.user-suspension-grid label { min-width: 0; gap: 8px; line-height: 1.4; }
+.user-suspension-grid label > span { display: inline; }
+.user-suspension-required { color: #c62d30; font-weight: 800; }
+.user-suspension-grid input,
+.user-suspension-grid select { min-width: 0; height: 44px; }
+.user-suspension-grid input[type="datetime-local"] { color-scheme: light; }
+.user-suspension-grid :is(input,select):focus-visible,
+.user-suspension-reason textarea:focus-visible {
+  outline: none; border-color: #0a9b55;
+  box-shadow: 0 0 0 3px rgb(10 155 85 / 13%);
+}
+.user-suspension-reason { gap: 9px; }
+.user-suspension-reason textarea { min-height: 75px; line-height: 1.5; }
+.user-suspension-preview { min-height: 36px; }
+.user-suspension-state { display: inline-flex; align-items: center; justify-content: center; text-align: center; white-space: nowrap; }
+@media(max-width:680px) {
+  .user-suspension-section { padding: 18px; }
+  .user-suspension-head { gap: 13px; }
+  .user-suspension-toggle { align-self: flex-start; }
+  .user-suspension-preview { gap: 10px; }
+}

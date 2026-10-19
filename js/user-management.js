@@ -56,6 +56,8 @@ function userLifecycleLabel(status) {
     ACTIVE: "Active",
     DISABLED: "Disabled",
     SETUP_PENDING: "Setup Pending",
+    SCHEDULED: "Scheduled",
+    SUSPENDED: "Suspended",
   }[status] || "Disabled";
 }
 
@@ -141,7 +143,21 @@ function userManagementEscapedMessage(error) {
 async function parseUserManagementResponse(response) {
   const body = await response.json().catch(() => null);
   if (!response.ok) {
-    const error = new Error("User request failed");
+    const message = Array.isArray(body?.message)
+      ? body.message.filter((item) => typeof item === "string").join(" ")
+      : typeof body?.message === "string"
+        ? body.message
+        : "";
+    const fallback = {
+      400: "The user details could not be saved. Please check the form.",
+      401: "Your session has expired. Please sign in again.",
+      403: "You do not have permission for this user operation.",
+      404: "The requested record was not found.",
+      409: "This user update conflicts with existing data.",
+    }[response.status] || "The user request could not be completed.";
+    const error = new Error(
+      response.status < 500 && message ? message : fallback,
+    );
     error.status = response.status;
     throw error;
   }
@@ -232,7 +248,7 @@ function renderUserManagementRows(container, users) {
     const status = document.createElement("td");
     status.dataset.label = "Status";
     const badge = document.createElement("span");
-    const lifecycle = getUserLifecycleStatus(user);
+    const lifecycle = window.ParkinUserSuspension.state(user) || getUserLifecycleStatus(user);
     badge.className = `user-management-badge ${lifecycle.toLowerCase().replaceAll("_", "-")}`;
     badge.textContent = userLifecycleLabel(lifecycle);
     status.append(badge);
@@ -484,6 +500,14 @@ function renderUserManagementDetails(body, user) {
     ],
     ["Department", user?.profile?.department || "—"],
     ["Region", user?.profile?.region || "—"],
+    ["Automatic suspension", user?.suspension?.enabled
+      ? ({ SCHEDULED:"Scheduled", SUSPENDED:"Suspended", COMPLETED:"Completed" }[user.suspension.state] || "Configured")
+      : "Not scheduled"],
+    ...(user?.suspension?.enabled ? [
+      ["Suspension starts", user.suspension.startsAt ? new Date(user.suspension.startsAt).toLocaleString() : "—"],
+      ["Automatic reactivation", user.suspension.endsAt ? new Date(user.suspension.endsAt).toLocaleString() : "Manual only"],
+      ["Suspension reason", user.suspension.reason || "—"],
+    ] : []),
   ];
   const preferences = [
     ["Preferred language", user?.profile?.preferredLanguage || "—"],
@@ -502,11 +526,18 @@ function renderUserManagementDetails(body, user) {
     }),
   );
   const lifecycle = getUserLifecycleStatus(user);
+  const suspensionState = window.ParkinUserSuspension.state(user);
   const statusDetail = [...sections[0].querySelectorAll("dd")].find(
     (detail) => detail.previousElementSibling?.textContent === "Status",
   );
   if (statusDetail) {
-    statusDetail.textContent = userLifecycleLabel(lifecycle);
+    statusDetail.textContent = userLifecycleLabel(suspensionState || lifecycle);
+    if (user?.suspension?.enabled && user?.suspension?.endsAt) {
+      const date = document.createElement("small");
+      date.className = "user-management-lifecycle-helper";
+      date.textContent = ` Automatic reactivation: ${new Date(user.suspension.endsAt).toLocaleString()}`;
+      statusDetail.append(date);
+    }
     statusDetail.classList.add(`user-management-lifecycle-${lifecycle.toLowerCase().replaceAll("_", "-")}`);
     if (lifecycle === "SETUP_PENDING") {
       const helper = document.createElement("small");
@@ -624,6 +655,24 @@ function getUserManagementCoreApiBaseUrl() {
   return getUserManagementApiBaseUrl();
 }
 
+/**
+ * Validate enabled suspension dates on every Edit User save attempt.
+ * The clock can invalidate a schedule without an input/change event, so
+ * dataset.dirty must control persistence, never validation.
+ */
+function userManagementValidatedEditSuspension(form) {
+  const section = form.querySelector("[data-user-suspension]");
+  if (!section || window.hasDashboardPermission?.("users.disable") !== true) {
+    return undefined;
+  }
+
+  // Refresh the preview against the clock at the moment Save is clicked.
+  window.ParkinUserSuspension.update(section);
+  // Throws when a scheduled start or reactivation time has already passed.
+  const settings = window.ParkinUserSuspension.payload(form);
+  return section.dataset.dirty === "true" ? settings : undefined;
+}
+
 async function openEditUserModal(container, user) {
   if (!user?.id) return;
 
@@ -648,6 +697,7 @@ async function openEditUserModal(container, user) {
 
       <div class="user-management-edit-error hidden" data-user-edit-error></div>
 
+      <div class="user-management-edit-scroll">
       <div class="user-management-edit-grid">
         <label>
           <span>Full Name *</span>
@@ -689,7 +739,7 @@ async function openEditUserModal(container, user) {
           <span>Phone</span>
           <div class="user-management-edit-phone">
             <span>+966</span>
-            <input name="phoneNumber" inputmode="numeric" placeholder="50 123 4567" />
+            <input name="phoneNumber" inputmode="numeric" maxlength="9" pattern="5[0-9]{8}" title="Enter exactly 9 digits starting with 5, without a leading zero." placeholder="501234567" />
           </div>
         </label>
 
@@ -716,6 +766,9 @@ async function openEditUserModal(container, user) {
         </div>
       </fieldset>
 
+      <section class="user-suspension-section user-suspension-edit-section" data-user-suspension></section>
+      </div>
+
       <div class="user-management-edit-actions">
         <button type="button" class="user-management-button secondary" data-user-edit-cancel>
           Cancel
@@ -740,9 +793,18 @@ async function openEditUserModal(container, user) {
   field("role").value = user.role || "";
   field("accessScope").value = user.accessScope || "COMPANY";
   field("phoneNumber").value = user.profile?.phoneNumber || "";
+  field("phoneNumber").addEventListener("input", (event) => {
+    const input = event.target;
+    input.value = input.value.replace(/[^0-9]/g, "").slice(0, 9);
+  });
   field("employeeId").value = user.profile?.employeeId || "";
   field("department").value = user.profile?.department || "";
   field("region").value = user.profile?.region || "";
+  window.ParkinUserSuspension.mount(form, user.suspension);
+  if (!window.hasDashboardPermission?.("users.disable")) {
+    const toggle = form.querySelector('[data-user-suspension-field="enabled"]');
+    if (toggle) toggle.disabled = true;
+  }
 
   const selectedLocationIds = new Set(
     Array.isArray(user.locationIds)
@@ -901,7 +963,7 @@ async function openEditUserModal(container, user) {
     const role = field("role").value;
     const companyId = field("companyId").value;
     const accessScope = field("accessScope").value;
-    const phoneNumber = field("phoneNumber").value.replace(/\D/g, "");
+    const phoneNumber = field("phoneNumber").value.trim();
 
     if (!name) {
       errorBox.textContent = "Full name is required.";
@@ -915,9 +977,9 @@ async function openEditUserModal(container, user) {
       return;
     }
 
-    if (phoneNumber && !(phoneNumber.length === 9 && phoneNumber.startsWith("5"))) {
+    if (phoneNumber && !/^5[0-9]{8}$/.test(phoneNumber)) {
       errorBox.textContent =
-        "Enter a Saudi mobile number such as 50 123 4567.";
+        "Enter exactly 9 digits starting with 5 (no leading zero or letters).";
       errorBox.classList.remove("hidden");
       return;
     }
@@ -935,15 +997,29 @@ async function openEditUserModal(container, user) {
       return;
     }
 
+    let automaticSuspension;
+    try {
+      // An unchanged schedule can expire while the Edit User dialog is open.
+      // Reject invalid dates BEFORE sending any PATCH request.
+      automaticSuspension = userManagementValidatedEditSuspension(form);
+    } catch (error) {
+      errorBox.textContent = error?.message || "Invalid suspension dates.";
+      errorBox.classList.remove("hidden");
+      errorBox.scrollIntoView({ block: "nearest" });
+      return;
+    }
+
     const payload = {
+      ...(automaticSuspension !== undefined ? { automaticSuspension } : {}),
       name,
       role,
       companyId,
       accessScope,
       locationIds: accessScope === "LOCATION" ? locationIds : [],
       employeeId: field("employeeId").value.trim(),
-      phoneCountryCode: phoneNumber ? "+966" : "",
-      phoneNumber,
+      // Empty phone inputs are optional. Do not send invalid empty phone fields;
+      // preserve any previously stored number when the input is blank.
+      ...(phoneNumber ? { phoneCountryCode: "+966", phoneNumber } : {}),
       department: field("department").value.trim(),
       region: field("region").value.trim(),
     };
