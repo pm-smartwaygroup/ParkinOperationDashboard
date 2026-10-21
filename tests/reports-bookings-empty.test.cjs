@@ -43,8 +43,8 @@ test('zero matches with existing authorized bookings offers View All',()=>{
   assert.equal(ui.element('[data-empty-clear-filters]').hidden,false);
   assert.match(ui.element('[data-empty-description]').textContent,/filters or search/);
   ui.clear();
-  assert.equal(ui.getFiltered().from,'2026-10-07');
-  assert.equal(ui.getFiltered().to,'2026-10-08');
+  assert.equal(ui.getFiltered().from,'2026-10-07T00:00');
+  assert.equal(ui.getFiltered().to,'2026-10-08T23:59');
   assert.equal(ui.state.search,'');
 });
 

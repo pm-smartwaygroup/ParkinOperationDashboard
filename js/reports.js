@@ -45,8 +45,17 @@
     {key:'vehicle',label:'Vehicle'}, {key:'type',label:'Vehicle Parking Type'}, {key:'location',label:'Location / Zone'},
     {key:'driver',label:'Driver'}, {key:'amount',label:'Amount'}, {key:'status',label:'Status'}, {key:'source',label:'Source'},
   ];
+  const SCREEN_BOOKING_COLUMNS = [
+    {key:'id',label:'Booking ID'}, {key:'date',label:'Date & Time'},
+    {key:'shiftTime',label:'Shift / Time Stamp'}, {key:'customer',label:'Customer'},
+    {key:'vehicle',label:'Vehicle'}, {key:'type',label:'Booking Type'},
+    {key:'location',label:'Location / Zone'}, {key:'driver',label:'Driver'},
+    {key:'amount',label:'Amount (SAR)'}, {key:'paymentMethod',label:'Payment Method'},
+    {key:'paymentStatus',label:'Payment Status'}, {key:'source',label:'Source'},
+    {key:'status',label:'Booking Status'},
+  ];
   const COLUMN_MAP = {
-    bookings:PRINT_COLUMNS,
+    bookings:SCREEN_BOOKING_COLUMNS,
     revenue:[{key:'paymentId',label:'Payment ID'},{key:'id',label:'Booking ID'},{key:'date',label:'Date'},{key:'customer',label:'Customer'},{key:'company',label:'Company'},{key:'method',label:'Method'},{key:'amount',label:'Amount'},{key:'paymentStatus',label:'Payment Status'}],
     locations:[{key:'location',label:'Location'},{key:'company',label:'Company'},{key:'bookings',label:'Bookings'},{key:'completed',label:'Completed'},{key:'cancelled',label:'Cancelled'},{key:'amount',label:'Revenue'}],
     drivers:[{key:'driver',label:'Driver'},{key:'company',label:'Company'},{key:'location',label:'Primary Location'},{key:'bookings',label:'Bookings'},{key:'completed',label:'Completed'},{key:'amount',label:'Revenue Generated'}],
@@ -63,7 +72,14 @@
   const localDate = iso => { const [y,m,d]=String(iso).split('-').map(Number); return new Date(y,m-1,d); };
   const shortDate = iso => localDate(iso).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
   const today = () => new Date();
-  const defaultFilters = () => {const end=today();const start=new Date(end.getFullYear(),end.getMonth(),1);return {from:dateId(start),to:dateId(end),type:'',company:'',location:'',source:'',status:''};};
+  const defaultFilters = () => {
+    // Filter values are Saudi-local wall-clock times, matching the adapter's AST values.
+    const parts = Object.fromEntries(new Intl.DateTimeFormat('en-GB', {
+      timeZone:'Asia/Riyadh',year:'numeric',month:'2-digit',day:'2-digit',hourCycle:'h23',hour:'2-digit',minute:'2-digit'
+    }).formatToParts(new Date()).filter(p=>p.type!=='literal').map(p=>[p.type,p.value]));
+    const day = `${parts.year}-${parts.month}-${parts.day}`;
+    return {from:`${parts.year}-${parts.month}-01T00:00`,to:`${day}T23:59`,type:'',company:'',location:'',source:'',status:'',paymentMethod:'',groupBy:'daily'};
+  };
   const state = {type:'bookings',filters:defaultFilters(),applied:defaultFilters(),search:'',sortKey:'date',sortDirection:-1,page:1,pageSize:8,selected:new Set(),hiddenColumns:new Set(),viewRecords:[],filteredBookings:[],root:null,firstModalFocus:null,liveRows:[],liveStatus:'idle',liveError:'',liveController:null,liveRequest:0,companyNames:new Map(),locationNames:new Map()};
   const qs = selector => state.root?.querySelector(selector);
   const qsa = selector => [...(state.root?.querySelectorAll(selector) || [])];
@@ -73,10 +89,18 @@
   function getReportRows(filtered) {
     return state.type === 'bookings' ? filtered.map(row=>({...row})) : [];
   }
+  // Accept date-only legacy saved presets: start at 00:00, end at 23:59 AST.
+  const filterClock = (value,end=false) => /^\d{4}-\d{2}-\d{2}$/.test(value||'')
+    ? `${value}T${end?'23:59':'00:00'}` : String(value||'');
+  const bookingClock = row => `${row.date}T${/^\d{2}:\d{2}$/.test(row.time||'')?row.time:'00:00'}`;
   function filteredBookings() {
     if (state.type !== 'bookings') return [];
     const f=state.applied;
-    return state.liveRows.filter(row=>row.date>=f.from&&row.date<=f.to&&(!f.company||row.companyId===f.company)&&(!f.location||row.locationId===f.location)&&(!f.source||row.source===f.source)&&(!f.status||row.status===f.status)&&(!f.type||row.type===f.type));
+    const from=filterClock(f.from),to=filterClock(f.to,true);
+    return state.liveRows.filter(row=>bookingClock(row)>=from&&bookingClock(row)<=to
+      &&(!f.company||row.companyId===f.company)&&(!f.location||row.locationId===f.location)
+      &&(!f.source||row.source===f.source)&&(!f.status||row.status===f.status)
+      &&(!f.type||row.type===f.type)&&(!f.paymentMethod||row.paymentMethod===f.paymentMethod));
   }
   function summary(rows, bookings) {
     const completed=bookings.filter(b=>b.status==='Completed'),cancelled=bookings.filter(b=>b.status==='Cancelled'),upcoming=bookings.filter(b=>state.type==='bookings'?b.statusGroup==='Open':b.status==='Upcoming');
@@ -102,8 +126,9 @@
     }
     const defaults=defaultFilters();
     const f=state.filters;
-    qs('[data-filter="from"]').value=f.from||defaults.from;
-    qs('[data-filter="to"]').value=f.to||defaults.to;
+    qs('[data-filter="from"]').value=filterClock(f.from||defaults.from);
+    qs('[data-filter="to"]').value=filterClock(f.to||defaults.to,true);
+    qs('[data-filter="groupBy"]').value=['daily','weekly','monthly'].includes(f.groupBy)?f.groupBy:'daily';
     const live=state.type==='bookings';
     const parkingTypes=live?[...new Set(state.liveRows.map(row=>row.type).filter(type=>type&&type!=='Not recorded'))]:[];
     qs('[data-filter="type"]').disabled=live&&!parkingTypes.length;
@@ -125,6 +150,9 @@
       qs('[data-filter="company"]').innerHTML='<option value="">All companies</option>'+companyOptions;
       qs('[data-filter="location"]').innerHTML='<option value="">All locations</option>'+[...locations].sort(sortByLabel)
         .map(([id,name])=>`<option value="${html(id)}" ${f.location===id?'selected':''}>${html(name)}</option>`).join('');
+      const methods=[...new Set(state.liveRows.map(row=>row.paymentMethod).filter(v=>v&&v!=='Not recorded'))];
+      qs('[data-filter="paymentMethod"]').disabled=!methods.length;
+      qs('[data-filter="paymentMethod"]').innerHTML=optionList(methods,methods.length?'All recorded methods':'No recorded methods',f.paymentMethod);
       qs('[data-filter="source"]').innerHTML=optionList(
         [...new Set([...SOURCES,...state.liveRows.map(row=>row.source)])], 'All sources',f.source);
       qs('[data-filter="status"]').innerHTML=optionList(
@@ -144,15 +172,18 @@
     qs('[data-export-toggle]').disabled=state.liveStatus!=='ready';
   }
   function readFilters() {
-    return Object.fromEntries(['from','to','type','company','location','source','status'].map(k=>[k,qs(`[data-filter="${k}"]`).value]));
+    return Object.fromEntries(['from','to','type','company','location','source','status','paymentMethod','groupBy'].map(k=>[k,qs(`[data-filter="${k}"]`).value]));
   }
   function showFeedback(message,success=false) {
     const item=qs('[data-feedback]'); if(!item)return;
     item.textContent=message||'';item.style.color=success?'#077945':'#b91c1c';
   }
   function applyFilters(next) {
-    if(!next.from||!next.to||next.from>next.to) {showFeedback('Choose a valid date range: From must be on or before To.');return false;}
-    state.filters={...next};state.applied={...state.filters};state.page=1;state.selected.clear();showFeedback('');renderAll();return true;
+    const from=filterClock(next.from),to=filterClock(next.to,true);
+    if(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(from)||!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(to)||next.from>next.to||from>to){
+      showFeedback('Choose a valid date range: From must be on or before To, including time (AST).');return false;
+    }
+    state.filters={...next,from,to};state.applied={...state.filters};state.page=1;state.selected.clear();showFeedback('');renderAll();return true;
   }
   function displayRows() {
     const filtered=filteredBookings();state.filteredBookings=filtered;
@@ -161,7 +192,7 @@
     const cols=COLUMN_MAP[state.type];
     const searched=term?raw.filter(row=>cols.some(col=>String(row[col.key]??'').toLowerCase().includes(term))):raw;
     return searched.sort((a,b)=>{
-      const key=state.sortKey;const x=a[key]??'',y=b[key]??'';
+      const key=state.sortKey;const x=key==='date'?bookingClock(a):a[key]??'',y=key==='date'?bookingClock(b):b[key]??'';
       const comparison=typeof x==='number'&&typeof y==='number'?x-y:String(x).localeCompare(String(y),undefined,{numeric:true});
       return state.sortDirection*comparison;
     });
@@ -177,11 +208,21 @@
     if(state.type==='bookings'&&state.liveStatus!=='ready'){qs('[data-trend-chart]').textContent=state.liveStatus==='error'?'Booking charts unavailable.':'Loading…';qs('[data-trend-total]').textContent='';qs('[data-donut-total]').textContent='—';qs('[data-breakdown-key]').textContent='';qs('[data-top-locations]').textContent='';return;}
     const live=state.type==='bookings';
     const series=chartItems(filtered,rows);
+    const grouping=state.applied.groupBy||'daily';
+    const timeBucket=date=>{
+      if(grouping==='monthly')return `${date.slice(0,7)}-01`;
+      if(grouping==='weekly'){
+        const d=new Date(`${date}T00:00:00Z`);
+        const day=(d.getUTCDay()+6)%7;d.setUTCDate(d.getUTCDate()-day);
+        return d.toISOString().slice(0,10);
+      }
+      return date;
+    };
     const dayCounts=new Map();
-    for(const item of series){const day=dayCounts.get(item.date)||{ok:0,up:0,no:0,expired:0};const status=live?item.statusGroup:(item.status||'');if(['Completed','Active'].includes(status))day.ok++;else if(['Open','Upcoming','Pending'].includes(status))day.up++;else if(status==='Expired')day.expired++;else day.no++;dayCounts.set(item.date,day);}
+    for(const item of series){const bucket=timeBucket(item.date);const day=dayCounts.get(bucket)||{ok:0,up:0,no:0,expired:0};const status=live?item.statusGroup:(item.status||'');if(['Completed','Active'].includes(status))day.ok++;else if(['Open','Upcoming','Pending'].includes(status))day.up++;else if(status==='Expired')day.expired++;else day.no++;dayCounts.set(bucket,day);}
     const ordered=[...dayCounts.entries()].sort((a,b)=>a[0].localeCompare(b[0]));
     const days=ordered.slice(-16);const max=Math.max(1,...days.map(([,counts])=>counts.ok+counts.up+counts.no+counts.expired));
-    qs('[data-trend-total]').textContent=`${series.length} records`;
+    qs('[data-trend-total]').textContent=`${series.length} records · ${grouping}`;
     qs('[data-trend-chart]').innerHTML=days.length?days.map(([date,count],i)=>{
       const total=count.ok+count.up+count.no+count.expired;const height=total?Math.max(3,total/max*100):0;
       return `<div class="pr-chart-col" title="${html(shortDate(date))}: ${total} records"><div class="pr-stack" style="height:${height}%"><span style="height:${count.ok/total*100}%;background:${COLORS[0]}"></span><span style="height:${count.up/total*100}%;background:${COLORS[1]}"></span><span style="height:${count.no/total*100}%;background:${COLORS[4]}"></span>${live?`<span style="height:${count.expired/total*100}%;background:${COLORS[3]}"></span>`:''}</div><span class="pr-chart-x">${i===0||i===days.length-1||i%3===0?html(shortDate(date).slice(0,6)):''}</span></div>`;
@@ -211,7 +252,12 @@
     qs('[data-top-locations]').innerHTML=locations.length?locations.map(([name,count],i)=>`<div class="pr-rank-row" title="${html(name)}: ${count}"><span class="pr-rank-number">${i+1}</span><span class="pr-rank-name">${html(name)}</span><span class="pr-rank-track"><span class="pr-rank-fill" style="display:block;width:${Math.max(2,count/largest*100)}%"></span></span><span class="pr-rank-value">${count}</span></div>`).join(''):'<p class="pr-empty">No matching locations.</p>';
   }
   function isStatus(key) {return key==='status'||key==='paymentStatus';}
-  function cellValue(row,key){return key==='amount'?(row[key]===null||row[key]===undefined?'—':formatCurrency(row[key])):row[key]??'—';}
+  function cellValue(row,key){
+    if(key==='amount')return row[key]===null||row[key]===undefined?'—':formatCurrency(row[key]);
+    if(key==='shiftTime')return row.time?`${row.time} AST`:'Not recorded';
+    if(key==='paymentStatus')return 'Not available'; // No settlement/verification status in Booking API.
+    return row[key]??'—';
+  }
   // An empty *authorized, successfully fetched* booking report is not an API error.
   // Keep loading / access failures visible, and never show this illustration for pending tabs.
   function updateBookingEmptyState(rows) {
@@ -240,12 +286,37 @@
   function viewAllAuthorizedBookings() {
     if (state.type !== 'bookings' || state.liveStatus !== 'ready' || !state.liveRows.length) return;
     const dates = state.liveRows.map(row => row.date).filter(value => /^\d{4}-\d{2}-\d{2}$/.test(value)).sort();
-    const next = {...defaultFilters(), from: dates[0] || defaultFilters().from, to: dates[dates.length - 1] || defaultFilters().to};
+    const next = {...defaultFilters(), from: dates[0]?`${dates[0]}T00:00`:defaultFilters().from, to: dates.length?`${dates[dates.length - 1]}T23:59`:defaultFilters().to};
     state.search = '';
     qs('[data-search]').value = '';
     state.filters = next;
     populateFilters();
     if (applyFilters(next)) showFeedback('Showing all booking records available to your account.', true);
+  }
+  function bookingTableCell(row,col) {
+    const key=col.key,value=cellValue(row,key);
+    if(key==='shiftTime')return `<span class="pr-time-pill" title="Shift assignments are not available in the booking API"><span>Shift not recorded</span><strong>${html(value)}</strong></span>`;
+    if(key==='paymentStatus')return '<span class="pr-unrecorded" title="Payment verification is not returned by the Bookings API">Not available</span>';
+    if(key==='type'||key==='source'){
+      const color=key==='type'?(row.type==='Valet Parking'?'pr-chip-green':'pr-chip-blue')
+        :(row.source==='Valet Driver App'?'pr-chip-purple':'pr-chip-blue');
+      return `<span class="pr-value-chip ${color}">${html(value)}</span>`;
+    }
+    if(key==='status')return `<span class="pr-status pr-status--${String(value).toLowerCase().replace(/[^a-z]/g,'')}"><span class="pr-status-dot" aria-hidden="true"></span>${html(value)}</span>`;
+    if(key==='paymentMethod')return row.paymentMethod&&row.paymentMethod!=='Not recorded'
+      ?`<span class="pr-payment-method"><i class="fa-regular fa-credit-card" aria-hidden="true"></i> ${html(value)}</span>`
+      :'<span class="pr-unrecorded">Not recorded</span>';
+    const main=html(value);
+    const secondary=key==='customer'?row.phone:key==='vehicle'?row.plate:key==='date'&&row.time?`${row.time} AST`:null;
+    return `${main}${secondary?`<small>${html(secondary)}</small>`:''}`;
+  }
+  function renderPageNumbers(maxPage){
+    const first=Math.max(1,Math.min(state.page-2,maxPage-4));
+    const last=Math.min(maxPage,first+4);
+    const buttons=[];
+    for(let i=first;i<=last;i++)buttons.push(`<button type="button" class="pr-page-button${i===state.page?' is-current':''}" data-go-page="${i}" ${i===state.page?'aria-current="page"':''} aria-label="Go to page ${i}">${i}</button>`);
+    qs('[data-page-numbers]').innerHTML=buttons.join('');
+    qs('[data-page-size]').value=String(state.pageSize);
   }
   function renderTable(rows) {
     updateBookingEmptyState(rows);
@@ -257,14 +328,13 @@
     qs('[data-table-body]').innerHTML=pageRows.length?pageRows.map((row,i)=>{
       const id=recordId(row);
       return `<tr><td><input class="pr-checkbox" type="checkbox" data-select-record="${html(id)}" aria-label="Select ${html(id)}" ${state.selected.has(id)?'checked':''}></td>${cols.map(col=>{
-        const text=cellValue(row,col.key);const statusClass=isStatus(col.key)?`pr-status pr-status--${String(text).toLowerCase().replace(/[^a-z]/g,'')}`:'';
-        const content=isStatus(col.key)?`<span class="${statusClass}">${html(text)}</span>`:html(text);
-        return `<td>${content}${col.key==='customer'&&row.phone?`<small>${html(row.phone)}</small>`:col.key==='vehicle'&&row.plate?`<small>${html(row.plate)}</small>`:col.key==='date'&&row.time&&state.type==='bookings'?`<small>${html(row.time)} AST</small>`:''}</td>`;
+        return `<td>${bookingTableCell(row,col)}</td>`;
       }).join('')}<td><button class="pr-row-action" type="button" data-show-record="${html(id)}"><i class="fa-regular fa-eye" aria-hidden="true"></i> View</button></td></tr>`;
     }).join(''):`<tr><td class="pr-no-results" colspan="${cols.length+2}">No records match the current filters. Try clearing search or adjusting the date range.</td></tr>`;
     const end=Math.min(start+state.pageSize,rows.length);const maxPage=Math.max(1,Math.ceil(rows.length/state.pageSize));
     qs('[data-table-info]').textContent=`Showing ${rows.length?start+1:0}–${end} of ${rows.length} actual records${state.selected.size?` · ${state.selected.size} selected`:''}`;
-    qs('[data-page-info]').textContent=`Page ${state.page} of ${maxPage}`;
+    qs('[data-page-info]').textContent=`of ${maxPage} pages`;
+    renderPageNumbers(maxPage);
     qs('[data-page-prev]').disabled=state.page<=1;
     qs('[data-page-next]').disabled=state.page>=maxPage;
     const selectPage=qs('[data-select-page]');selectPage.checked=pageRows.length>0&&pageRows.every(row=>state.selected.has(recordId(row)));
@@ -299,7 +369,7 @@
     // Never allow access to an undisplayed report via a synthetic click or stale tab.
     if(!canOpenCategory(id)||state.type===id)return;
     if(state.type==='bookings'){state.liveController?.abort();state.liveRequest++;if(state.liveStatus==='loading')state.liveStatus='idle';}
-    state.type=id;state.filters.type='';state.filters.status='';state.filters.source='';state.filters.company='';state.filters.location='';state.applied={...state.filters};state.sortKey=id==='users'?'date':id==='bookings'||id==='revenue'?'date':'bookings';state.sortDirection=-1;state.selected.clear();state.hiddenColumns.clear();state.search='';state.page=1;
+    state.type=id;state.filters.type='';state.filters.status='';state.filters.source='';state.filters.company='';state.filters.location='';state.filters.paymentMethod='';state.applied={...state.filters};state.sortKey=id==='users'?'date':id==='bookings'||id==='revenue'?'date':'bookings';state.sortDirection=-1;state.selected.clear();state.hiddenColumns.clear();state.search='';state.page=1;
     qs('[data-search]').value='';populateFilters();renderAll();closeMenus();
     if(id==='bookings')loadLiveBookings();
   }
@@ -357,9 +427,13 @@
     const isBookings = state.type === 'bookings';
     const title = isBookings ? 'Booking Records' : category().name;
     // Show a clear Saudi-local date range without changing any underlying filters.
-    const formatPrintDate = value => /^\d{4}-\d{2}-\d{2}$/.test(value || '')
-      ? new Intl.DateTimeFormat('en-GB', {day:'2-digit',month:'short',year:'numeric',timeZone:'UTC'})
-        .format(new Date(`${value}T12:00:00Z`)) : (value || 'Not specified');
+    const formatPrintDate = value => {
+      const match=String(value||'').match(/^(\d{4}-\d{2}-\d{2})(?:T(\d{2}:\d{2}))?$/);
+      if(!match)return value||'Not specified';
+      const day=new Intl.DateTimeFormat('en-GB',{day:'2-digit',month:'short',year:'numeric',timeZone:'UTC'})
+        .format(new Date(`${match[1]}T12:00:00Z`));
+      return match[2]?`${day}, ${match[2]} AST`:day;
+    };
     const dateRange = `${formatPrintDate(state.applied.from)} — ${formatPrintDate(state.applied.to)}`;
     const choice = state.selected.size ? 'Selected records' : 'All matching records';
     const company = state.applied.company
@@ -658,7 +732,7 @@
     }
     const rows = rowsForExport();
     if (!rows.length) { showFeedback('No matching records to export as PDF.');return; }
-    const cols = COLUMN_MAP[state.type].filter(col => !state.hiddenColumns.has(col.key));
+    const cols = PRINT_COLUMNS.filter(col => !state.hiddenColumns.has(col.key));
     // A separate document means no dashboard header, KPI cards, charts or navigation.
     // It also stops browser print handlers from replacing a selected subset with all rows.
     const frame = document.createElement('iframe');
@@ -742,12 +816,14 @@
     if(action.dataset.sort){if(state.sortKey===action.dataset.sort)state.sortDirection*=-1;else{state.sortKey=action.dataset.sort;state.sortDirection=1;}state.page=1;state.viewRecords=displayRows();renderTable(state.viewRecords);return;}
     if(action.matches('[data-page-prev]')){state.page=Math.max(1,state.page-1);renderTable(state.viewRecords);return;}
     if(action.matches('[data-page-next]')){state.page=Math.min(Math.max(1,Math.ceil(state.viewRecords.length/state.pageSize)),state.page+1);renderTable(state.viewRecords);return;}
+    if(action.dataset.goPage){const page=Number(action.dataset.goPage);if(Number.isSafeInteger(page)&&page>=1&&page<=Math.max(1,Math.ceil(state.viewRecords.length/state.pageSize))){state.page=page;renderTable(state.viewRecords);}return;}
     if(action.dataset.showRecord){showDetails(action.dataset.showRecord);return;}
     if(action.matches('[data-close-modal]')){closeDetails();return;}
     if(!action.closest('.pr-menu-host'))closeMenus();
   }
   function handleChange(event){
     const item=event.target;
+    if(item.matches('[data-page-size]')){const size=Number(item.value);if([8,16,32,64].includes(size)){state.pageSize=size;state.page=1;renderTable(state.viewRecords);}return;}
     if(item.matches('[data-column]')){const key=item.dataset.column;if(!item.checked&&COLUMN_MAP[state.type].length-state.hiddenColumns.size<=1){item.checked=true;showFeedback('At least one column must remain visible.');return;}item.checked?state.hiddenColumns.delete(key):state.hiddenColumns.add(key);renderTable(state.viewRecords);return;}
     if(item.matches('[data-select-record]')){item.checked?state.selected.add(item.dataset.selectRecord):state.selected.delete(item.dataset.selectRecord);renderTable(state.viewRecords);return;}
     if(item.matches('[data-select-page]')){state.viewRecords.slice((state.page-1)*state.pageSize,state.page*state.pageSize).forEach(row=>item.checked?state.selected.add(recordId(row)):state.selected.delete(recordId(row)));renderTable(state.viewRecords);}

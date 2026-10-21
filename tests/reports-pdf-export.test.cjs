@@ -33,7 +33,7 @@ function harness({selected=[],records=rows,liveStatus='ready',type='bookings',hi
     today:()=>new Date('2026-10-19T10:00:00Z'),
     html:x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),
     shortDate:x=>x,cellValue:(r,key)=>key==='amount'&&r.amount!==null?`SAR ${r.amount}`:r[key]??'—',
-    recordId:r=>r.id,category:()=>({name:'Bookings Report'}),COLUMN_MAP:{bookings:cols,locations:cols},
+    recordId:r=>r.id,category:()=>({name:'Bookings Report'}),PRINT_COLUMNS:cols,COLUMN_MAP:{bookings:cols,locations:cols},
     showFeedback:(msg,success)=>feedback.push({msg,success})};
   vm.runInNewContext(exportsCode,context);
   return {context,printed,feedback,events};
@@ -132,4 +132,14 @@ test('PDF runs in a standalone iframe, never parent dashboard print()',()=>{
   assert.match(source,/if\(id==='pdf'\)printRecordsOnly\(\)/);
   assert.doesNotMatch(source,/previousPageSize|addEventListener\('beforeprint'/);
   assert.match(page,/Save Records as PDF/);
+});
+test('records-only PDF shows chosen Saudi time boundaries without changing the layout',()=>{
+  const h=harness({selected:['BK-2026-10-02']});
+  h.context.state.applied.from='2026-10-01T08:30';
+  h.context.state.applied.to='2026-10-19T17:45';
+  h.context.printRecordsOnly();
+  const doc=h.printed[0];
+  assert.match(doc,/01 Oct 2026, 08:30 AST — 19 Oct 2026, 17:45 AST/);
+  assert.match(doc,/<h1>Booking Records Report<\/h1>/);
+  assert.doesNotMatch(doc,/Shift \/ Time Stamp|Payment Status/);
 });

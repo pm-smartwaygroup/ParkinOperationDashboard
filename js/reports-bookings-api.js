@@ -55,6 +55,9 @@
       company:safeText(booking.companyId),companyId:safeText(booking.companyId),
       driver:'Not recorded', // Driver assignment/name is not returned by this API.
       amount:Number.isFinite(amount) ? amount : null,
+      paymentMethod:safeText(booking.paymentMethod) || 'Not recorded',
+      paymentStatus:null, // A booking payment method or amount does not prove payment success.
+      shiftCode:null, // Booking API does not join driver assignments / shift codes.
       status:STATUS_NAMES[statusCode] || (statusCode || 'Unknown'),
       statusCode,
       statusGroup:statusCode==='COMPLETED'?'Completed':statusCode==='CANCELLED'?'Cancelled':statusCode==='EXPIRED'?'Expired':OPEN_STATUSES.has(statusCode)?'Open':'Other',

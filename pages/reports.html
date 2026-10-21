@@ -22,15 +22,21 @@
       </div>
     </header>
     <form data-reports-filter-form class="pr-filter-grid">
-      <div class="pr-field pr-date-field"><label for="pr-from">From date</label><input id="pr-from" data-filter="from" type="date" required /></div>
-      <div class="pr-field pr-date-field"><label for="pr-to">To date</label><input id="pr-to" data-filter="to" type="date" required /></div>
-      <div class="pr-field"><label for="pr-type" data-type-label>Booking Type</label><select id="pr-type" data-filter="type"><option value="">All types</option></select></div>
+      <div class="pr-field pr-date-field"><label for="pr-from">From · date &amp; time (AST)</label><input id="pr-from" data-filter="from" type="datetime-local" step="60" required aria-describedby="pr-filter-time-note" /></div>
+      <div class="pr-field pr-date-field"><label for="pr-to">To · date &amp; time (AST)</label><input id="pr-to" data-filter="to" type="datetime-local" step="60" required aria-describedby="pr-filter-time-note" /></div>
       <div class="pr-field"><label for="pr-company">Company</label><select id="pr-company" data-filter="company"><option value="">All companies</option></select></div>
       <div class="pr-field"><label for="pr-location">Location</label><select id="pr-location" data-filter="location"><option value="">All locations</option></select></div>
+      <div class="pr-field"><label for="pr-type" data-type-label>Vehicle Parking Type</label><select id="pr-type" data-filter="type"><option value="">All parking types</option></select></div>
+      <div class="pr-field"><label for="pr-payment-method">Payment Method</label><select id="pr-payment-method" data-filter="paymentMethod"><option value="">All recorded methods</option></select></div>
+      <div class="pr-field pr-field-unavailable"><label for="pr-role">User Type / Role</label><select id="pr-role" disabled title="User role is not provided by the Bookings API"><option>Not available in API</option></select></div>
+      <div class="pr-field pr-field-unavailable"><label for="pr-shift">Shift Pattern</label><select id="pr-shift" disabled title="Shift assignment is not provided by the Bookings API"><option>Not available in API</option></select></div>
+      <div class="pr-field pr-field-unavailable"><label for="pr-payment-status">Payment Status</label><select id="pr-payment-status" disabled title="Payment verification status is not provided by the Bookings API"><option>Not available in API</option></select></div>
+      <div class="pr-field"><label for="pr-group-by">Group By · activity trend</label><select id="pr-group-by" data-filter="groupBy"><option value="daily">Daily</option><option value="weekly">Weekly</option><option value="monthly">Monthly</option></select></div>
       <div class="pr-field"><label for="pr-source" data-source-label>Source</label><select id="pr-source" data-filter="source"><option value="">All sources</option></select></div>
-      <div class="pr-field"><label for="pr-status">Status</label><select id="pr-status" data-filter="status"><option value="">All statuses</option></select></div>
+      <div class="pr-field"><label for="pr-status">Booking Status</label><select id="pr-status" data-filter="status"><option value="">All statuses</option></select></div>
       <div class="pr-filter-actions"><button type="submit" class="pr-btn pr-btn-primary"><i class="fa-solid fa-filter" aria-hidden="true"></i> Apply Filters</button><button type="button" class="pr-btn pr-btn-plain" data-reset><i class="fa-solid fa-arrow-rotate-left" aria-hidden="true"></i> Reset</button></div>
     </form>
+    <p class="pr-filter-note" id="pr-filter-time-note"><i class="fa-regular fa-clock" aria-hidden="true"></i> Booking dates and times use Saudi Arabia Time (AST, UTC+03:00). Shift and payment status are unavailable in the current booking API.</p>
     <div class="pr-feedback" data-feedback role="status" aria-live="polite"></div>
   </section>
 
@@ -64,7 +70,7 @@
       <p class="pr-empty-hint" data-empty-hint hidden>Choose a customer on the Customers page to create a booking.</p>
     </div>
     <div class="pr-table-scroll" tabindex="0" role="region" aria-label="Scrollable report results"><table class="pr-table"><thead data-table-head></thead><tbody data-table-body></tbody></table></div>
-    <div class="pr-table-footer"><span data-table-info aria-live="polite">Loading report records...</span><div class="pr-pagination"><button class="pr-btn pr-btn-light" type="button" data-page-prev><i class="fa-solid fa-chevron-left" aria-hidden="true"></i> Prev</button><span data-page-info></span><button class="pr-btn pr-btn-light" type="button" data-page-next>Next <i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button></div></div>
+    <div class="pr-table-footer"><span data-table-info aria-live="polite">Loading report records...</span><div class="pr-pagination"><label class="pr-page-size-label" for="pr-page-size">Rows <select id="pr-page-size" data-page-size aria-label="Bookings per page"><option value="8">8</option><option value="16">16</option><option value="32">32</option><option value="64">64</option></select></label><button class="pr-btn pr-btn-light" type="button" data-page-prev aria-label="Previous page"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button><span class="pr-page-numbers" data-page-numbers aria-label="Booking result pages"></span><button class="pr-btn pr-btn-light" type="button" data-page-next aria-label="Next page"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button><span class="pr-page-info" data-page-info></span></div></div>
   </section>
 
   <div class="pr-modal-backdrop" data-detail-dialog hidden><div class="pr-modal" role="dialog" aria-modal="true" aria-labelledby="pr-modal-title"><div class="pr-modal-head"><h2 id="pr-modal-title">Report record</h2><button class="pr-icon-btn" type="button" data-close-modal aria-label="Close details"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></div><dl data-modal-content></dl><div class="pr-modal-actions"><button class="pr-btn pr-btn-light" type="button" data-close-modal>Close</button></div></div></div>
