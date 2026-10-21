@@ -1,0 +1,71 @@
+<div class="parkin-reports" data-reports-root aria-label="Parking operations reports">
+  <div class="pr-topline">
+    <nav class="pr-crumb" aria-label="Breadcrumb"><a href="#dashboard">Home</a><span aria-hidden="true">›</span><span>Reports</span></nav>
+    <div class="pr-live-actions"><span class="pr-demo-tag" data-report-data-tag role="status" aria-live="polite">Live booking data</span><button class="pr-btn pr-btn-light" type="button" data-live-refresh aria-label="Refresh live booking records"><i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i> Refresh</button></div>
+  </div>
+  <div class="pr-report-tabs" data-report-tabs role="tablist" aria-label="Report type"></div>
+  <div class="pr-panel pr-access-message" data-reports-access-message role="status" hidden>No report categories are available for this account. Ask your administrator to grant Reports access and permission to view at least one module.</div>
+
+  <section class="pr-panel pr-release-pending" data-report-pending hidden role="status" aria-live="polite" aria-labelledby="pr-pending-title">
+    <div class="pr-pending-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></div>
+    <h2 id="pr-pending-title">Report integration pending</h2>
+    <p>This report is not connected to verified ParkIn data yet. No business records, totals, or exports are available for this category.</p>
+    <p class="pr-pending-small">The Bookings Report is available now with live, permission-scoped data. Other reports will become available after their integrations are verified.</p>
+  </section>
+
+  <section class="pr-panel pr-filters" aria-labelledby="pr-filters-title">
+    <header class="pr-section-head">
+      <div class="pr-headline"><span class="pr-section-icon"><i class="fa-solid fa-filter" aria-hidden="true"></i></span><div><h2 id="pr-filters-title">Booking Report Filters</h2><p>Choose a reporting period and scope.</p></div></div>
+      <div class="pr-menu-host">
+        <button class="pr-btn pr-btn-light" data-saved-toggle aria-haspopup="true" aria-expanded="false" type="button"><i class="fa-regular fa-floppy-disk" aria-hidden="true"></i> Saved Filters <i class="fa-solid fa-chevron-down" aria-hidden="true"></i></button>
+        <div class="pr-popover" data-saved-menu hidden><div class="pr-popover-title">Saved presets</div><div data-saved-list></div><button class="pr-menu-action" type="button" data-save-preset><i class="fa-solid fa-plus" aria-hidden="true"></i> Save current filters</button></div>
+      </div>
+    </header>
+    <form data-reports-filter-form class="pr-filter-grid">
+      <div class="pr-field pr-date-field"><label for="pr-from">From date</label><input id="pr-from" data-filter="from" type="date" required /></div>
+      <div class="pr-field pr-date-field"><label for="pr-to">To date</label><input id="pr-to" data-filter="to" type="date" required /></div>
+      <div class="pr-field"><label for="pr-type" data-type-label>Booking Type</label><select id="pr-type" data-filter="type"><option value="">All types</option></select></div>
+      <div class="pr-field"><label for="pr-company">Company</label><select id="pr-company" data-filter="company"><option value="">All companies</option></select></div>
+      <div class="pr-field"><label for="pr-location">Location</label><select id="pr-location" data-filter="location"><option value="">All locations</option></select></div>
+      <div class="pr-field"><label for="pr-source" data-source-label>Source</label><select id="pr-source" data-filter="source"><option value="">All sources</option></select></div>
+      <div class="pr-field"><label for="pr-status">Status</label><select id="pr-status" data-filter="status"><option value="">All statuses</option></select></div>
+      <div class="pr-filter-actions"><button type="submit" class="pr-btn pr-btn-primary"><i class="fa-solid fa-filter" aria-hidden="true"></i> Apply Filters</button><button type="button" class="pr-btn pr-btn-plain" data-reset><i class="fa-solid fa-arrow-rotate-left" aria-hidden="true"></i> Reset</button></div>
+    </form>
+    <div class="pr-feedback" data-feedback role="status" aria-live="polite"></div>
+  </section>
+
+  <div class="pr-overview-header">
+    <div><h2>Overview</h2><p data-overview-description>Statistics for your selected period.</p></div>
+    <div class="pr-menu-host"><button type="button" class="pr-btn pr-btn-primary pr-export-btn" data-export-toggle aria-haspopup="true" aria-expanded="false"><i class="fa-solid fa-arrow-down-to-bracket" aria-hidden="true"></i> Export <i class="fa-solid fa-chevron-down" aria-hidden="true"></i></button>
+      <div class="pr-popover pr-export-menu" data-export-menu hidden>
+        <button type="button" class="pr-menu-action" data-export="csv"><i class="fa-solid fa-file-excel pr-green" aria-hidden="true"></i> Export to Excel (CSV)</button>
+        <button type="button" class="pr-menu-action" data-export="pdf"><i class="fa-solid fa-file-pdf pr-red" aria-hidden="true"></i> Save Records as PDF</button>
+        <button type="button" class="pr-menu-action" data-export="email"><i class="fa-regular fa-envelope" aria-hidden="true"></i> Compose Email</button>
+        <button type="button" class="pr-menu-action" data-export="schedule"><i class="fa-regular fa-clock" aria-hidden="true"></i> Schedule Report <span class="pr-soon">API phase</span></button>
+      </div>
+    </div>
+  </div>
+  <section class="pr-metric-grid" data-kpis aria-label="Report overview metrics"></section>
+  <div class="pr-chart-grid">
+    <section class="pr-panel pr-chart-panel" aria-labelledby="pr-trend-title"><header class="pr-chart-head"><div><h3 id="pr-trend-title"><i class="fa-solid fa-chart-column" aria-hidden="true"></i> Activity Trend</h3><p>Reporting period at a glance</p></div><span class="pr-chart-tag" data-trend-total></span></header><div class="pr-bar-chart" data-trend-chart role="img" aria-label="Daily report activity trend"></div><div class="pr-chart-legend" data-trend-legend></div></section>
+    <section class="pr-panel pr-chart-panel" aria-labelledby="pr-breakdown-title"><header class="pr-chart-head"><div><h3 id="pr-breakdown-title"><i class="fa-solid fa-chart-pie" aria-hidden="true"></i> Breakdown</h3><p>Distribution of filtered records</p></div></header><div class="pr-breakdown-body"><div class="pr-donut" data-donut role="img" aria-label="Distribution by category"><div class="pr-donut-center"><strong data-donut-total>0</strong><span>Total</span></div></div><div class="pr-breakdown-key" data-breakdown-key></div></div></section>
+    <section class="pr-panel pr-chart-panel" aria-labelledby="pr-top-title"><header class="pr-chart-head"><div><h3 id="pr-top-title"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> Top Locations</h3><p>Ranked by report activity</p></div></header><div class="pr-ranking" data-top-locations></div></section>
+  </div>
+
+  <section class="pr-panel pr-table-panel" aria-labelledby="pr-details-title"><header class="pr-details-head"><div class="pr-headline"><span class="pr-section-icon"><i class="fa-regular fa-rectangle-list" aria-hidden="true"></i></span><div><h2 id="pr-details-title">Booking Details</h2><p data-details-subtitle>Records based on selected filters</p></div></div><div class="pr-table-toolbar"><label class="pr-search"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><input type="search" data-search placeholder="Search displayed records..." aria-label="Search report records" /></label><div class="pr-menu-host"><button class="pr-btn pr-btn-light" type="button" data-column-toggle aria-haspopup="true" aria-expanded="false"><i class="fa-solid fa-table-columns" aria-hidden="true"></i> Columns <i class="fa-solid fa-chevron-down" aria-hidden="true"></i></button><div class="pr-popover pr-columns-popover" data-column-menu hidden><div class="pr-popover-title">Visible columns</div><div data-column-options></div></div></div></div></header>
+    <div class="pr-bookings-empty" data-bookings-empty hidden>
+      <img class="pr-empty-illustration" src="/assets/illustrations/reports-no-bookings.png" alt="Parking car, booking calendar and search illustration" width="360" height="238" loading="lazy" />
+      <h3 data-empty-title>No bookings found</h3>
+      <p class="pr-empty-description" data-empty-description>No booking records are available for the selected filters.</p>
+      <div class="pr-empty-actions">
+        <button type="button" class="pr-btn pr-btn-primary" data-empty-add-booking hidden><i class="fa-solid fa-plus" aria-hidden="true"></i> Add New Booking</button>
+        <button type="button" class="pr-btn pr-btn-light" data-empty-clear-filters hidden><i class="fa-solid fa-arrow-rotate-left" aria-hidden="true"></i> View All Bookings</button>
+      </div>
+      <p class="pr-empty-hint" data-empty-hint hidden>Choose a customer on the Customers page to create a booking.</p>
+    </div>
+    <div class="pr-table-scroll" tabindex="0" role="region" aria-label="Scrollable report results"><table class="pr-table"><thead data-table-head></thead><tbody data-table-body></tbody></table></div>
+    <div class="pr-table-footer"><span data-table-info aria-live="polite">Loading report records...</span><div class="pr-pagination"><button class="pr-btn pr-btn-light" type="button" data-page-prev><i class="fa-solid fa-chevron-left" aria-hidden="true"></i> Prev</button><span data-page-info></span><button class="pr-btn pr-btn-light" type="button" data-page-next>Next <i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button></div></div>
+  </section>
+
+  <div class="pr-modal-backdrop" data-detail-dialog hidden><div class="pr-modal" role="dialog" aria-modal="true" aria-labelledby="pr-modal-title"><div class="pr-modal-head"><h2 id="pr-modal-title">Report record</h2><button class="pr-icon-btn" type="button" data-close-modal aria-label="Close details"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></div><dl data-modal-content></dl><div class="pr-modal-actions"><button class="pr-btn pr-btn-light" type="button" data-close-modal>Close</button></div></div></div>
+</div>

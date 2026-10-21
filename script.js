@@ -433,6 +433,11 @@ async function loadRevenueFeatureScripts() {
   await loadDashboardScript("/js/revenue.js");
 }
 
+async function loadReportsFeatureScripts() {
+  await loadDashboardScript("/js/reports-bookings-api.js");
+  await loadDashboardScript("/js/reports.js");
+}
+
 async function loadVehiclesFeatureScripts() {
   await loadDashboardScript("/js/vehicles.js");
 }
@@ -735,6 +740,53 @@ function applyPermissionNavigationVisibility() {
     clearRestrictedCompaniesView();
   }
 }
+
+/**
+ * The sidebar provides navigation, not per-module notification totals.
+ * Keep its counter nodes in the DOM for any legacy updater, but do not
+ * display numeric badges on Drivers, Bookings or Alerts for any role.
+ */
+function hideSidebarNavigationCounters() {
+  const navigation = document.querySelector(".dashboard-nav");
+  if (!navigation) return;
+
+  const targetRoutes = ["#drivers", "#bookings", "#alerts"];
+  const isCounter = (value) => /^\d[\d,]*\+?$/.test(String(value || "").trim());
+
+  const hideCounters = () => {
+    targetRoutes.forEach((route) => {
+      const link = navigation.querySelector(`a[href="${route}"]`);
+      if (!link) return;
+
+      link.querySelectorAll("span, small, sup, strong, em, b, i, div").forEach((node) => {
+        if (!isCounter(node.textContent)) return;
+
+        // When the number is nested inside a styled pill, hide the pill too.
+        const wrapper = node.closest('[class*="badge"], [class*="count"], [class*="pill"]');
+        const badge =
+          wrapper && wrapper !== link && link.contains(wrapper) && isCounter(wrapper.textContent)
+            ? wrapper
+            : node;
+        badge.hidden = true;
+        badge.setAttribute("aria-hidden", "true");
+        badge.style.setProperty("display", "none", "important");
+      });
+    });
+  };
+
+  hideCounters();
+
+  // Counts may be regenerated on login, account switch, or live updates.
+  if (typeof MutationObserver === "function") {
+    new MutationObserver(hideCounters).observe(navigation, {
+      childList: true,
+      characterData: true,
+      subtree: true,
+    });
+  }
+}
+
+hideSidebarNavigationCounters();
 
 function getAuthenticatedDashboardUser() {
   let user = null;
@@ -1406,6 +1458,7 @@ function hideAllFeatureViews() {
   customersView?.classList.add("hidden");
   companiesView?.classList.add("hidden");
   revenueView?.classList.add("hidden");
+  document.querySelector("#reports-view")?.classList.add("hidden");
   vehiclesView?.classList.add("hidden");
   bookingsView?.classList.add("hidden");
   bookingDetailsView?.classList.add("hidden");
@@ -1797,6 +1850,52 @@ async function showCompaniesView() {
 
   await loadCompanyFeatureScripts();
   await loadCompaniesPage();
+}
+
+async function showReportsView() {
+  dashboardSections.forEach((section) => section.classList.add("hidden"));
+  hideAllFeatureViews();
+
+  let reportsView = document.querySelector("#reports-view");
+  if (!reportsView) {
+    reportsView = document.createElement("section");
+    reportsView.id = "reports-view";
+    reportsView.className = "hidden";
+    dashboardMain.appendChild(reportsView);
+  }
+  reportsView.classList.remove("hidden");
+
+  const title = document.querySelector(".dashboard-title");
+  if (title) {
+    title.innerHTML =
+      "<h1>Reports</h1><p>Get detailed insights and export reports for your parking operations.</p>";
+  }
+  setActiveNav("#reports");
+
+  if (!document.querySelector('link[data-reports-stylesheet]')) {
+    const stylesheet = document.createElement("link");
+    stylesheet.rel = "stylesheet";
+    stylesheet.href = "/css/reports.css";
+    stylesheet.dataset.reportsStylesheet = "true";
+    document.head.appendChild(stylesheet);
+  }
+
+  try {
+    await loadReportsFeatureScripts();
+    if (!reportsView.querySelector("[data-reports-root]")) {
+      const response = await fetch("/pages/reports.html", { cache: "no-store" });
+      if (!response.ok) throw new Error("Unable to load the Reports layout.");
+      const markup = await response.text();
+      if (getDashboardRoute().name !== "reports") return;
+      reportsView.innerHTML = markup;
+    }
+    if (getDashboardRoute().name === "reports") {
+      await window.loadReportsPage?.(reportsView);
+    }
+  } catch (error) {
+    console.error("Reports page initialization failed:", error);
+    reportsView.textContent = "Unable to open Reports. Please refresh and try again.";
+  }
 }
 
 async function showRevenueView() {
@@ -2202,6 +2301,10 @@ function handleDashboardRoute() {
 
   if (routeName === "revenue") {
     showRevenueView();
+    return;
+  }
+  if (routeName === "reports") {
+    showReportsView();
     return;
   }
 

@@ -934,22 +934,126 @@ function renderCustomerPagination(container, page, totalPages) {
   addButton("Next", page + 1, page >= totalPages);
 }
 
+function hasCustomerListFilters() {
+  return Boolean(
+    customerListState.search ||
+      customerListState.status ||
+      customerListState.customerType ||
+      customerListState.createdSource,
+  );
+}
+
+function clearCustomerListFilters(container) {
+  customerListState.search = "";
+  customerListState.status = "";
+  customerListState.customerType = "";
+  customerListState.createdSource = "";
+  customerListState.page = 1;
+
+  const search = container.querySelector(
+    "#customers-search, .customers-search input",
+  );
+  if (search) search.value = "";
+
+  [
+    "#customers-status-filter, .customers-table-controls select[aria-label*='status' i]",
+    "#customers-type-filter, .customers-table-controls select[aria-label*='type' i]",
+  ].forEach((selector) => {
+    const select = container.querySelector(selector);
+    if (!select) return;
+    const allOption = [...select.options].find(
+      (option) =>
+        !option.value || /^all(?:\s|$)/i.test(option.value),
+    );
+    if (allOption) select.value = allOption.value;
+    else select.selectedIndex = 0;
+  });
+
+  const mobileToggle = container.querySelector("#customers-mobile-toggle");
+  const allToggle = container.querySelector("#customers-all-toggle");
+  mobileToggle?.classList.remove("active");
+  mobileToggle?.setAttribute("aria-pressed", "false");
+  allToggle?.classList.add("active");
+  allToggle?.setAttribute("aria-pressed", "true");
+
+  loadCustomersPage(1);
+}
+
+function createCustomerEmptyState(container) {
+  const filtered = hasCustomerListFilters();
+  const state = document.createElement("section");
+  state.className = "customer-empty-state";
+  state.setAttribute("role", "status");
+  state.setAttribute("aria-live", "polite");
+
+  const illustration = document.createElement("img");
+  illustration.className = "customer-empty-illustration";
+  illustration.src = "/assets/illustrations/customers-empty.png";
+  illustration.alt = "";
+  illustration.loading = "lazy";
+  illustration.decoding = "async";
+
+  const heading = document.createElement("h3");
+  heading.className = "customer-empty-title";
+  heading.textContent = "No Customers Found";
+
+  const description = document.createElement("p");
+  description.className = "customer-empty-description";
+  description.textContent = filtered
+    ? "We couldn’t find any customers matching your selected filters. Try adjusting your search criteria or clear the filters to see results."
+    : "There are no customers available for your account yet. Customers added or associated with your company will appear here.";
+
+  state.append(illustration, heading, description);
+
+  if (filtered) {
+    const clearButton = document.createElement("button");
+    clearButton.type = "button";
+    clearButton.className = "customer-empty-action";
+    clearButton.textContent = "Clear Filters";
+    clearButton.addEventListener("click", () => {
+      clearCustomerListFilters(container);
+    });
+    state.append(clearButton);
+  }
+
+  return state;
+}
+
+function ensureCustomerEmptyStyles() {
+  if (document.querySelector('link[data-customer-empty-css]')) return;
+  const stylesheet = document.createElement("link");
+  stylesheet.rel = "stylesheet";
+  stylesheet.href = "/css/customers-empty.css";
+  stylesheet.dataset.customerEmptyCss = "true";
+  document.head.append(stylesheet);
+}
+
 function renderCustomerList(container, customers, pagination) {
   const table = container.querySelector(".customers-table-scroll");
   if (!table) return;
 
+  ensureCustomerEmptyStyles();
   table
     .querySelectorAll(
-      ".customers-row:not(.customers-head), .customers-loading-state",
+      ".customers-row:not(.customers-head), .customers-loading-state, .customer-empty-state",
     )
     .forEach((element) => element.remove());
 
-  if (customers.length) {
+  const isEmpty = customers.length === 0;
+  table.classList.toggle("customers-table-empty", isEmpty);
+  const selectAll = container.querySelector("#select-all-customers");
+  if (selectAll) {
+    selectAll.checked = false;
+    selectAll.indeterminate = false;
+    selectAll.disabled = isEmpty;
+  }
+
+  if (!isEmpty) {
     customers.forEach((customer) => {
       table.append(createCustomerRow(customer));
     });
   } else {
-    table.append(createCustomerListMessage("No customers found."));
+    table.append(createCustomerEmptyState(container));
   }
 
   const total = Number(pagination?.total || 0);
@@ -967,9 +1071,7 @@ function renderCustomerList(container, customers, pagination) {
   container
     .querySelector("#customers-pagination-label")
     ?.replaceChildren(
-      total
-        ? `Showing ${start}-${end} of ${total} customers`
-        : "No customers found",
+      total ? `Showing ${start}-${end} of ${total} customers` : "",
     );
   renderCustomerPagination(container, page, totalPages);
 }
@@ -1153,33 +1255,27 @@ function bindCustomerActions() {
 
 function bindCustomerTableSelection() {
   const selectAll = document.querySelector("#select-all-customers");
-  const rowCheckboxes = document.querySelectorAll(".customer-row-checkbox");
+  if (!selectAll) return;
 
-  if (!selectAll || rowCheckboxes.length === 0) return;
-
-  if (selectAll.dataset.bound === "true") return;
-  selectAll.dataset.bound = "true";
-
-  selectAll.addEventListener("change", () => {
-    rowCheckboxes.forEach((checkbox) => {
-      checkbox.checked = selectAll.checked;
+  if (selectAll.dataset.bound !== "true") {
+    selectAll.dataset.bound = "true";
+    selectAll.addEventListener("change", () => {
+      document.querySelectorAll(".customer-row-checkbox").forEach((checkbox) => {
+        checkbox.checked = selectAll.checked;
+      });
+      selectAll.indeterminate = false;
     });
+  }
 
-    selectAll.indeterminate = false;
-  });
-
-  rowCheckboxes.forEach((checkbox) => {
+  document.querySelectorAll(".customer-row-checkbox").forEach((checkbox) => {
     if (checkbox.dataset.bound === "true") return;
     checkbox.dataset.bound = "true";
-
     checkbox.addEventListener("change", () => {
-      const selectedCount = [...rowCheckboxes].filter(
-        (item) => item.checked,
-      ).length;
-
-      selectAll.checked = selectedCount === rowCheckboxes.length;
+      const rows = [...document.querySelectorAll(".customer-row-checkbox")];
+      const selectedCount = rows.filter((item) => item.checked).length;
+      selectAll.checked = rows.length > 0 && selectedCount === rows.length;
       selectAll.indeterminate =
-        selectedCount > 0 && selectedCount < rowCheckboxes.length;
+        selectedCount > 0 && selectedCount < rows.length;
     });
   });
 }
