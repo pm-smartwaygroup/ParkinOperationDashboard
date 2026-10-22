@@ -303,6 +303,8 @@ window.refreshParkinDashboardAccess = async () => {
   const loaded = await loadDashboardAccess();
   if (!dashboardAccessState.authFailed) {
     applyPermissionNavigationVisibility();
+    summaryReset();
+    loadSidebarLiveSummary({ force: true });
     handleDashboardRoute();
   }
   return loaded;
@@ -682,6 +684,8 @@ async function showDashboard({ preserveRoute = false } = {}) {
   await loadDashboardAccess();
   if (dashboardAccessState.authFailed) return;
   applyPermissionNavigationVisibility();
+  summaryReset();
+  loadSidebarLiveSummary({ force: true });
   syncDashboardProfile(getAuthenticatedDashboardUser());
   hydrateDashboardProfile();
 
@@ -787,6 +791,156 @@ function hideSidebarNavigationCounters() {
 }
 
 hideSidebarNavigationCounters();
+
+/**
+ * Sidebar is a layout preference, not an access control. Permission-gated
+ * navigation remains in the DOM and keeps all of its existing route guards.
+ */
+function installDashboardSidebarCollapse() {
+  const button = document.querySelector('.sidebar-collapse');
+  const page = document.querySelector('#dashboard-page');
+  const sidebar = page?.querySelector('.dashboard-sidebar');
+  const navigation = page?.querySelector('.dashboard-nav');
+  const main = page?.querySelector('.dashboard-main');
+  if (!button || !page || !sidebar || !navigation || !main) return;
+  // Account for deployments where the sidebar is fixed and the main view
+  // reserves a margin instead of using a CSS grid or flex layout.
+  const expandedMainMargin = Number.parseFloat(getComputedStyle(main).marginLeft) || 0;
+  const fixedSidebarLayout = expandedMainMargin > 60;
+  const initialInlineMargin = main.style.marginLeft;
+  const initialInlineWidth = main.style.width;
+  const preference = 'parkin_dashboard_sidebar_collapsed';
+  const menuLabels = [...navigation.querySelectorAll('a[href]')].map((link) => {
+    const label = link.querySelector('span')?.textContent?.trim() || '';
+    return [link, label];
+  });
+  menuLabels.forEach(([link, label]) => { if (label) link.title = label; });
+  let collapsed = false;
+  const apply = (next) => {
+    collapsed = Boolean(next);
+    page.classList.toggle('parkin-sidebar-condensed', collapsed);
+    if (fixedSidebarLayout) {
+      const compactOnDesktop = collapsed && window.matchMedia('(min-width: 901px)').matches;
+      main.style.marginLeft = compactOnDesktop ? '82px' : initialInlineMargin;
+      main.style.width = compactOnDesktop ? 'calc(100% - 82px)' : initialInlineWidth;
+    }
+    button.setAttribute('aria-expanded', String(!collapsed));
+    button.setAttribute('aria-label', collapsed ? 'Expand sidebar' : 'Collapse sidebar');
+    button.title = collapsed ? 'Expand sidebar' : 'Collapse sidebar';
+    button.querySelector('svg')?.setAttribute('aria-hidden', 'true');
+  };
+  try { collapsed = localStorage.getItem(preference) === 'true'; } catch {}
+  apply(collapsed);
+  button.addEventListener('click', () => {
+    apply(!collapsed);
+    try { localStorage.setItem(preference, String(collapsed)); } catch {}
+  });
+  window.addEventListener('resize', () => apply(collapsed));
+}
+
+installDashboardSidebarCollapse();
+
+/** Authenticated and permission-scoped; never use static sample numbers. */
+const sidebarSummaryRoot = document.getElementById('parkin-live-summary');
+const SUMMARY_REFRESH_MS = 5 * 60_000;
+let lastSidebarSummaryAt = 0;
+let sidebarSummaryRequestId = 0;
+
+function summarySetMetric(name, value, description) {
+  const element = sidebarSummaryRoot?.querySelector(`[data-summary-metric="${name}"]`);
+  if (!element) return;
+  element.textContent = value === null || value === undefined ? '—' : Number(value).toLocaleString('en-US');
+  element.title = description || '';
+}
+
+function summarySaudiDate(value) {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'Asia/Riyadh', year: 'numeric', month: '2-digit', day: '2-digit'
+  }).formatToParts(value);
+  const map = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  return `${map.year}-${map.month}-${map.day}`;
+}
+
+function summaryReset() {
+  sidebarSummaryRequestId += 1;
+  lastSidebarSummaryAt = 0;
+  ['companies', 'vehicles', 'locations'].forEach((name) => summarySetMetric(name, null, 'Not loaded'));
+  if (sidebarSummaryRoot) sidebarSummaryRoot.setAttribute('aria-busy', 'false');
+  const feedback = sidebarSummaryRoot?.querySelector('.summary-feedback');
+  if (feedback) feedback.textContent = '';
+}
+
+async function loadSidebarLiveSummary({ force = false } = {}) {
+  if (!sidebarSummaryRoot || !dashboardAccessState.ready || !dashboardAccessState.user ||
+      dashboardPage?.classList.contains('hidden')) return;
+  if (!force && Date.now() - lastSidebarSummaryAt < SUMMARY_REFRESH_MS) return;
+  const token = localStorage.getItem('parkin_access_token');
+  if (!token) return;
+  const requestId = ++sidebarSummaryRequestId;
+  lastSidebarSummaryAt = Date.now();
+  const feedback = sidebarSummaryRoot.querySelector('.summary-feedback');
+  sidebarSummaryRoot.setAttribute('aria-busy', 'true');
+  ['companies', 'vehicles', 'locations'].forEach((name) => summarySetMetric(name, null, 'Loading live data'));
+  if (feedback) feedback.textContent = 'Updating…';
+  const getJSON = async (route) => {
+    const response = await fetch(`${API_BASE_URL}${route}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const result = await response.json();
+    return result?.data ?? result;
+  };
+  const current = () => requestId === sidebarSummaryRequestId &&
+    localStorage.getItem('parkin_access_token') === token &&
+    !dashboardPage?.classList.contains('hidden');
+  // Denied, malformed and unavailable metrics stay unavailable: no fake zero.
+  const metrics = await Promise.allSettled([
+    (async () => {
+      const role = getCurrentDashboardUserRole();
+      if (!['SUPER_ADMIN', 'COMPANY_ADMIN', 'OPERATIONS_MANAGER', 'VALET_OPERATIONS', 'SUPPORT'].includes(role)) return null;
+      // /companies/options is role- and company-scoped by the backend.
+      const options = await getJSON('/companies/options');
+      return Array.isArray(options) ? options.length : null;
+    })(),
+    (async () => {
+      if (!hasDashboardPermission('vehicles.view')) return null;
+      const payload = await getJSON('/vehicles');
+      const items = payload?.items;
+      if (!Array.isArray(items) || !items.every((entry) => entry && typeof entry.createdAt === 'string')) return null;
+      const today = summarySaudiDate(new Date());
+      return items.filter((vehicle) => {
+        const date = new Date(vehicle.createdAt);
+        return !Number.isNaN(date.valueOf()) && summarySaudiDate(date) === today;
+      }).length;
+    })(),
+    (async () => {
+      if (!hasDashboardPermission('locations.view')) return null;
+      const payload = await getJSON('/locations/statistics');
+      const active = payload?.active;
+      return Number.isInteger(active) && active >= 0 ? active : null;
+    })(),
+  ]);
+  if (!current()) return;
+  ['companies', 'vehicles', 'locations'].forEach((name, index) => {
+    const result = metrics[index];
+    const value = result.status === 'fulfilled' ? result.value : null;
+    summarySetMetric(name, value, value === null ? 'Unavailable or not authorized' : 'Live, permission-scoped data');
+  });
+  sidebarSummaryRoot.setAttribute('aria-busy', 'false');
+  if (feedback) feedback.textContent = 'Live data · ' + new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Asia/Riyadh', hour: '2-digit', minute: '2-digit', hour12: false,
+  }).format(new Date()) + ' AST';
+}
+
+sidebarSummaryRoot?.querySelector('.summary-refresh')?.addEventListener('click', () => {
+  loadSidebarLiveSummary({ force: true });
+});
+window.setInterval(() => {
+  if (!document.hidden) loadSidebarLiveSummary();
+}, SUMMARY_REFRESH_MS);
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) loadSidebarLiveSummary();
+});
 
 function getAuthenticatedDashboardUser() {
   let user = null;
@@ -953,6 +1107,7 @@ function clearRestrictedCompaniesView() {
 }
 
 function showLogin() {
+  summaryReset();
   disconnectAuthSocket();
   stopSessionMonitor();
   hideLoader();
@@ -1318,23 +1473,33 @@ setProfileDarkToggleState(getStoredDarkModePreference(), { persist: false });
 
 dashboardLogout?.addEventListener("click", requestDashboardLogoutConfirmation);
 
-function updateCurrentDate() {
-  const dateElement = document.getElementById("current-date");
-
-  if (!dateElement) return;
-
-  const today = new Date();
-
-  const formattedDate = today.toLocaleDateString("en-US", {
+/**
+ * Dashboard header date follows Saudi Arabia's calendar day, not the date
+ * captured at login. Long-lived sessions refresh without a page reload.
+ */
+function formatDashboardDate(now = new Date()) {
+  return `Today, ${new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Riyadh",
     month: "long",
     day: "numeric",
     year: "numeric",
-  });
+  }).format(now)}`;
+}
 
-  dateElement.textContent = `Today, ${formattedDate}`;
+function updateCurrentDate() {
+  document.querySelectorAll("#current-date").forEach((dateElement) => {
+    dateElement.textContent = formatDashboardDate();
+  });
 }
 
 updateCurrentDate();
+// Refresh at least once a minute, including across AST midnight.
+window.setInterval(updateCurrentDate, 60_000);
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) updateCurrentDate();
+});
+window.addEventListener("focus", updateCurrentDate);
+window.addEventListener("hashchange", updateCurrentDate);
 
 async function restoreSession() {
   const token = localStorage.getItem("parkin_access_token");

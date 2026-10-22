@@ -1,0 +1,32 @@
+/* ParkIn navigation: desktop compact mode and authenticated summary. */
+.dashboard-page .today-summary .summary-timezone {
+  float: right; opacity: .75; font-size: 10px; font-weight: 500;
+}
+.dashboard-page .today-summary .summary-refresh {
+  display: block; width: 100%; margin-top: 9px; padding: 7px;
+  color: #55e0a2; background: transparent; border: 1px solid rgba(90,210,151,.26);
+  border-radius: 8px; font: inherit; font-size: 12px; cursor: pointer;
+}
+.dashboard-page .today-summary .summary-refresh:hover { background: rgba(42,175,112,.15); }
+.dashboard-page .today-summary .summary-feedback { display: block; margin-top: 7px; font-size: 10px; opacity: .77; }
+.dashboard-page .today-summary dd { font-variant-numeric: tabular-nums; }
+.dashboard-page .sidebar-collapse { cursor: pointer; }
+@media (min-width: 901px) {
+  .dashboard-page.parkin-sidebar-condensed { grid-template-columns: 82px minmax(0,1fr) !important; }
+  .dashboard-page.parkin-sidebar-condensed .dashboard-sidebar { width: 82px !important; min-width: 82px !important; max-width: 82px !important; box-sizing: border-box !important; }
+  .dashboard-page.parkin-sidebar-condensed .dashboard-main { min-width: 0; }
+  .dashboard-page.parkin-sidebar-condensed .sidebar-top { display: flex; justify-content: center; }
+  .dashboard-page.parkin-sidebar-condensed .dashboard-logo,
+  .dashboard-page.parkin-sidebar-condensed .dashboard-nav > p,
+  .dashboard-page.parkin-sidebar-condensed .dashboard-nav > a > span,
+  .dashboard-page.parkin-sidebar-condensed .dashboard-nav > a > em,
+  .dashboard-page.parkin-sidebar-condensed .today-summary,
+  .dashboard-page.parkin-sidebar-condensed .manager-card > span { display: none !important; }
+  .dashboard-page.parkin-sidebar-condensed .dashboard-nav > a { display: flex; justify-content: center; padding-left: 0; padding-right: 0; gap: 0; }
+  .dashboard-page.parkin-sidebar-condensed .dashboard-nav > a > svg { flex: 0 0 22px; }
+  .dashboard-page.parkin-sidebar-condensed .sidebar-collapse svg { transform: rotate(180deg); }
+}
+@media (max-width: 900px) {
+  /* On small screens preserve the existing responsive navigation behavior. */
+  .dashboard-page .sidebar-collapse { display: none; }
+}

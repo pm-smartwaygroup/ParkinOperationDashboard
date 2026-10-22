@@ -39,6 +39,7 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
     />
     <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/css/dashboard-sidebar-live.css" />
     <link rel="stylesheet" href="/css/valet.css" />
     <link rel="stylesheet" href="/css/drivers.css" />
     <link rel="stylesheet" href="/css/add-driver.css" />
@@ -351,6 +352,8 @@
             class="sidebar-collapse"
             type="button"
             aria-label="Collapse sidebar"
+            aria-expanded="true"
+            aria-controls="parkin-dashboard-navigation"
           >
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="m15 6-6 6 6 6M20 6l-6 6 6 6" />
@@ -358,7 +361,7 @@
           </button>
         </div>
 
-        <nav class="dashboard-nav" aria-label="Dashboard navigation">
+        <nav class="dashboard-nav" id="parkin-dashboard-navigation" aria-label="Dashboard navigation">
           <p>Operations</p>
           <a class="is-active" href="#dashboard">
             <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -474,23 +477,24 @@
           </a>
         </nav>
 
-        <div class="today-summary">
-          <p>Today’s Summary</p>
+        <div class="today-summary" id="parkin-live-summary" aria-busy="false">
+          <p>Today's Summary <small class="summary-timezone">AST</small></p>
           <dl>
             <div>
-              <dt>Total Companies</dt>
-              <dd>24</dd>
+              <dt>Active Companies</dt>
+              <dd data-summary-metric="companies" aria-label="Active companies in current account scope">—</dd>
             </div>
             <div>
-              <dt>Vehicles Today</dt>
-              <dd>1,248</dd>
+              <dt>Vehicles Registered Today</dt>
+              <dd data-summary-metric="vehicles" aria-label="Vehicles registered today">—</dd>
             </div>
             <div>
               <dt>Active Locations</dt>
-              <dd>18</dd>
+              <dd data-summary-metric="locations" aria-label="Active locations">—</dd>
             </div>
           </dl>
-          <a href="#summary">View full summary →</a>
+          <button class="summary-refresh" type="button" aria-label="Refresh today's summary">Refresh summary ↻</button>
+          <span class="summary-feedback" role="status" aria-live="polite"></span>
         </div>
 
         <button
