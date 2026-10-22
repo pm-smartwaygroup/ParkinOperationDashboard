@@ -3420,6 +3420,10 @@ async function loadEditCustomerPage() {
   bindEditCustomerActions();
   window.applyDashboardPermissionVisibility?.(container);
 
+  // Clear the previous customer's summary immediately when changing routes.
+  // Otherwise a recycled page can briefly show another customer's vehicles.
+  renderEditCustomerOverview(null, null, null);
+
   const databaseId = resolveCustomerDatabaseId(customerId);
   let customer;
   try {
@@ -3445,9 +3449,35 @@ async function loadEditCustomerPage() {
     return;
   }
 
-  if (customer) populateEditCustomerForm(customer);
+  if (!customer) return;
+  populateEditCustomerForm(customer);
+  renderEditCustomerOverview(customer, null, null);
   bindEditCustomerActions();
   window.applyDashboardPermissionVisibility?.(container);
+
+  // Vehicles are loaded using the existing permission-protected vehicle API.
+  // Never infer an empty list from a failed or unauthorized request.
+  if (!databaseId || !window.hasDashboardPermission?.("vehicles.view")) {
+    renderEditCustomerOverview(customer, null, "restricted");
+    return;
+  }
+  try {
+    const vehicles = await fetchCustomerVehicles(databaseId, controller.signal);
+    if (
+      controller.signal.aborted ||
+      requestId !== customerEditRequestId ||
+      getDashboardRoute().name !== "edit-customer" ||
+      getCurrentCustomerId() !== customerId
+    ) return;
+    renderEditCustomerOverview(customer, vehicles, null);
+  } catch (error) {
+    if (error?.name === "AbortError") return;
+    if (
+      requestId === customerEditRequestId &&
+      getDashboardRoute().name === "edit-customer" &&
+      getCurrentCustomerId() === customerId
+    ) renderEditCustomerOverview(customer, null, "failed");
+  }
 }
 
 function populateEditCustomerForm(customer) {
@@ -3475,10 +3505,125 @@ function populateEditCustomerForm(customer) {
   setValue("#edit-language", customer.preferredLanguage || "");
   setValue("#edit-communication", customer.communicationPreference || "");
   setValue("#edit-notes", customer.notes || "");
+  const notesCount = document.querySelector("#edit-notes-count");
+  if (notesCount) notesCount.textContent = String((customer.notes || "").length);
+
+  // The current Customer model has no address, nationality or emergency fields.
+  // The legacy form contains illustrative values: do not display or save them.
+  ["#edit-nationality", "#edit-address", "#edit-emergency-contact", "#edit-emergency-phone"].forEach((selector) => {
+    const field = document.querySelector(selector);
+    if (!field) return;
+    field.value = "";
+    field.required = false;
+    field.disabled = true;
+    field.title = "Not yet supported by the current customer API";
+    field.setAttribute("aria-label", `${field.id.replace(/^edit-/, "").replace(/-/g, " ")} (not yet integrated)`);
+  });
   populateCustomerSuspensionForm(
     document.querySelector("#edit-customer-form"),
     customer.automaticSuspension,
   );
+}
+
+/**
+ * Edit Customer summary: render only fields supported by our current API.
+ * The legacy HTML contains demo numbers; they must never appear as real data.
+ * Payment Methods are intentionally left unchanged pending its own integration.
+ */
+function renderEditCustomerOverview(customer, vehicles, vehicleState) {
+  const page = document.querySelector(".edit-customer-page");
+  if (!page) return;
+  const summary = page.querySelector(".edit-sidebar");
+  if (!summary) return;
+
+  const rows = [...summary.querySelectorAll(".edit-overview-item")];
+  const byLabel = (label) => rows.find((row) =>
+    row.querySelector("small")?.textContent?.trim() === label,
+  )?.querySelector("b");
+  const put = (label, value) => {
+    const el = byLabel(label);
+    if (el) el.textContent = value == null ? "—" : String(value);
+  };
+  const formatted = (value) => {
+    if (!value) return "—";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "—";
+    return new Intl.DateTimeFormat("en-US", {
+      timeZone: "Asia/Riyadh",
+      month: "short", day: "numeric", year: "numeric",
+    }).format(date);
+  };
+  put("Customer Since", formatted(customer?.memberSince));
+  put("Total Bookings", "—");
+  put("Total Spent", "—");
+  put("Active Bookings", "—");
+  // Payment methods deliberately unchanged, per product requirement.
+
+  const section = [...summary.querySelectorAll(".edit-summary-card")].find(
+    (card) => card.querySelector("h3")?.textContent?.trim() === "Registered Vehicles",
+  );
+  if (!section) return;
+  let list = section.querySelector("[data-edit-real-vehicles]");
+  if (!list) {
+    // Replace static demo empty-state with a dedicated live state container.
+    section.querySelector(".edit-empty-state")?.remove();
+    list = document.createElement("div");
+    list.dataset.editRealVehicles = "true";
+    list.className = "edit-live-vehicles";
+    list.style.cssText = "display:grid;gap:10px;padding:16px 2px;";
+    section.append(list);
+  }
+  list.replaceChildren();
+  const message = (text) => {
+    const p = document.createElement("p");
+    p.className = "edit-live-vehicles-state";
+    p.style.cssText = "margin:12px 0;color:#62758b;text-align:center;font-size:13px;";
+    p.textContent = text;
+    list.append(p);
+  };
+
+  if (!customer) {
+    put("Vehicles", "—");
+    message("Loading customer records…");
+    return;
+  }
+  if (vehicleState === "restricted") {
+    put("Vehicles", "—");
+    message("Vehicle details are not available for your account.");
+    return;
+  }
+  if (vehicleState === "failed") {
+    put("Vehicles", "—");
+    message("Unable to load registered vehicles. Please refresh to retry.");
+    return;
+  }
+  if (!Array.isArray(vehicles)) {
+    put("Vehicles", customer.vehicleCount ?? "—");
+    message("Loading registered vehicles…");
+    return;
+  }
+  const total = Number.isFinite(Number(customer.vehicleCount))
+    ? Number(customer.vehicleCount) : vehicles.length;
+  put("Vehicles", total);
+  if (!vehicles.length) {
+    message(total > 0 ? "Vehicle list is unavailable; count is from the customer record." : "No registered vehicles");
+    return;
+  }
+  // Use textContent, never inject user-controlled vehicle values into HTML.
+  vehicles.forEach((vehicle) => {
+    const card = document.createElement("article");
+    card.className = "edit-live-vehicle-card";
+    card.style.cssText = "padding:11px 13px;border:1px solid #e3ebf3;border-radius:10px;background:#fbfdfe;";
+    const title = document.createElement("strong");
+    title.style.cssText = "display:block;font-size:13px;color:#162838;";
+    title.textContent = [vehicle.make, vehicle.model].filter(Boolean).join(" ") || "Vehicle";
+    const detail = document.createElement("small");
+    detail.style.cssText = "display:block;margin-top:4px;color:#64758b;";
+    detail.textContent = vehicle.plateDisplayEnglish || vehicle.normalizedPlate || "Plate not recorded";
+    card.append(title, detail);
+    list.append(card);
+  });
+  if (total > vehicles.length) message(`Showing ${vehicles.length} of ${total} vehicles.`);
 }
 
 function formatCustomerDetailDate(value) {
