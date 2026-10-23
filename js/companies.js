@@ -117,6 +117,13 @@ function setCompaniesLoading(isLoading) {
 }
 
 function showCompanyToast(message, type = "success") {
+  if (typeof window.showParkinToast === "function") {
+    window.showParkinToast(message, {
+      type,
+      title: type === "error" ? "Company action failed" : /created/i.test(message) ? "Company created" : "Company updated",
+    });
+    return;
+  }
   const toast = document.querySelector("#company-toast");
 
   if (!toast) return;

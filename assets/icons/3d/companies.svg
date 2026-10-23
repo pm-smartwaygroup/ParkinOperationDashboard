@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" fill="none" role="img" aria-label="companies dimensional icon">
+<defs>
+  <linearGradient id="tile" x1="8" y1="4" x2="72" y2="75" gradientUnits="userSpaceOnUse"><stop stop-color="#d4beff"/><stop offset=".47" stop-color="#9474e5"/><stop offset="1" stop-color="#5644a5"/></linearGradient>
+  <linearGradient id="white" x1="18" y1="15" x2="58" y2="69" gradientUnits="userSpaceOnUse"><stop stop-color="#ffffff"/><stop offset=".56" stop-color="#f7fcff"/><stop offset="1" stop-color="#d4e9f1"/></linearGradient>
+  <linearGradient id="accent" x1="26" y1="18" x2="60" y2="68" gradientUnits="userSpaceOnUse"><stop stop-color="#d4beff"/><stop offset="1" stop-color="#5644a5"/></linearGradient>
+  <filter id="raised" x="-28%" y="-30%" width="158%" height="168%"><feDropShadow dx="0" dy="3" stdDeviation="2.2" flood-color="#654aa5" flood-opacity=".6"/></filter>
+</defs>
+<rect x="5" y="10" width="70" height="68" rx="20" fill="#5644a5" opacity=".68"/>
+<rect x="3" y="2" width="74" height="72" rx="20" fill="url(#tile)" stroke="#fff" stroke-opacity=".55" stroke-width="1.5"/>
+<path d="M11 24C14 10 21 7 38 7h15c11 0 16 3 19 13-15-5-42-6-61 4Z" fill="#fff" opacity=".27"/>
+<path d="M12 64c12 8 40 11 58-2" stroke="#fff" stroke-opacity=".33" stroke-width="2" stroke-linecap="round"/>
+<g filter="url(#raised)"><path d="M20 67V25l18-12 22 12v42Z" fill="url(#white)" stroke="#efe7ff" stroke-width="1.4"/>
+<path d="M38 13v54h22V25Z" fill="#d1bcf4"/>
+<path d="M20 25 38 13l22 12-22 11Z" fill="#fbf9ff"/>
+<path d="M26 38h6m-6 10h6m-6 10h6M44 38h9m-9 10h9m-9 10h9" stroke="#806bbd" stroke-width="4.5" stroke-linecap="round"/>
+<path d="M34 67V57h9v10" fill="url(#accent)"/></g>
+</svg>

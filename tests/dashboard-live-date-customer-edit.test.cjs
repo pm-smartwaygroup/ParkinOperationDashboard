@@ -25,13 +25,12 @@ test('header clock shows AST date (including after Riyadh midnight)', () => {
   assert.ok(dashboard.includes('window.setInterval(updateCurrentDate, 60_000)'));
 });
 
-test('edit customer form retrieves actual customer fields and resets sample-only inputs', () => {
+test('edit customer form retrieves actual fields including persisted address and emergency contact', () => {
   const body = extract(customers,'function populateEditCustomerForm(', 'function renderEditCustomerOverview(');
-  assert.ok(body.includes('customer.memberSince'));
-  assert.ok(body.includes('customer.notes'));
-  assert.ok(body.includes('field.disabled = true'));
-  assert.ok(body.includes('field.required = false'));
-  assert.ok(body.includes('field.value = ""'));
+  for (const field of ['memberSince', 'notes', 'nationality', 'address', 'emergencyContactName', 'emergencyContactPhone']) {
+    assert.ok(body.includes(`customer.${field}`), field);
+  }
+  assert.ok(!body.includes('field.disabled = true'));
   assert.ok(!body.includes('customer.totalSpent'));
 });
 

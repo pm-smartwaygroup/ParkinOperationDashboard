@@ -330,3 +330,8 @@ html[data-theme="dark"] .parkin-reports .pr-page-button.is-current {background:#
   .parkin-reports .pr-pagination {justify-content:flex-start;}
   .parkin-reports .pr-table-footer {gap:11px;}
 }
+
+/* Lightweight dimensional visual treatment, no change to report data. */
+.parkin-reports .pr-report-tab .pr-tab-icon {width:48px;height:48px;background:transparent;border-radius:0;}
+.parkin-reports .pr-report-tab:nth-child(2n) .pr-tab-icon,
+.parkin-reports .pr-report-tab:nth-child(4n) .pr-tab-icon {background:transparent;}

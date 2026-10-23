@@ -5,14 +5,16 @@
 
   const CATEGORIES = [
     { id:'bookings', name:'Bookings Report', icon:'fa-calendar-days', description:'Booking details and statistics', singular:'Booking', filterLabel:'Booking Type', typeField:'type' },
-    { id:'locations', name:'Locations Report', icon:'fa-location-dot', description:'Performance by location', singular:'Location', filterLabel:'Booking Type', typeField:'type' },
-    { id:'drivers', name:'Drivers Report', icon:'fa-user-tie', description:'Driver activity and performance', singular:'Driver', filterLabel:'Booking Type', typeField:'type' },
-    { id:'customers', name:'Customers Report', icon:'fa-users', description:'Customer insights and history', singular:'Customer', filterLabel:'Booking Type', typeField:'type' },
-    { id:'vehicles', name:'Vehicles Report', icon:'fa-car', description:'Vehicle statistics and trends', singular:'Vehicle', filterLabel:'Booking Type', typeField:'type' },
-    { id:'companies', name:'Companies Report', icon:'fa-building', description:'Company-wise performance', singular:'Company', filterLabel:'Booking Type', typeField:'type' },
-    { id:'users', name:'Users Report', icon:'fa-user-gear', description:'System users and activity', singular:'User', filterLabel:'Role', typeField:'role' },
+    { id:'locations', name:'Locations Report', icon:'fa-location-dot', description:'Location registration directory', singular:'Location', filterLabel:'Booking Type', typeField:'type' },
+    { id:'drivers', name:'Drivers Report', icon:'fa-user-tie', description:'Authorized driver registration directory', singular:'Driver', filterLabel:'Booking Type', typeField:'type' },
+    { id:'customers', name:'Customers Report', icon:'fa-users', description:'Customer registration directory', singular:'Customer', filterLabel:'Booking Type', typeField:'type' },
+    { id:'vehicles', name:'Vehicles Report', icon:'fa-car', description:'Vehicle registration directory', singular:'Vehicle', filterLabel:'Booking Type', typeField:'type' },
+    { id:'companies', name:'Companies Report', icon:'fa-building', description:'Super Admin company directory', singular:'Company', filterLabel:'Booking Type', typeField:'type' },
+    { id:'users', name:'Users Report', icon:'fa-user-gear', description:'Authorized system user directory', singular:'User', filterLabel:'Role', typeField:'role' },
     { id:'revenue', name:'Revenue Report', icon:'fa-chart-column', description:'Payments and revenue analysis', singular:'Payment', filterLabel:'Payment Method', typeField:'method' },
   ];
+  const DIRECTORY_CATEGORIES = new Set(['locations','customers','vehicles','companies','drivers','users']);
+  const PENDING_CATEGORIES = new Set(['revenue']);
   // Reports access is independent of module access. Both are required.
   // Read the same effective permissions as the existing Dashboard sidebar and routes.
   const REPORT_MODULE_PERMISSIONS = Object.freeze({
@@ -38,7 +40,7 @@
   }
   const COLORS = ['#00a75c','#2378ef','#862cff','#ff9016','#e83d50','#2ab8af'];
   // No synthetic report records are shipped to production.
-  // Non-Bookings categories remain visible to permitted roles but are unavailable until integrated.
+  // Unverified revenue data stays unavailable until a payment ledger exists.
   const SOURCES = ['Customer App','Valet Driver App','Dashboard'];
   const PRINT_COLUMNS = [
     {key:'id',label:'Booking ID'}, {key:'date',label:'Booking Date'}, {key:'customer',label:'Customer'},
@@ -57,12 +59,12 @@
   const COLUMN_MAP = {
     bookings:SCREEN_BOOKING_COLUMNS,
     revenue:[{key:'paymentId',label:'Payment ID'},{key:'id',label:'Booking ID'},{key:'date',label:'Date'},{key:'customer',label:'Customer'},{key:'company',label:'Company'},{key:'method',label:'Method'},{key:'amount',label:'Amount'},{key:'paymentStatus',label:'Payment Status'}],
-    locations:[{key:'location',label:'Location'},{key:'company',label:'Company'},{key:'bookings',label:'Bookings'},{key:'completed',label:'Completed'},{key:'cancelled',label:'Cancelled'},{key:'amount',label:'Revenue'}],
-    drivers:[{key:'driver',label:'Driver'},{key:'company',label:'Company'},{key:'location',label:'Primary Location'},{key:'bookings',label:'Bookings'},{key:'completed',label:'Completed'},{key:'amount',label:'Revenue Generated'}],
-    customers:[{key:'customer',label:'Customer'},{key:'phone',label:'Mobile'},{key:'bookings',label:'Bookings'},{key:'completed',label:'Completed'},{key:'location',label:'Recent Location'},{key:'amount',label:'Total Spent'}],
-    vehicles:[{key:'vehicle',label:'Vehicle'},{key:'plate',label:'Plate'},{key:'customer',label:'Customer'},{key:'bookings',label:'Bookings'},{key:'completed',label:'Completed'},{key:'location',label:'Recent Location'}],
-    companies:[{key:'company',label:'Company'},{key:'bookings',label:'Bookings'},{key:'completed',label:'Completed'},{key:'drivers',label:'Active Drivers'},{key:'locations',label:'Locations'},{key:'amount',label:'Revenue'}],
-    users:[{key:'userId',label:'User ID'},{key:'user',label:'User'},{key:'role',label:'Role'},{key:'company',label:'Company'},{key:'location',label:'Access Location'},{key:'date',label:'Last Activity'},{key:'status',label:'Status'}],
+    locations:[{key:'location',label:'Location'},{key:'code',label:'Code'},{key:'city',label:'City'},{key:'district',label:'District'},{key:'company',label:'Company'},{key:'capacity',label:'Capacity'},{key:'status',label:'Status'},{key:'date',label:'Created (AST)'}],
+    drivers:[{key:'driverCode',label:'Driver Code'},{key:'driver',label:'Driver'},{key:'phone',label:'Phone'},{key:'driverType',label:'Driver Type'},{key:'company',label:'Company'},{key:'location',label:'Primary Location'},{key:'status',label:'Status'},{key:'date',label:'Created (AST)'}],
+    customers:[{key:'customer',label:'Customer'},{key:'phone',label:'Mobile'},{key:'company',label:'Associated Company'},{key:'source',label:'Source'},{key:'status',label:'Status'},{key:'vehicles',label:'Vehicles'},{key:'date',label:'Created (AST)'}],
+    vehicles:[{key:'vehicle',label:'Vehicle'},{key:'plate',label:'Plate'},{key:'customer',label:'Customer'},{key:'company',label:'Company'},{key:'parkingType',label:'Parking Type'},{key:'status',label:'Status'},{key:'date',label:'Created (AST)'}],
+    companies:[{key:'company',label:'Company'},{key:'code',label:'Code'},{key:'status',label:'Status'},{key:'drivers',label:'Active Drivers'},{key:'locations',label:'Assigned Locations'},{key:'customers',label:'Operational Customers'},{key:'date',label:'Created (AST)'}],
+    users:[{key:'user',label:'User'},{key:'email',label:'Email'},{key:'role',label:'Role'},{key:'company',label:'Company'},{key:'accessScope',label:'Access Scope'},{key:'enabled',label:'Account Enabled'},{key:'suspension',label:'Suspension Schedule'},{key:'date',label:'Created (AST)'}],
   };
   const PRESETS_KEY = 'parkin_reports_ui_saved_filters_v1';
   const formatCurrency = value => `SAR ${Number(value || 0).toLocaleString('en-US')}`;
@@ -80,14 +82,16 @@
     const day = `${parts.year}-${parts.month}-${parts.day}`;
     return {from:`${parts.year}-${parts.month}-01T00:00`,to:`${day}T23:59`,type:'',company:'',location:'',source:'',status:'',paymentMethod:'',groupBy:'daily'};
   };
-  const state = {type:'bookings',filters:defaultFilters(),applied:defaultFilters(),search:'',sortKey:'date',sortDirection:-1,page:1,pageSize:8,selected:new Set(),hiddenColumns:new Set(),viewRecords:[],filteredBookings:[],root:null,firstModalFocus:null,liveRows:[],liveStatus:'idle',liveError:'',liveController:null,liveRequest:0,companyNames:new Map(),locationNames:new Map()};
+  const state = {type:'bookings',filters:defaultFilters(),applied:defaultFilters(),search:'',sortKey:'date',sortDirection:-1,page:1,pageSize:8,selected:new Set(),hiddenColumns:new Set(),viewRecords:[],filteredBookings:[],root:null,firstModalFocus:null,liveRows:[],liveStatus:'idle',liveType:null,liveError:'',liveController:null,liveRequest:0,companyNames:new Map(),locationNames:new Map()};
   const qs = selector => state.root?.querySelector(selector);
   const qsa = selector => [...(state.root?.querySelectorAll(selector) || [])];
   const category = () => CATEGORIES.find(cat=>cat.id===state.type) || CATEGORIES[0];
   const optionList = (values,allLabel,selected='') => `<option value="">${html(allLabel)}</option>`+[...new Set(values)].sort().map(value=>`<option value="${html(value)}" ${value===selected?'selected':''}>${html(value)}</option>`).join('');
-  // Only the Bookings report has a verified, permission-scoped API integration.
   function getReportRows(filtered) {
-    return state.type === 'bookings' ? filtered.map(row=>({...row})) : [];
+    if(state.type==='bookings')return filtered.map(row=>({...row}));
+    if(!DIRECTORY_CATEGORIES.has(state.type)||state.liveType!==state.type||state.liveStatus!=='ready')return [];
+    const from=filterClock(state.applied.from),to=filterClock(state.applied.to,true);
+    return state.liveRows.filter(row=>bookingClock(row)>=from&&bookingClock(row)<=to);
   }
   // Accept date-only legacy saved presets: start at 00:00, end at 23:59 AST.
   const filterClock = (value,end=false) => /^\d{4}-\d{2}-\d{2}$/.test(value||'')
@@ -113,9 +117,37 @@
     return items.bookings;
   }
   function renderTabs() {
-    qs('[data-report-tabs]').innerHTML=visibleCategories().map(cat=>`<button type="button" role="tab" aria-selected="${cat.id===state.type}" data-report-type="${cat.id}" class="pr-report-tab"${cat.id!=='bookings'?' data-integration-pending="true"':''}><span class="pr-tab-icon"><i class="fa-solid ${cat.icon}" aria-hidden="true"></i></span><span class="pr-tab-name">${html(cat.name)}</span><span class="pr-tab-desc">${html(cat.id==='bookings'?cat.description:'Integration pending · No live data')}</span></button>`).join('');
+    qs('[data-report-tabs]').innerHTML=visibleCategories().map(cat=>`<button type="button" role="tab" aria-selected="${cat.id===state.type}" data-report-type="${cat.id}" class="pr-report-tab"${PENDING_CATEGORIES.has(cat.id)?' data-integration-pending="true"':''}><span class="pr-tab-icon"><img class="pr-tab-3d" src="/assets/icons/3d/${cat.id}.svg" alt="" aria-hidden="true" width="48" height="48" decoding="async"></span><span class="pr-tab-name">${html(cat.name)}</span><span class="pr-tab-desc">${html(PENDING_CATEGORIES.has(cat.id)?'Integration pending · No live data':cat.id==='bookings'?cat.description:'Actual authorized directory records')}</span></button>`).join('');
   }
   function populateFilters() {
+    const directory=DIRECTORY_CATEGORIES.has(state.type);
+    for(const key of ['company','location','type','paymentMethod','groupBy','source','status']) {
+      const field=qs(`[data-filter="${key}"]`);if(field?.closest('.pr-field'))field.closest('.pr-field').hidden=directory;
+    }
+    for(const selector of ['#pr-role','#pr-shift','#pr-payment-status']){
+      const field=qs(selector);if(field?.closest('.pr-field'))field.closest('.pr-field').hidden=directory;
+    }
+    if(directory){
+      const defaults=defaultFilters(), f=state.filters;
+      qs('[data-filter="from"]').value=filterClock(f.from||defaults.from);
+      qs('[data-filter="to"]').value=filterClock(f.to||defaults.to,true);
+      qs('#pr-pending-title').textContent='';
+      qs('[data-report-data-tag]').textContent=state.liveStatus==='ready'&&state.liveType===state.type?`Live · ${state.liveRows.length} authorized ${state.type}`:state.liveStatus==='error'?'Directory unavailable':state.liveStatus==='loading'?'Loading real directory records…':'Live directory records';
+      qs('[data-report-data-tag]').classList.add('pr-live-tag');
+      qs('[data-live-refresh]').hidden=false;
+      qs('[data-export-toggle]').disabled=state.liveStatus!=='ready'||state.liveType!==state.type;
+      qs('#pr-filters-title').textContent=`${category().name} Filters`;
+      qs('#pr-details-title').textContent=`${category().singular} Directory`;
+      qs('[data-details-subtitle]').textContent='Actual records returned by authorized API · creation date in Saudi Arabia Time';
+      qs('.pr-overview-header h2').textContent='Directory Records';
+      qs('[data-overview-description]').textContent='Permission-scoped registration records. Date filters use creation timestamps, not booking activity.';
+      qs('#pr-filter-time-note').textContent='Created-date range in Saudi Arabia Time (AST, UTC+03:00). These are registration records; booking totals and revenue are not inferred.';
+      for(const key of ['from','to']){const field=qs(`[data-filter="${key}"]`);const label=field?.closest('.pr-field')?.querySelector('label');if(label)label.textContent=`Created ${key==='from'?'from':'to'} · AST`; }
+      return;
+    }
+    qs('.pr-overview-header h2').textContent='Overview';
+    qs('#pr-filter-time-note').textContent='Booking dates and times use Saudi Arabia Time (AST, UTC+03:00). Shift and payment status are unavailable in the current booking API.';
+    for(const key of ['from','to']){const field=qs(`[data-filter="${key}"]`);const label=field?.closest('.pr-field')?.querySelector('label');if(label)label.textContent=`${key==='from'?'From':'To'} · date & time (AST)`;}
     if(state.type!=='bookings'){
       qs('#pr-pending-title').textContent=`${category().name} is not available yet`;
       qs('[data-report-data-tag]').textContent='Integration pending · No report data';
@@ -320,7 +352,7 @@
   }
   function renderTable(rows) {
     updateBookingEmptyState(rows);
-    if(state.type==='bookings'&&state.liveStatus!=='ready'){qs('[data-table-head]').innerHTML='';qs('[data-table-body]').innerHTML=`<tr><td class="pr-no-results">${html(state.liveStatus==='error'?state.liveError:'Loading real booking records from the API…')}</td></tr>`;qs('[data-table-info]').textContent=state.liveStatus==='error'?'No report generated': 'Loading…';qs('[data-page-info]').textContent='';qs('[data-page-prev]').disabled=true;qs('[data-page-next]').disabled=true;return;}
+    if(state.liveStatus!=='ready'||(DIRECTORY_CATEGORIES.has(state.type)&&state.liveType!==state.type)){qs('[data-table-head]').innerHTML='';qs('[data-table-body]').innerHTML=`<tr><td class="pr-no-results">${html(state.liveStatus==='error'?state.liveError:'Loading verified report records from the API…')}</td></tr>`;qs('[data-table-info]').textContent=state.liveStatus==='error'?'No report generated': 'Loading…';qs('[data-page-info]').textContent='';qs('[data-page-prev]').disabled=true;qs('[data-page-next]').disabled=true;return;}
     const cols=COLUMN_MAP[state.type].filter(col=>!state.hiddenColumns.has(col.key));
     const start=(state.page-1)*state.pageSize;
     const pageRows=rows.slice(start,start+state.pageSize);
@@ -344,12 +376,12 @@
   function renderColumnMenu(){qs('[data-column-options]').innerHTML=COLUMN_MAP[state.type].map(col=>`<label class="pr-column-option"><input type="checkbox" data-column="${html(col.key)}" ${state.hiddenColumns.has(col.key)?'':'checked'}> ${html(col.label)}</label>`).join('');}
   function renderAll(){
     // A visible report tab is not a promise that its API integration is complete.
-    // Never render invented financial, customer, driver, or user metrics.
-    const pending = state.type !== 'bookings';
+    // Never render inferred driver performance, user activity, or payment metrics.
+    const pending = ['revenue'].includes(state.type);
     qs('[data-report-pending]').hidden=!pending;
     for(const selector of ['.pr-filters','.pr-overview-header','[data-kpis]','.pr-chart-grid','.pr-table-panel']){
       const section=qs(selector);
-      if(section)section.hidden=pending;
+      if(section)section.hidden=pending||((selector==='[data-kpis]'||selector==='.pr-chart-grid')&&DIRECTORY_CATEGORIES.has(state.type));
     }
     renderTabs();
     if(pending){
@@ -362,16 +394,22 @@
       return;
     }
     const rows=displayRows();state.viewRecords=rows;
-    renderKpis(getReportRows(state.filteredBookings),state.filteredBookings);
-    renderCharts(state.filteredBookings,getReportRows(state.filteredBookings));renderTable(rows);renderColumnMenu();
+    if(state.type==='bookings'){
+      renderKpis(getReportRows(state.filteredBookings),state.filteredBookings);
+      renderCharts(state.filteredBookings,getReportRows(state.filteredBookings));
+    } else {
+      for(const selector of ['[data-kpis]','[data-trend-chart]','[data-breakdown-key]','[data-top-locations]']){const e=qs(selector);if(e)e.textContent='';}
+    }
+    renderTable(rows);renderColumnMenu();
   }
   function switchCategory(id){
     // Never allow access to an undisplayed report via a synthetic click or stale tab.
     if(!canOpenCategory(id)||state.type===id)return;
-    if(state.type==='bookings'){state.liveController?.abort();state.liveRequest++;if(state.liveStatus==='loading')state.liveStatus='idle';}
-    state.type=id;state.filters.type='';state.filters.status='';state.filters.source='';state.filters.company='';state.filters.location='';state.filters.paymentMethod='';state.applied={...state.filters};state.sortKey=id==='users'?'date':id==='bookings'||id==='revenue'?'date':'bookings';state.sortDirection=-1;state.selected.clear();state.hiddenColumns.clear();state.search='';state.page=1;
+    state.liveController?.abort();state.liveRequest++;state.liveRows=[];state.liveStatus='idle';state.liveType=null;state.liveError='';
+    state.type=id;state.filters.type='';state.filters.status='';state.filters.source='';state.filters.company='';state.filters.location='';state.filters.paymentMethod='';state.applied={...state.filters};state.sortKey='date';state.sortDirection=-1;state.selected.clear();state.hiddenColumns.clear();state.search='';state.page=1;
     qs('[data-search]').value='';populateFilters();renderAll();closeMenus();
     if(id==='bookings')loadLiveBookings();
+    else if(DIRECTORY_CATEGORIES.has(id))loadLiveDirectory();
   }
   function closeMenus(exception){
     for(const [button,menu] of [['[data-saved-toggle]','[data-saved-menu]'],['[data-export-toggle]','[data-export-menu]'],['[data-column-toggle]','[data-column-menu]']]){
@@ -410,7 +448,7 @@
   // The PDF export is deliberately isolated from the Dashboard's print stylesheet.
   // Checked rows take precedence; otherwise export ALL matching records, not one page.
   function rowsForExport() {
-    if(state.type!=='bookings'||state.liveStatus!=='ready')return [];
+    if((state.type!=='bookings'&&!DIRECTORY_CATEGORIES.has(state.type))||state.liveStatus!=='ready'||(state.liveType&&state.liveType!==state.type))return [];
     return state.selected.size
       ? state.viewRecords.filter(row => state.selected.has(recordId(row)))
       : state.viewRecords;
@@ -726,8 +764,34 @@
       </style></head><body>${pages.map(shell).join('')}</body></html>`;
   }
 
+  function buildDirectoryPrintDocument(rows,cols){
+    const directoryLogo='data:image/png;base64,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';
+    const escape=html;
+    const reportName=category().name;
+    const dateRange=`${state.applied.from} to ${state.applied.to} AST`;
+    const chunks=[];
+    for(let i=0;i<rows.length;i+=19)chunks.push(rows.slice(i,i+19));
+    return `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>${escape(reportName)}</title>
+    <style>@page{size:A4 landscape;margin:0}*{box-sizing:border-box}body{font:10px Arial,sans-serif;color:#213449;margin:0}.page{width:297mm;height:210mm;padding:14mm 12mm 12mm;break-after:page;display:flex;flex-direction:column}.page:last-child{break-after:auto}h1{font-size:22px;color:#006c47;margin:0 0 5mm}.brand{margin-bottom:9mm;display:flex;align-items:center;gap:12px;font-size:10px;letter-spacing:.6px;color:#527466}.brand img{width:126px;height:42px;object-fit:contain}.meta{color:#516579;margin-bottom:6mm}table{border-collapse:collapse;width:100%;table-layout:fixed}thead{display:table-header-group}th{background:#e7f6ed;color:#154734;text-align:left}th,td{padding:7px 5px;border-bottom:1px solid #dfe7e9;overflow-wrap:anywhere;vertical-align:top}tr{break-inside:avoid}.footer{margin-top:auto;border-top:1px solid #ccd9d9;padding-top:4mm;color:#607585}</style>
+    </head><body>${chunks.map((group,index)=>`<section class="page"><div class="brand"><img src="${directoryLogo}" alt="ParkIn company logo" width="126" height="42">AUTHORIZED REPORTS</div><h1>${escape(reportName)}${index?' (continued)':''}</h1><div class="meta">Creation period: ${escape(dateRange)} · ${rows.length} selected/matching records · Generated from ParkIn Dashboard</div><table><thead><tr>${cols.map(col=>`<th>${escape(col.label)}</th>`).join('')}</tr></thead><tbody>${group.map(row=>`<tr>${cols.map(col=>`<td>${escape(col.key==='date'&&row.date?`${row.date}${row.time?' '+row.time+' AST':''}`:cellValue(row,col.key))}</td>`).join('')}</tr>`).join('')}</tbody></table><div class="footer">ParkIn · Actual permitted directory records · Page ${index+1} of ${chunks.length}</div></section>`).join('')}</body></html>`;
+  }
+  function printDirectoryOnly(){
+    if(!DIRECTORY_CATEGORIES.has(state.type)||state.liveStatus!=='ready'||state.liveType!==state.type){showFeedback('Actual directory records have not loaded. PDF export is unavailable.');return;}
+    const rows=rowsForExport();
+    if(!rows.length){showFeedback('No matching records to export as PDF.');return;}
+    const cols=COLUMN_MAP[state.type].filter(col=>!state.hiddenColumns.has(col.key));
+    const frame=document.createElement('iframe');
+    frame.setAttribute('title','ParkIn directory report PDF');frame.setAttribute('aria-hidden','true');
+    frame.tabIndex=-1;frame.style.cssText='position:fixed;left:-10000px;top:0;width:1100px;height:800px;border:0;opacity:0;pointer-events:none';
+    let timer,done=false;
+    const cleanup=()=>{if(done)return;done=true;clearTimeout(timer);frame.remove();};
+    frame.onload=()=>{try{frame.contentWindow.addEventListener('afterprint',()=>setTimeout(cleanup,2000),{once:true});frame.contentWindow.focus();frame.contentWindow.print();}catch{cleanup();showFeedback('Unable to open the print dialog.');}};
+    frame.srcdoc=buildDirectoryPrintDocument(rows,cols);
+    timer=setTimeout(cleanup,120000);document.body.appendChild(frame);
+    showFeedback(`Preparing ${rows.length} actual ${state.type} records for Save as PDF.`,true);
+  }
   function printRecordsOnly() {
-    if (state.type !== 'bookings' || state.liveStatus !== 'ready') {
+    if (state.type !== 'bookings' || state.liveStatus !== 'ready' || (state.liveType && state.liveType !== 'bookings')) {
       showFeedback('Actual booking records have not loaded. PDF export is unavailable.');return;
     }
     const rows = rowsForExport();
@@ -762,27 +826,29 @@
     showFeedback(`Preparing ${rows.length} ${state.selected.size?'selected':'matching'} records only. Choose “Save as PDF” in the print dialog.`,true);
   }
   function downloadCSV(){
-    if(state.type!=='bookings'||state.liveStatus!=='ready'){showFeedback('Actual booking records have not loaded. Export is unavailable.');return;}
+    if((state.type!=='bookings'&&!DIRECTORY_CATEGORIES.has(state.type))||state.liveStatus!=='ready'||state.liveType!==state.type){showFeedback('Actual report records have not loaded. Export is unavailable.');return;}
     const cols=COLUMN_MAP[state.type].filter(col=>!state.hiddenColumns.has(col.key));
     const chosen=rowsForExport();
     const lines=[cols.map(col=>csvCell(col.label)).join(','),...chosen.map(row=>cols.map(col=>csvCell(cellValue(row,col.key))).join(','))];
     const csv='\ufeff'+lines.join('\r\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
-    const url=URL.createObjectURL(blob);const link=document.createElement('a');link.href=url;link.download=`parkin-bookings-actual-${dateId(today())}.csv`;document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+    const url=URL.createObjectURL(blob);const link=document.createElement('a');link.href=url;link.download=`parkin-${state.type}-actual-${dateId(today())}.csv`;document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
     showFeedback(`Exported ${chosen.length} actual records as Excel-compatible CSV.`,true);
   }
   function composeEmail(){
     const rows=rowsForExport();
-    if(state.type!=='bookings'||state.liveStatus!=='ready'){showFeedback('Actual booking records have not loaded.');return;}
-    const title=`ParkIn ${category().name} — actual booking summary`;
-    const body=`Actual authorized booking records. Booking value does not prove payment.\nReport: ${category().name}\nPeriod: ${state.applied.from} to ${state.applied.to}\nMatching records: ${rows.length}\n\nFor full details, export the CSV from ParkIn Dashboard.`;
+    if((state.type!=='bookings'&&!DIRECTORY_CATEGORIES.has(state.type))||state.liveStatus!=='ready'||state.liveType!==state.type){showFeedback('Actual report records have not loaded.');return;}
+    const title=`ParkIn ${category().name} — actual records`;
+    const body=`Actual authorized ${state.type==='bookings'?'booking':'directory'} records.\nReport: ${category().name}\n${state.type==='bookings'?'Booking':'Created'} period (AST): ${state.applied.from} to ${state.applied.to}\nMatching records: ${rows.length}\n\nFor full details, export CSV from ParkIn Dashboard.`;
     window.location.href=`mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}`;
     showFeedback('Your email application should open a draft. No email was sent automatically.',true);
   }
   function exportAction(id){closeMenus();
-    if(state.type!=='bookings'){showFeedback('This report has no live integration yet. No export was generated.');return;}
-    if(state.liveStatus!=='ready'){showFeedback('Actual booking records have not loaded. Export is unavailable.');return;}
+    if(state.type!=='bookings'&&!DIRECTORY_CATEGORIES.has(state.type)){showFeedback('This report has no live integration yet. No export was generated.');return;}
+    if(state.liveStatus!=='ready'||state.liveType!==state.type){showFeedback('Actual report records have not loaded. Export is unavailable.');return;}
     if(id==='csv')downloadCSV();
-    if(id==='pdf')printRecordsOnly();
+    if(state.type==='bookings'){
+      if(id==='pdf')printRecordsOnly();
+    }else if(id==='pdf')printDirectoryOnly();
     if(id==='email')composeEmail();
     if(id==='schedule')showFeedback('Scheduled report delivery requires the future API/email integration. No job has been created.');
   }
@@ -806,7 +872,7 @@
       if(hasReportPermission('bookings.create') && hasReportPermission('customers.view')) window.location.hash='#customers';
       return;
     }
-    if(action.matches('[data-live-refresh]')){loadLiveBookings();return;}
+    if(action.matches('[data-live-refresh]')){if(state.type==='bookings')loadLiveBookings();else if(DIRECTORY_CATEGORIES.has(state.type))loadLiveDirectory();return;}
     if(action.matches('[data-reset]')){state.filters=defaultFilters();populateFilters();applyFilters(readFilters());showFeedback('Filters reset to the current month.',true);return;}
     if(action.matches('[data-export-toggle]')){toggleMenu('[data-export-toggle]','[data-export-menu]');return;}
     if(action.matches('[data-saved-toggle]')){renderPresets();toggleMenu('[data-saved-toggle]','[data-saved-menu]');return;}
@@ -834,7 +900,7 @@
     state.liveController?.abort();
     const controller=new AbortController();state.liveController=controller;
     const request=++state.liveRequest;
-    state.liveStatus='loading';state.liveError='';state.liveRows=[];state.companyNames=new Map();state.locationNames=new Map();
+    state.liveStatus='loading';state.liveType='bookings';state.liveError='';state.liveRows=[];state.companyNames=new Map();state.locationNames=new Map();
     state.selected.clear();state.page=1;renderAll();
     if(!api){state.liveStatus='error';state.liveError='Booking report API adapter is not available. Reload the Dashboard.';renderAll();return;}
     const token=localStorage.getItem('parkin_access_token');
@@ -852,7 +918,7 @@
       ]);
       if(request!==state.liveRequest||controller.signal.aborted)return;
       state.companyNames=companies;state.locationNames=locations;
-      state.liveRows=rows;state.liveStatus='ready';
+      state.liveRows=rows;state.liveStatus='ready';state.liveType='bookings';
       // Only clear demo-era filter values, not valid zero-booking directory options.
       if(state.applied.company&&!companies.has(state.applied.company)&&!rows.some(r=>r.companyId===state.applied.company))state.applied.company='';
       if(state.applied.location&&!locations.has(state.applied.location)&&!rows.some(r=>r.locationId===state.applied.location))state.applied.location='';
@@ -862,7 +928,31 @@
       showFeedback(`Loaded ${rows.length.toLocaleString('en-US')} actual bookings. Filtered results reflect your account's access permissions.`,true);
     } catch(error){
       if(request!==state.liveRequest||controller.signal.aborted)return;
-      state.liveRows=[];state.liveStatus='error';state.liveError=error?.message||'Could not load booking data.';
+      state.liveRows=[];state.liveStatus='error';state.liveType='bookings';state.liveError=error?.message||'Could not load booking data.';
+      populateFilters();renderAll();showFeedback(state.liveError);
+    }
+  }
+  async function loadLiveDirectory(){
+    const kind=state.type;
+    if(!state.root||!DIRECTORY_CATEGORIES.has(kind)||!canOpenCategory(kind))return;
+    state.liveController?.abort();
+    const controller=new AbortController();state.liveController=controller;
+    const request=++state.liveRequest;
+    state.liveStatus='loading';state.liveType=kind;state.liveError='';state.liveRows=[];
+    state.selected.clear();state.page=1;populateFilters();renderAll();
+    try{
+      const api=window.ParkinDirectoryReportAPI;
+      if(!api)throw new Error('Directory API adapter not loaded. Reload Dashboard.');
+      const rows=await api.fetchAll({kind,apiBaseUrl:window.PARKIN_CONFIG?.apiBaseUrl||'',
+        token:localStorage.getItem('parkin_access_token'),signal:controller.signal,
+        onProgress:(count,total)=>{if(request===state.liveRequest)qs('[data-report-data-tag]').textContent=`Loading ${kind}… ${count}/${total}`;}
+      });
+      if(request!==state.liveRequest||controller.signal.aborted||state.type!==kind)return;
+      state.liveRows=rows;state.liveStatus='ready';populateFilters();renderAll();
+      showFeedback(`Loaded ${rows.length.toLocaleString('en-US')} actual ${kind} returned by the authorized API.${kind==='drivers'?' The Drivers endpoint does not provide a total count.':''}`,true);
+    }catch(error){
+      if(request!==state.liveRequest||controller.signal.aborted||state.type!==kind)return;
+      state.liveRows=[];state.liveStatus='error';state.liveError=error?.message||'Could not load the directory report.';
       populateFilters();renderAll();showFeedback(state.liveError);
     }
   }
@@ -872,7 +962,7 @@
     const previous=state.type;
     // Invalidate old API responses when account permissions or session changes.
     state.liveController?.abort();state.liveRequest++;
-    state.liveRows=[];state.liveStatus='idle';state.liveError='';
+    state.liveRows=[];state.liveStatus='idle';state.liveType=null;state.liveError='';
     state.companyNames=new Map();state.locationNames=new Map();
     state.viewRecords=[];state.filteredBookings=[];
     state.selected.clear();state.page=1;
@@ -881,7 +971,7 @@
     }
     if(previous!==state.type){
       state.filters=defaultFilters();state.applied={...state.filters};
-      state.sortKey=state.type==='users'||state.type==='bookings'||state.type==='revenue'?'date':'bookings';
+      state.sortKey='date';
       state.sortDirection=-1;state.hiddenColumns.clear();state.search='';
       qs('[data-search]').value='';
     }
@@ -893,6 +983,7 @@
     if(!allowed.length)return;
     populateFilters();renderAll();
     if(state.type==='bookings')loadLiveBookings();
+    else if(DIRECTORY_CATEGORIES.has(state.type))loadLiveDirectory();
   }
   function setup(root){
     if(root.dataset.reportsMounted==='true')return;

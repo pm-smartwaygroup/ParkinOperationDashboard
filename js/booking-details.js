@@ -238,10 +238,17 @@ function bookingDetailTimeline(booking) {
     })
     .join("");
 }
-function showBookingDetailNotice(message) {
+function showBookingDetailNotice(message, type = "info") {
+  if (typeof window.showParkinToast === "function") {
+    window.showParkinToast(message, {
+      title: type === "success" ? "Booking updated" : "Booking Details",
+      type,
+    });
+    return;
+  }
   window.showDashboardAlert?.(message, {
     title: "Booking Details",
-    type: "info",
+    type,
   });
 }
 
@@ -314,6 +321,7 @@ async function updateBookingWorkflowApi(
       headers: {
         Authorization: `Bearer ${token}`,
       },
+      cache: "no-store",
     },
   );
 
@@ -335,8 +343,32 @@ async function updateBookingWorkflowApi(
   return payload?.data ?? payload;
 }
 
+function bookingDetailStatusLabel(rawStatus, fallback) {
+  const labels = {
+    CONFIRMED: "Confirmed",
+    VEHICLE_PARKED: "Vehicle Parked",
+    RETURN_REQUESTED: "Return Requested",
+    RETRIEVAL_IN_PROGRESS: "Vehicle on Retrieval",
+    READY_FOR_HANDOVER: "Ready for Handover",
+    COMPLETED: "Collected",
+    CANCELLED: "Cancelled",
+    EXPIRED: "Expired",
+  };
+  return labels[rawStatus] || fallback;
+}
+
 function bookingWorkflowActionConfig(rawStatus) {
   switch (rawStatus) {
+    case "CONFIRMED":
+      return {
+        actionPath: "park",
+        label: "Mark Vehicle Parked",
+        icon: "fa-square-parking",
+        confirmTitle: "Confirm vehicle is parked?",
+        confirmMessage:
+          "This records that the vehicle has physically entered parking.",
+      };
+
     case "RETURN_REQUESTED":
       return {
         actionPath: "start-retrieval",
@@ -379,6 +411,11 @@ function bookingWorkflowSuccessMessage(
   result,
 ) {
   switch (actionPath) {
+    case "park":
+      return result?.alreadyParked
+        ? "Vehicle is already marked parked."
+        : "Vehicle marked parked successfully.";
+
     case "start-retrieval":
       return result?.alreadyStarted
         ? "Vehicle retrieval is already in progress."
@@ -409,6 +446,13 @@ function applyBookingWorkflowResult(
     booking.rawStatus;
 
   booking.rawStatus = nextStatus;
+
+  if (nextStatus === "VEHICLE_PARKED") {
+    booking.status = "Active";
+    if (result?.parkedAt) {
+      booking.parkedAt = bookingDetailFormatApiDateTime(result.parkedAt);
+    }
+  }
 
   if (
     nextStatus ===
@@ -451,9 +495,7 @@ function applyBookingWorkflowResult(
 
   bookingDetailSet(
     "[data-booking-summary-status]",
-    nextStatus === "COMPLETED"
-      ? "Collected"
-      : booking.status,
+    bookingDetailStatusLabel(nextStatus, booking.status),
   );
 
   const statusElement = root.querySelector(
@@ -499,7 +541,9 @@ function renderBookingWorkflowAction(
 
   existing?.remove();
 
-  if (!actions || !booking) {
+  if (!actions || !booking ||
+      typeof window.hasDashboardPermission !== "function" ||
+      !window.hasDashboardPermission("bookings.edit")) {
     return;
   }
 
@@ -580,6 +624,7 @@ function renderBookingWorkflowAction(
             config.actionPath,
             result,
           ),
+          "success",
         );
       } catch (error) {
         button.disabled = false;
@@ -589,6 +634,7 @@ function renderBookingWorkflowAction(
         showBookingDetailNotice(
           error?.message ||
             "Unable to update the booking.",
+          "error",
         );
       }
     },
@@ -821,9 +867,7 @@ function initializeBookingDetailsPage() {
     bookingDetailSet("[data-booking-phone]", booking.phone);
     bookingDetailSet(
       "[data-booking-summary-status]",
-      booking.status === "Completed"
-        ? "Collected"
-        : booking.status,
+      bookingDetailStatusLabel(booking.rawStatus, booking.status),
     );
     bookingDetailSet(
       "[data-booking-summary-source]",

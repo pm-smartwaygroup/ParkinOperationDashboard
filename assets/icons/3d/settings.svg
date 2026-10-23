@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" fill="none" role="img" aria-label="settings dimensional icon">
+<defs>
+  <linearGradient id="tile" x1="8" y1="4" x2="72" y2="75" gradientUnits="userSpaceOnUse"><stop stop-color="#d0e2ef"/><stop offset=".47" stop-color="#789bba"/><stop offset="1" stop-color="#466785"/></linearGradient>
+  <linearGradient id="white" x1="18" y1="15" x2="58" y2="69" gradientUnits="userSpaceOnUse"><stop stop-color="#ffffff"/><stop offset=".56" stop-color="#f7fcff"/><stop offset="1" stop-color="#d4e9f1"/></linearGradient>
+  <linearGradient id="accent" x1="26" y1="18" x2="60" y2="68" gradientUnits="userSpaceOnUse"><stop stop-color="#d0e2ef"/><stop offset="1" stop-color="#466785"/></linearGradient>
+  <filter id="raised" x="-28%" y="-30%" width="158%" height="168%"><feDropShadow dx="0" dy="3" stdDeviation="2.2" flood-color="#52718b" flood-opacity=".6"/></filter>
+</defs>
+<rect x="5" y="10" width="70" height="68" rx="20" fill="#466785" opacity=".68"/>
+<rect x="3" y="2" width="74" height="72" rx="20" fill="url(#tile)" stroke="#fff" stroke-opacity=".55" stroke-width="1.5"/>
+<path d="M11 24C14 10 21 7 38 7h15c11 0 16 3 19 13-15-5-42-6-61 4Z" fill="#fff" opacity=".27"/>
+<path d="M12 64c12 8 40 11 58-2" stroke="#fff" stroke-opacity=".33" stroke-width="2" stroke-linecap="round"/>
+<g filter="url(#raised)"><path d="M35 13h10l3 9 8 3 8-4 7 8-5 7 2 8 8 5-3 10-9 1-5 6 2 9-9 5-7-6h-9l-7 6-9-5 2-9-5-6-9-1-3-10 8-5 2-8-5-7 7-8 8 4 8-3Z" fill="url(#white)" stroke="#f4faff" stroke-width="1.3" stroke-linejoin="round"/>
+<circle cx="40" cy="44" r="16" fill="url(#accent)"/>
+<circle cx="40" cy="44" r="8" fill="#eff9ff"/>
+<path d="M29 33c7-7 14-7 21-1" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/></g>
+</svg>

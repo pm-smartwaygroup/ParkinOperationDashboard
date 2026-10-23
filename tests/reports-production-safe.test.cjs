@@ -7,7 +7,8 @@ const vm = require('node:vm');
 const source = fs.readFileSync(path.join(__dirname,'../js/reports.js'),'utf8');
 const page = fs.readFileSync(path.join(__dirname,'../pages/reports.html'),'utf8');
 const styles = fs.readFileSync(path.join(__dirname,'../css/reports.css'),'utf8');
-const pendingCategories = ['locations','drivers','customers','vehicles','companies','users','revenue'];
+const pendingCategories = ['revenue'];
+const DIRECTORY_CATEGORIES = new Set(['locations','customers','vehicles','companies','drivers','users']);
 function extract(from,to) {
   const start=source.indexOf(from),end=source.indexOf(to,start);
   assert.ok(start>=0 && end>start,`Could not extract ${from}..${to}`);
@@ -23,11 +24,11 @@ test('no generated bookings, synthetic users, or mock operational values ship to
   assert.match(styles,/\.pr-release-pending/);
 });
 
-test('all seven unfinished report categories have zero source records regardless of API bookings', () => {
+test('unintegrated revenue report never treats booking rows as payment records', () => {
   const row={date:'2026-10-20',companyId:'company-a',locationId:'location-a',source:'Customer App',status:'Confirmed',type:'Valet Parking',id:'BK-1'};
   const f={from:'2026-10-01',to:'2026-10-21',company:'',location:'',source:'',status:'',type:''};
   for(const type of pendingCategories){
-    const ctx={state:{type,liveRows:[row],applied:f}};
+    const ctx={state:{type,liveRows:[row],applied:f},DIRECTORY_CATEGORIES};
     vm.runInNewContext(scopeFns,ctx);
     assert.equal(ctx.filteredBookings().length,0,type);
     assert.equal(ctx.getReportRows([row]).length,0,type);
@@ -49,7 +50,7 @@ function rendering(type){
   const state={type,viewRecords:[{id:'old'}],filteredBookings:[{id:'old'}],selected:new Set(['old']),liveStatus:'ready'};
   const els=new Map(); const touched=[];
   function qs(selector){if(!els.has(selector))els.set(selector,{hidden:false});return els.get(selector);}
-  const ctx={state,qs,renderTabs:()=>touched.push('tabs'),displayRows:()=>[{id:'actual'}],
+  const ctx={state,qs,DIRECTORY_CATEGORIES,renderTabs:()=>touched.push('tabs'),displayRows:()=>[{id:'actual'}],
     renderKpis:()=>touched.push('kpis'),renderCharts:()=>touched.push('charts'),renderTable:()=>touched.push('table'),renderColumnMenu:()=>touched.push('columns'),getReportRows:()=>[],};
   vm.runInNewContext(renderFn,ctx);
   return {ctx,state,qs,touched};
@@ -70,7 +71,7 @@ test('each unfinished category hides overview, controls, charts and table, displ
 });
 
 test('returning to Bookings restores all report sections and live renderer',()=>{
-  const ui=rendering('locations');ui.ctx.renderAll();ui.state.type='bookings';ui.ctx.renderAll();
+  const ui=rendering('revenue');ui.ctx.renderAll();ui.state.type='bookings';ui.ctx.renderAll();
   assert.equal(ui.qs('[data-report-pending]').hidden,true);
   for(const selector of ['.pr-filters','.pr-overview-header','[data-kpis]','.pr-chart-grid','.pr-table-panel']){
     assert.equal(ui.qs(selector).hidden,false,selector);
@@ -78,10 +79,10 @@ test('returning to Bookings restores all report sections and live renderer',()=>
   assert.deepEqual(ui.touched,['tabs','tabs','kpis','charts','table','columns']);
 });
 
-test('direct export events cannot generate fake revenue, users or other unavailable reports',()=>{
+test('direct export events cannot generate fake revenue records',()=>{
   for(const type of pendingCategories){
     const feedback=[],actions=[];
-    const ctx={state:{type,liveStatus:'ready'},closeMenus:()=>{},showFeedback:msg=>feedback.push(msg),downloadCSV:()=>actions.push('csv'),printRecordsOnly:()=>actions.push('pdf'),composeEmail:()=>actions.push('email')};
+    const ctx={state:{type,liveStatus:'ready'},DIRECTORY_CATEGORIES,closeMenus:()=>{},showFeedback:msg=>feedback.push(msg),downloadCSV:()=>actions.push('csv'),printRecordsOnly:()=>actions.push('pdf'),composeEmail:()=>actions.push('email')};
     vm.runInNewContext(exportFn,ctx);
     for(const choice of ['csv','pdf','email','schedule'])ctx.exportAction(choice);
     assert.equal(actions.length,0,type);
@@ -93,7 +94,7 @@ test('direct export events cannot generate fake revenue, users or other unavaila
 test('export is also blocked for incomplete/error booking fetches',()=>{
   for(const liveStatus of ['idle','loading','error']){
     const feedback=[],actions=[];
-    const ctx={state:{type:'bookings',liveStatus},closeMenus:()=>{},showFeedback:msg=>feedback.push(msg),downloadCSV:()=>actions.push('csv'),printRecordsOnly:()=>actions.push('pdf'),composeEmail:()=>actions.push('email')};
+    const ctx={state:{type:'bookings',liveStatus},DIRECTORY_CATEGORIES,closeMenus:()=>{},showFeedback:msg=>feedback.push(msg),downloadCSV:()=>actions.push('csv'),printRecordsOnly:()=>actions.push('pdf'),composeEmail:()=>actions.push('email')};
     vm.runInNewContext(exportFn,ctx);
     ctx.exportAction('pdf');
     assert.equal(actions.length,0);

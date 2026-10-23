@@ -1,0 +1,22 @@
+<svg width="570" height="340" viewBox="0 0 570 340" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Illustration of a valet parking location ready to be created">
+<defs>
+  <linearGradient id="map" x1="110" y1="170" x2="477" y2="289" gradientUnits="userSpaceOnUse"><stop stop-color="#E7F8F0"/><stop offset="1" stop-color="#C6EAD7"/></linearGradient>
+  <linearGradient id="pin" x1="255" y1="75" x2="362" y2="221" gradientUnits="userSpaceOnUse"><stop stop-color="#36D28A"/><stop offset="0.42" stop-color="#079B5B"/><stop offset="1" stop-color="#006338"/></linearGradient>
+  <linearGradient id="roof" x1="404" y1="171" x2="448" y2="220" gradientUnits="userSpaceOnUse"><stop stop-color="#38B7E4"/><stop offset="1" stop-color="#1773A6"/></linearGradient>
+  <filter id="shadow" x="68" y="70" width="466" height="260" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feGaussianBlur stdDeviation="13"/></filter>
+  <filter id="pinShadow" x="222" y="59" width="158" height="183" filterUnits="userSpaceOnUse"><feDropShadow dx="0" dy="11" stdDeviation="10" flood-color="#026C3D" flood-opacity=".25"/></filter>
+</defs>
+<ellipse cx="288" cy="283" rx="217" ry="29" fill="#E3F1EB"/>
+<path d="M97 243 230 182l141 22 103 53-131 50-148-14-98-50Z" fill="url(#map)" stroke="#B9E1D0" stroke-width="2"/>
+<path d="m145 240 113-50m-56 93 96-71m73 73-150-38m126-42-125 87m225-39-145-38" stroke="white" stroke-width="10" stroke-linecap="round" opacity=".9"/>
+<path d="m146 240 113-50m-57 93 96-71m73 73-150-38m126-42-125 87m225-39-145-38" stroke="#A5D4BF" stroke-width="1.5" stroke-dasharray="5 8"/>
+<g opacity=".9"><rect x="170" y="116" width="51" height="81" rx="7" fill="#D2E6F3"/><path d="M161 121 193 100l36 21v9h-68v-9Z" fill="#99BAD0"/><rect x="181" y="144" width="12" height="19" rx="3" fill="white"/><rect x="199" y="144" width="12" height="19" rx="3" fill="white"/><rect x="187" y="174" width="17" height="23" rx="3" fill="#5BA18C"/></g>
+<g opacity=".95"><rect x="388" y="173" width="67" height="61" rx="7" fill="#D3E8F4"/><path d="M380 180h82l-13-17h-57l-12 17Z" fill="url(#roof)"/><rect x="401" y="192" width="13" height="15" rx="3" fill="white"/><rect x="427" y="192" width="13" height="15" rx="3" fill="white"/><rect x="418" y="213" width="18" height="21" rx="3" fill="#78AECA"/></g>
+<g filter="url(#pinShadow)"><path d="M302 75c-40 0-72 32-72 71 0 54 72 112 72 112s72-58 72-112c0-39-32-71-72-71Z" fill="url(#pin)" stroke="#59D59B" stroke-width="2"/><circle cx="302" cy="145" r="35" fill="#D7FDEB"/><circle cx="302" cy="145" r="21" fill="white"/></g>
+<path d="M246 112c18-23 50-32 78-23" stroke="#A3FFCA" stroke-width="7" stroke-linecap="round" opacity=".55"/>
+<g><path d="M121 170h4v45h-4z" fill="#618E93"/><rect x="104" y="155" width="39" height="32" rx="9" fill="#2066B1" stroke="white" stroke-width="4"/><text x="123.5" y="178" text-anchor="middle" font-family="Arial,sans-serif" font-size="22" font-weight="900" fill="white">P</text></g>
+<g><path d="M126 241c-6-21-5-35 0-39 12 0 18 9 18 22 0 14-5 20-18 17Z" fill="#30BE75"/><path d="M123 238v20" stroke="#508778" stroke-width="3"/><path d="M464 237c-8-27-6-40 6-44 15 3 17 18 14 31-4 14-13 18-20 13Z" fill="#16A768"/><path d="M468 238v25" stroke="#568E7A" stroke-width="3"/></g>
+<g><path d="M73 152c-7-10-4-22 8-24 3-19 31-20 38-3 17-2 23 18 8 27H73Z" fill="#E3F4FE"/><path d="M405 94c-5-12 2-18 13-17 2-14 20-17 27-4 13-1 19 16 7 21h-47Z" fill="#D8EBF9"/></g>
+<g><path d="M355 258h13l8-9h28l10 9h10a6 6 0 0 1 6 6v14h-82v-14a6 6 0 0 1 7-6Z" fill="#4095DE"/><rect x="378" y="252" width="23" height="9" rx="3" fill="#DDF3FF"/><circle cx="367" cy="278" r="9" fill="#2A465F"/><circle cx="413" cy="278" r="9" fill="#2A465F"/><circle cx="367" cy="278" r="4" fill="#E1EFF5"/><circle cx="413" cy="278" r="4" fill="#E1EFF5"/></g>
+<path d="m310 275 8-8 9 8-9 7-8-7Z" fill="#FFF8DF"/>
+</svg>

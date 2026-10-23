@@ -913,3 +913,31 @@ html[data-theme="dark"] .revenue-page .revenue-paid-badge {
   color: #32d583;
   background: rgb(10 155 85 / 18%);
 }
+
+/* No mock revenue in live Dashboard. This state is replaced only with a verified ledger API. */
+.revenue-integration-pending {
+  margin: clamp(15px,3vw,32px) auto;
+  max-width: 980px;
+  padding: clamp(28px,6vw,62px);
+  border: 1px solid #dae7e4;
+  border-radius: 22px;
+  background: radial-gradient(ellipse at 50% 0%,#eafbf4 0%,#fff 64%);
+  box-shadow: 0 16px 38px rgba(8,64,45,.05);
+  text-align: center;
+  color: #183a33;
+}
+.revenue-integration-art img {width:96px;height:96px;object-fit:contain;}
+.revenue-integration-eyebrow {margin: 6px 0 10px; text-transform: uppercase; letter-spacing: 1.7px; font-size: 11px; color: #058657; font-weight: 800;}
+.revenue-integration-pending h2 {font-size:clamp(23px,3vw,34px); margin: 0 0 12px; line-height:1.2; color: inherit;}
+.revenue-integration-description {max-width: 670px; margin: 0 auto 24px; font-size:14px; line-height:1.8; color:#62756f;}
+.revenue-integration-requirements {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:0 auto 22px;max-width:670px;text-align:left;}
+.revenue-integration-requirements > div {padding:15px 17px;background: #f8fcfa;border:1px solid #e0ede6;border-radius:12px;}
+.revenue-integration-requirements strong,.revenue-integration-requirements span {display:block;}
+.revenue-integration-requirements strong {font-size:13px;color:#204a3c;}
+.revenue-integration-requirements span {font-size:12px;line-height:1.6;margin-top:4px;color:#6b8277;}
+.revenue-integration-note {margin:0; color:#586c62; font-size:12px; font-weight:600;}
+html[data-theme="dark"] .revenue-integration-pending {background:radial-gradient(ellipse at top,#144c40,#193036 72%);border-color:#34564b;color:#e8f8f1;}
+html[data-theme="dark"] .revenue-integration-requirements > div {background:#1d3a37;border-color:#375a50;}
+html[data-theme="dark"] .revenue-integration-requirements strong {color:#e9f8ef;}
+html[data-theme="dark"] .revenue-integration-description,html[data-theme="dark"] .revenue-integration-note,html[data-theme="dark"] .revenue-integration-requirements span {color:#aac5b8;}
+@media (max-width:580px) {.revenue-integration-requirements {grid-template-columns:minmax(0,1fr);}}

@@ -2583,3 +2583,13 @@ body.dashboard-alert-open {
     min-height: 48px;
   }
 }
+
+/* M11: distinguish successful saves from validation errors. */
+.dashboard-alert-success .dashboard-alert-card { border: 1px solid #b8ead0; box-shadow: 0 30px 90px rgba(0,95,55,.22); }
+.dashboard-alert-success .dashboard-alert-icon { width: 72px; height: 72px; border: 0; border-radius: 50%; background: linear-gradient(145deg,#14b86b,#087a49); color: white; font-size: 32px; box-shadow: 0 12px 24px rgba(5,137,70,.24); }
+.dashboard-alert-success .dashboard-alert-icon i { animation: parkin-check-pop 380ms cubic-bezier(.2,1.6,.4,1) both; }
+.dashboard-alert-success .dashboard-alert-label { background: #e9f9ef; color: #067b48; }
+.dashboard-alert-success .dashboard-alert-primary { background: linear-gradient(100deg,#086d41,#0b9556); }
+.dashboard-alert-success .dashboard-alert-primary:hover { background: #086c40; }
+@keyframes parkin-check-pop { from { opacity:0; transform: scale(.55); } to { opacity:1; transform:scale(1); } }
+@media (prefers-reduced-motion: reduce) { .dashboard-alert-success .dashboard-alert-icon i { animation: none; } }

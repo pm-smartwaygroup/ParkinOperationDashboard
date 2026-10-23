@@ -3370,6 +3370,13 @@ function validateDriverDetailsStep(root) {
 }
 
 function showDriverDraftSuccessModal() {
+  if (typeof window.showParkinToast === "function") {
+    window.showParkinToast("Draft saved successfully.", {
+      title: "Driver draft saved",
+      type: "success",
+    });
+    return;
+  }
   document.querySelector("#driver-draft-success-modal")?.remove();
 
   const modal = document.createElement("div");

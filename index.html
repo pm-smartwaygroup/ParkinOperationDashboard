@@ -40,6 +40,9 @@
     />
     <link rel="stylesheet" href="/styles.css" />
     <link rel="stylesheet" href="/css/dashboard-sidebar-live.css" />
+    <link rel="stylesheet" href="/css/parkin-3d-icons.css" />
+    <link rel="stylesheet" href="/css/customer-address-autocomplete.css" />
+    <link rel="stylesheet" href="/css/customer-national-address.css" />
     <link rel="stylesheet" href="/css/valet.css" />
     <link rel="stylesheet" href="/css/drivers.css" />
     <link rel="stylesheet" href="/css/add-driver.css" />
@@ -69,6 +72,7 @@
     <link rel="stylesheet" href="/css/user-management-add.css" />
 
     <title>Parkin Dashboard | Sign in</title>
+      <link rel="stylesheet" href="/css/dashboard-notifications.css" />
   </head>
 
   <body>
@@ -364,115 +368,68 @@
         <nav class="dashboard-nav" id="parkin-dashboard-navigation" aria-label="Dashboard navigation">
           <p>Operations</p>
           <a class="is-active" href="#dashboard">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M3 10.5 12 3l9 7.5V21H5v-8h14" />
-            </svg>
+            <img class="parkin-nav-3d" src="/assets/icons/3d/dashboard.svg" alt="" aria-hidden="true" width="46" height="46" decoding="async" />
             <span>Dashboard</span>
           </a>
           <a href="#locations">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 21s7-5.3 7-11a7 7 0 0 0-14 0c0 5.7 7 11 7 11Z" />
-              <circle cx="12" cy="10" r="2.5" />
-            </svg>
+            <img class="parkin-nav-3d" src="/assets/icons/3d/locations.svg" alt="" aria-hidden="true" width="46" height="46" decoding="async" />
             <span>Locations</span>
           </a>
           <a href="#valet-operations">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path
-                d="M5 12h14l-2-5H7l-2 5Zm1 0v6m12-6v6M7 18h10M7 18a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm14 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z"
-              />
-            </svg>
+            <img class="parkin-nav-3d" src="/assets/icons/3d/valet.svg" alt="" aria-hidden="true" width="46" height="46" decoding="async" />
             <span>Valet Operations</span>
           </a>
           <a href="#drivers">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <circle cx="12" cy="7.5" r="4" />
-              <path d="M4.5 21a7.5 7.5 0 0 1 15 0" />
-            </svg>
+            <img class="parkin-nav-3d" src="/assets/icons/3d/drivers.svg" alt="" aria-hidden="true" width="46" height="46" decoding="async" />
             <span>Drivers</span>
             <em>3</em>
           </a>
           <a href="#customers">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path
-                d="M8 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm8-1a3.5 3.5 0 1 0 0-7m-13 18a7 7 0 0 1 14 0m1-7a6 6 0 0 1 5 6"
-              />
-            </svg>
+            <img class="parkin-nav-3d" src="/assets/icons/3d/customers.svg" alt="" aria-hidden="true" width="46" height="46" decoding="async" />
             <span>Customers</span>
           </a>
 
           <p>Parking Management</p>
           <a href="#vehicles">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path
-                d="M5 12h14l-2-5H7l-2 5Zm1 0v6m12-6v6M7 18h10M7 18a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm14 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z"
-              />
-            </svg>
+            <img class="parkin-nav-3d" src="/assets/icons/3d/vehicles.svg" alt="" aria-hidden="true" width="46" height="46" decoding="async" />
             <span>Vehicles</span>
           </a>
           <a href="#zones">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <circle cx="12" cy="12" r="9" />
-              <path d="M9 18V6h4.2a3.6 3.6 0 0 1 0 7.2H9" />
-            </svg>
+            <img class="parkin-nav-3d" src="/assets/icons/3d/zones.svg" alt="" aria-hidden="true" width="46" height="46" decoding="async" />
             <span>Parking Zones</span>
           </a>
           <a href="#bookings">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <rect x="4" y="5" width="16" height="16" rx="2" />
-              <path d="M8 3v4m8-4v4M4 10h16m5 5h4" />
-            </svg>
+            <img class="parkin-nav-3d" src="/assets/icons/3d/bookings.svg" alt="" aria-hidden="true" width="46" height="46" decoding="async" />
             <span>Bookings</span>
             <em>12</em>
           </a>
 
           <p>Business</p>
           <a href="#companies">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M4 21h16M6 21V7l6-3 6 3v14M9 10h1m4 0h1M9 14h1m4 0h1" />
-            </svg>
+            <img class="parkin-nav-3d" src="/assets/icons/3d/companies.svg" alt="" aria-hidden="true" width="46" height="46" decoding="async" />
             <span>Companies</span>
           </a>
           <a href="#revenue">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M4 20V10m5 10V6m5 14v-8m5 8V4M3 20h18" />
-            </svg>
+            <img class="parkin-nav-3d" src="/assets/icons/3d/revenue.svg" alt="" aria-hidden="true" width="46" height="46" decoding="async" />
             <span>Revenue</span>
           </a>
           <a href="#reports">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <rect x="5" y="3" width="14" height="18" rx="2" />
-              <path d="M9 8h6M9 12h6M9 16h3" />
-            </svg>
+            <img class="parkin-nav-3d" src="/assets/icons/3d/reports.svg" alt="" aria-hidden="true" width="46" height="46" decoding="async" />
             <span>Reports</span>
           </a>
           <a href="#user-management">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <circle cx="9" cy="8" r="3" />
-              <path
-                d="M3.5 20a5.5 5.5 0 0 1 11 0M16 11a3 3 0 1 0 0-6m1 8a5 5 0 0 1 4 5"
-              />
-            </svg>
+            <img class="parkin-nav-3d" src="/assets/icons/3d/users.svg" alt="" aria-hidden="true" width="46" height="46" decoding="async" />
             <span>User Management</span>
           </a>
 
           <p>System</p>
           <a href="#alerts">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path
-                d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"
-              />
-            </svg>
+            <img class="parkin-nav-3d" src="/assets/icons/3d/alerts.svg" alt="" aria-hidden="true" width="46" height="46" decoding="async" />
             <span>Alerts</span>
             <em class="danger">8</em>
           </a>
           <a href="#settings">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <circle cx="12" cy="12" r="3" />
-              <path
-                d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2 3.5-.2-.1a1.7 1.7 0 0 0-2 .2 1.7 1.7 0 0 0-.8 1.7v.2H10v-.2a1.7 1.7 0 0 0-.8-1.7 1.7 1.7 0 0 0-2-.2l-.2.1-2-3.5.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.4-1.1H3.8V10h.2a1.7 1.7 0 0 0 1.4-1.1 1.7 1.7 0 0 0-.3-1.9L5 6.9l2-3.5.2.1a1.7 1.7 0 0 0 2-.2 1.7 1.7 0 0 0 .8-1.7V1.5h4v.2a1.7 1.7 0 0 0 .8 1.7 1.7 1.7 0 0 0 2 .2l.2-.1 2 3.5-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.4 1.1h.2v4h-.2A1.7 1.7 0 0 0 19.4 15Z"
-              />
-            </svg>
+            <img class="parkin-nav-3d" src="/assets/icons/3d/settings.svg" alt="" aria-hidden="true" width="46" height="46" decoding="async" />
             <span>Settings</span>
           </a>
         </nav>
@@ -1336,7 +1293,7 @@
               </span>
               <div>
                 <p>Average Occupancy</p>
-                <strong>0%</strong>
+                <strong>—</strong>
                 <small>Current occupancy</small>
               </div>
             </article>
@@ -1353,7 +1310,7 @@
               </span>
               <div>
                 <p>Revenue</p>
-                <strong>SAR 0</strong>
+                <strong>—</strong>
                 <small>Today</small>
               </div>
             </article>
@@ -1370,10 +1327,10 @@
                 <span>Location</span>
                 <span>City</span>
                 <span>Type</span>
+                <span>Capacity</span>
+                <span>Reserved Now</span>
+                <span>Vehicles Parked</span>
                 <span>Occupancy</span>
-                <span>Revenue Today</span>
-                <span>Vehicles Today</span>
-                <span>Avg. Wait Time</span>
                 <span>Status</span>
                 <span>Actions</span>
               </div>
@@ -1480,6 +1437,18 @@
                 <h2>Location Information</h2>
               </div>
 
+              <div class="form-grid one">
+                <label data-location-company-field>
+                  Company <b>*</b>
+                  <select name="companyId" required disabled>
+                    <option value="">Loading authorized companies...</option>
+                  </select>
+                  <small data-location-company-message aria-live="polite">
+                    Each location must belong to an active company.
+                  </small>
+                </label>
+              </div>
+
               <div class="form-grid two">
                 <label>
                   Location Name <b>*</b>
@@ -1499,6 +1468,9 @@
                     <option value="HOTEL">Hotel</option>
                     <option value="COMMERCIAL">Commercial</option>
                     <option value="EVENT_VENUE">Event Venue</option>
+                    <option value="AIRPORT">Airport</option>
+                    <option value="HOSPITAL">Hospital</option>
+                    <option value="OTHER">Other</option>
                   </select>
                 </label>
 
@@ -1531,10 +1503,14 @@
                   Address <b>*</b>
                   <input
                     name="address"
+                    id="location-address-search"
                     type="text"
-                    placeholder="Enter complete address"
+                    placeholder="Search for a location or enter complete address"
+                    autocomplete="off"
                     required
+                    aria-describedby="location-address-help"
                   />
+                  <small id="location-address-help" class="location-places-help">Google suggestions after 3 characters. Select a place to fill the coordinates, or type manually.</small>
                 </label>
               </div>
 
@@ -1543,7 +1519,10 @@
                   Latitude <b>*</b>
                   <input
                     name="latitude"
-                    type="text"
+                    type="number"
+                    step="any"
+                    min="-90"
+                    max="90"
                     placeholder="Enter latitude"
                   />
                 </label>
@@ -1552,7 +1531,10 @@
                   Longitude <b>*</b>
                   <input
                     name="longitude"
-                    type="text"
+                    type="number"
+                    step="any"
+                    min="-180"
+                    max="180"
                     placeholder="Enter longitude"
                   />
                 </label>
@@ -1629,14 +1611,13 @@
                     <em>Choose File</em>
                   </label>
 
-                  <div class="preview-card">
+                  <div class="preview-card" hidden>
                     <button type="button">×</button>
                     <img
-                      src="/public/assets/parkin-valet-hero.jpg"
-                      alt="Location preview"
+                      alt="Selected location image preview"
                     />
-                    <b>Riyadh Mall.jpg</b>
-                    <small>2.4 MB</small>
+                    <b></b>
+                    <small></small>
                   </div>
                 </div>
               </section>
@@ -1694,6 +1675,13 @@
                       <small>Location is inactive and hidden</small>
                     </span>
                   </label>
+                  <label>
+                    <input type="radio" name="status" value="SUSPENDED" />
+                    <span>
+                      <b>Suspended</b>
+                      <small>Location operations are suspended</small>
+                    </span>
+                  </label>
                 </div>
               </section>
 
@@ -1728,7 +1716,9 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
 
+    <script src="/js/dashboard-notifications.js" defer></script>
     <script src="/script.js" defer></script>
+    <script src="/js/location-address-autocomplete.js" defer></script>
 
     <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
 

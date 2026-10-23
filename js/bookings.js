@@ -354,6 +354,7 @@ async function fetchBookingsApiPage(
       headers: {
         Authorization: `Bearer ${token}`,
       },
+      cache: "no-store",
     },
   );
 
@@ -614,7 +615,10 @@ async function loadBookingsData() {
     mapBookingFromApi,
   );
 
-  bookingState.selectedIds.clear();
+  const currentIds = new Set(BOOKING_DATA.map((item) => item.id));
+  for (const id of bookingState.selectedIds) {
+    if (!currentIds.has(id)) bookingState.selectedIds.delete(id);
+  }
 
   syncBookingFilterOptions();
 }
@@ -693,11 +697,18 @@ function bookingFilteredData() {
 function bookingColorClass(color) {
   return color.toLowerCase();
 }
-function bookingStatusMarkup(status) {
-  const displayStatus =
-    status === "Completed"
-      ? "Collected"
-      : status;
+function bookingStatusMarkup(status, rawStatus) {
+  const names = {
+    CONFIRMED: "Confirmed",
+    VEHICLE_PARKED: "Vehicle Parked",
+    RETURN_REQUESTED: "Return Requested",
+    RETRIEVAL_IN_PROGRESS: "Vehicle on Retrieval",
+    READY_FOR_HANDOVER: "Ready for Handover",
+    COMPLETED: "Completed",
+    CANCELLED: "Cancelled",
+    EXPIRED: "Expired",
+  };
+  const displayStatus = names[rawStatus] || status;
 
   return `<span class="bookings-status ${status.toLowerCase()}"><i aria-hidden="true"></i>${bookingEscape(displayStatus)}</span>`;
 }
@@ -748,7 +759,7 @@ function renderBookingTable(items) {
   body.innerHTML = items
     .map(
       (booking) =>
-        `<tr><td><input type="checkbox" data-booking-select="${bookingEscape(booking.id)}" aria-label="Select ${bookingEscape(booking.id)}" ${bookingState.selectedIds.has(booking.id) ? "checked" : ""} /></td><td><strong class="bookings-id">${bookingEscape(booking.id)}</strong><small class="bookings-created">${bookingEscape(booking.created)}</small></td><td><div class="bookings-customer"><span>${bookingInitials(booking.customer)}</span><strong>${bookingEscape(booking.customer)}</strong><small>${bookingEscape(booking.phone)}</small></div></td><td>${bookingVehicleMarkup(booking)}</td><td>${bookingDetailsMarkup(booking)}</td><td><div class="bookings-location"><i class="fa-solid fa-location-dot" aria-hidden="true"></i><span><strong>${bookingEscape(booking.zone)}</strong><small>${bookingEscape(booking.location)}</small></span></div></td><td>${bookingSourceMarkup(booking.source)}</td><td>${bookingStatusMarkup(booking.status)}</td><td>${bookingPaymentMarkup(booking)}</td><td>${bookingActionsMarkup(booking)}</td></tr>`,
+        `<tr><td><input type="checkbox" data-booking-select="${bookingEscape(booking.id)}" aria-label="Select ${bookingEscape(booking.id)}" ${bookingState.selectedIds.has(booking.id) ? "checked" : ""} /></td><td><strong class="bookings-id">${bookingEscape(booking.id)}</strong><small class="bookings-created">${bookingEscape(booking.created)}</small></td><td><div class="bookings-customer"><span>${bookingInitials(booking.customer)}</span><strong>${bookingEscape(booking.customer)}</strong><small>${bookingEscape(booking.phone)}</small></div></td><td>${bookingVehicleMarkup(booking)}</td><td>${bookingDetailsMarkup(booking)}</td><td><div class="bookings-location"><i class="fa-solid fa-location-dot" aria-hidden="true"></i><span><strong>${bookingEscape(booking.zone)}</strong><small>${bookingEscape(booking.location)}</small></span></div></td><td>${bookingSourceMarkup(booking.source)}</td><td>${bookingStatusMarkup(booking.status, booking.rawStatus)}</td><td>${bookingPaymentMarkup(booking)}</td><td>${bookingActionsMarkup(booking)}</td></tr>`,
     )
     .join("");
   bindBookingVehicleImageFallback(body);
@@ -759,7 +770,7 @@ function renderBookingMobile(items) {
   target.innerHTML = items
     .map(
       (booking) =>
-        `<article class="bookings-mobile-card"><header><strong>${bookingEscape(booking.id)}</strong>${bookingStatusMarkup(booking.status)}</header><div class="bookings-mobile-customer"><span>${bookingInitials(booking.customer)}</span><strong>${bookingEscape(booking.customer)}</strong><small>${bookingEscape(booking.phone)}</small></div>${bookingVehicleMarkup(booking)}${bookingDetailsMarkup(booking)}<div class="bookings-mobile-location"><i class="fa-solid fa-location-dot" aria-hidden="true"></i><span><strong>${bookingEscape(booking.zone)}</strong><small>${bookingEscape(booking.location)}</small></span></div><div class="bookings-mobile-meta">${bookingSourceMarkup(booking.source)}${bookingPaymentMarkup(booking)}</div><button type="button" class="bookings-mobile-view" data-booking-view="${bookingEscape(booking.id)}"><i class="fa-solid fa-eye" aria-hidden="true"></i>View</button></article>`,
+        `<article class="bookings-mobile-card"><header><strong>${bookingEscape(booking.id)}</strong>${bookingStatusMarkup(booking.status, booking.rawStatus)}</header><div class="bookings-mobile-customer"><span>${bookingInitials(booking.customer)}</span><strong>${bookingEscape(booking.customer)}</strong><small>${bookingEscape(booking.phone)}</small></div>${bookingVehicleMarkup(booking)}${bookingDetailsMarkup(booking)}<div class="bookings-mobile-location"><i class="fa-solid fa-location-dot" aria-hidden="true"></i><span><strong>${bookingEscape(booking.zone)}</strong><small>${bookingEscape(booking.location)}</small></span></div><div class="bookings-mobile-meta">${bookingSourceMarkup(booking.source)}${bookingPaymentMarkup(booking)}</div><button type="button" class="bookings-mobile-view" data-booking-view="${bookingEscape(booking.id)}"><i class="fa-solid fa-eye" aria-hidden="true"></i>View</button></article>`,
     )
     .join("");
   bindBookingVehicleImageFallback(target);
@@ -1034,6 +1045,58 @@ function initializeBookingsPage() {
     });
   }
 }
+const BOOKING_LIST_SYNC_INTERVAL_MS = 12000;
+let bookingListSyncTimer = null;
+let bookingListSyncInFlight = false;
+let bookingListSyncEventsBound = false;
+
+function bookingListIsActive() {
+  return /^#bookings(?:$|\?)/.test(window.location.hash || "");
+}
+
+async function refreshBookingsList() {
+  if (bookingListSyncInFlight || document.hidden || !bookingListIsActive()) return;
+  bookingListSyncInFlight = true;
+  try {
+    await loadBookingsData();
+    if (bookingListIsActive()) renderBookings();
+  } catch (error) {
+    // Retain the last successful API snapshot. A network error does not
+    // establish an empty booking list, and polling must not spam modals.
+    console.warn("Bookings sync unavailable:", error);
+  } finally {
+    bookingListSyncInFlight = false;
+  }
+}
+
+function stopBookingsListSync() {
+  if (bookingListSyncTimer !== null) {
+    clearInterval(bookingListSyncTimer);
+    bookingListSyncTimer = null;
+  }
+}
+
+function startBookingsListSync() {
+  stopBookingsListSync();
+  if (!bookingListIsActive()) return;
+  bookingListSyncTimer = setInterval(() => {
+    void refreshBookingsList();
+  }, BOOKING_LIST_SYNC_INTERVAL_MS);
+
+  if (!bookingListSyncEventsBound) {
+    bookingListSyncEventsBound = true;
+    window.addEventListener("hashchange", () => {
+      if (!bookingListIsActive()) stopBookingsListSync();
+    });
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden && bookingListIsActive()) void refreshBookingsList();
+    });
+    window.addEventListener("focus", () => {
+      if (bookingListIsActive()) void refreshBookingsList();
+    });
+  }
+}
+
 async function loadBookingsPage() {
   const container = document.querySelector("#bookings-container");
   if (!container) return;
@@ -1069,4 +1132,5 @@ async function loadBookingsPage() {
 
   // Refresh real data when returning to Bookings.
   renderBookings();
+  startBookingsListSync();
 }

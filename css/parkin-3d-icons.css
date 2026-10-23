@@ -1,0 +1,190 @@
+/* ParkIn premium dimensional navigation, Milestone 6B.
+   Visual-only enhancement. Does not alter routes, permissions or data. */
+.dashboard-page .dashboard-nav > a {
+  position: relative;
+  isolation: isolate;
+  min-height: 62px;
+  grid-template-columns: 46px minmax(0, 1fr) auto;
+  gap: 11px;
+  padding-inline: 10px;
+}
+
+/* Single oversized tile, no nested icon frame. Keep labels as the accessible name. */
+.dashboard-page .dashboard-nav > a > img.parkin-nav-3d {
+  display: block;
+  position: relative;
+  z-index: 1;
+  width: 46px;
+  height: 46px;
+  max-width: none;
+  min-width: 46px;
+  flex: 0 0 46px;
+  object-fit: contain;
+  overflow: visible;
+  transform-origin: 50% 66%;
+  transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  filter: drop-shadow(0 5px 4px rgba(0, 17, 13, 0.24));
+  will-change: auto;
+  transition: transform 260ms cubic-bezier(.2, .85, .25, 1.25), filter 260ms ease;
+}
+.dashboard-page .dashboard-nav > a > span {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  line-height: 1.25;
+}
+
+/* Visible lift, tilt and shadow. Only run hover motion on hover-capable pointers. */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .dashboard-page .dashboard-nav > a:hover > img.parkin-nav-3d {
+    transform: translate3d(0, -5px, 0) rotate(-7deg) scale(1.13);
+    filter: drop-shadow(0 10px 9px rgba(0, 15, 13, 0.36)) brightness(1.09);
+  }
+}
+.dashboard-page .dashboard-nav > a:focus-visible > img.parkin-nav-3d {
+  transform: translate3d(0, -3px, 0) rotate(-4deg) scale(1.09);
+  filter: drop-shadow(0 9px 8px rgba(0, 15, 13, 0.30));
+}
+.dashboard-page .dashboard-nav > a:focus-visible {
+  outline: 2px solid #a1ffe2;
+  outline-offset: 2px;
+}
+.dashboard-page .dashboard-nav > a:active > img.parkin-nav-3d {
+  animation: none;
+  transform: translate3d(0, 2px, 0) scale(.95);
+  filter: drop-shadow(0 2px 2px rgba(0, 18, 13, .25));
+  transition-duration: 100ms;
+}
+
+/* The selected route is alive even when the pointer is elsewhere. */
+@keyframes parkin-nav-icon-float {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(-1deg) scale(1.025); }
+  50% { transform: translate3d(0, -3px, 0) rotate(2deg) scale(1.085); }
+}
+@keyframes parkin-nav-icon-halo {
+  0%, 100% { opacity: .25; transform: translateY(-50%) scale(.89); }
+  50% { opacity: .55; transform: translateY(-50%) scale(1.13); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .dashboard-page .dashboard-nav > a.is-active:not(:hover):not(:focus-visible):not(:active) > img.parkin-nav-3d {
+    animation: parkin-nav-icon-float 3.0s ease-in-out infinite;
+  }
+}
+.dashboard-page .dashboard-nav > a.is-active::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  left: 11px;
+  top: 50%;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(148, 255, 206, .55) 0%, rgba(148, 255, 206, .10) 52%, transparent 75%);
+  pointer-events: none;
+  opacity: .35;
+  transform: translateY(-50%) scale(.9);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .dashboard-page .dashboard-nav > a.is-active::before {
+    animation: parkin-nav-icon-halo 3.0s ease-in-out infinite;
+  }
+}
+
+/* Match the existing 82px collapsed sidebar. Do not affect permission-hidden links. */
+@media (min-width: 901px) {
+  .dashboard-page.parkin-sidebar-condensed .dashboard-nav > a {
+    min-height: 58px;
+    gap: 0;
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .dashboard-page.parkin-sidebar-condensed .dashboard-nav > a > img.parkin-nav-3d {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    flex: 0 0 44px;
+    margin-inline: auto;
+  }
+  .dashboard-page.parkin-sidebar-condensed .dashboard-nav > a.is-active::before {
+    left: 50%;
+    margin-left: -22px;
+  }
+}
+
+/* Existing mobile/tablet nav becomes a horizontal scroll row. */
+@media (max-width: 1180px) {
+  .dashboard-page .dashboard-nav > a {
+    min-height: 52px;
+    grid-template-columns: 36px auto auto;
+    gap: 8px;
+    padding-inline: 9px 12px;
+  }
+  .dashboard-page .dashboard-nav > a > img.parkin-nav-3d {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    flex: 0 0 36px;
+  }
+  .dashboard-page .dashboard-nav > a.is-active::before {
+    left: 7px;
+    width: 38px;
+    height: 38px;
+  }
+}
+@media (max-width: 760px) {
+  .dashboard-page .dashboard-nav > a {
+    min-height: 46px;
+    grid-template-columns: 32px auto auto !important;
+    gap: 7px;
+    padding: 6px 11px !important;
+  }
+  .dashboard-page .dashboard-nav > a > img.parkin-nav-3d {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    flex: 0 0 32px;
+  }
+}
+
+/* Report picker shares the 3D asset system. Keep the existing report panel structure. */
+.parkin-reports .pr-report-tab .pr-tab-icon {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  overflow: visible;
+  background: transparent;
+  border-radius: 0;
+}
+.parkin-reports .pr-report-tab .pr-tab-3d {
+  display: block;
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  transform-origin: 50% 66%;
+  filter: drop-shadow(0 5px 4px rgba(18, 41, 64, .15));
+  transition: transform 260ms cubic-bezier(.2, .85, .25, 1.25), filter 260ms ease;
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .parkin-reports .pr-report-tab:hover .pr-tab-3d {
+    transform: translateY(-5px) rotate(-6deg) scale(1.12);
+    filter: drop-shadow(0 10px 8px rgba(18, 41, 64, .24));
+  }
+}
+.parkin-reports .pr-report-tab:focus-visible .pr-tab-3d,
+.parkin-reports .pr-report-tab[aria-selected="true"] .pr-tab-3d {
+  transform: translateY(-2px) scale(1.06);
+  filter: drop-shadow(0 8px 6px rgba(18, 41, 64, .22));
+}
+.parkin-reports .pr-report-tab[data-integration-pending="true"] .pr-tab-3d {
+  filter: grayscale(.4) saturate(.75);
+}
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-page .dashboard-nav > a > img.parkin-nav-3d,
+  .parkin-reports .pr-report-tab .pr-tab-3d {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+  .dashboard-page .dashboard-nav > a.is-active::before { animation: none !important; }
+}

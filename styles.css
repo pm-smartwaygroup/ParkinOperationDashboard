@@ -5834,3 +5834,55 @@ html[data-theme="dark"] .dashboard-alert-secondary:hover {
 .locations-pagination[hidden] {
   display: none !important;
 }
+
+/* Add / Edit Location. Google Places suggestions are an optional convenience. */
+#add-location-view .form-grid.one label { position: relative; }
+#add-location-view .location-places-help {
+  color: #637589; font-size: .78rem; font-weight: 500; line-height: 1.5;
+}
+#add-location-view .location-google-suggestions {
+  position: absolute; top: calc(100% - 28px); left: 0; right: 0;
+  z-index: 100; max-height: 290px; overflow-y: auto;
+  background: #fff; border: 1px solid #d8e3e9; border-radius: 12px;
+  box-shadow: 0 15px 38px rgb(13 41 35 / 16%);
+}
+#add-location-view .location-google-suggestions[hidden] { display: none; }
+#add-location-view .location-google-option {
+  width: 100%; display: grid; gap: 4px; padding: 12px 16px;
+  border: 0; border-bottom: 1px solid #edf1f3; background: #fff;
+  color: #172b3e; text-align: left; cursor: pointer;
+}
+#add-location-view .location-google-option:hover,
+#add-location-view .location-google-option.is-active,
+#add-location-view .location-google-option:focus-visible { background: #eaf8f0; outline: 2px solid #129653; outline-offset: -2px; }
+#add-location-view .location-google-option strong { font-size: .89rem; }
+#add-location-view .location-google-option small { font-size: .78rem; color: #64748b; }
+#add-location-view .location-google-attribution { padding: 8px 14px; text-align: right; color: #64748b; font-size: .78rem; }
+#add-location-view .location-google-feedback { color: #426e62; font-size: .78rem; font-weight: 500; }
+#add-location-view .preview-card[hidden] { display: none; }
+
+#add-location-view .preview-card button[hidden] { display: none; }
+
+/* Company ownership is required on location creation and immutable on edit. */
+.add-location-layout [data-location-company-message] {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.79rem;
+  line-height: 1.45;
+  color: #64748b;
+}
+.add-location-layout [data-location-company-field] select:disabled {
+  cursor: not-allowed;
+  background-color: #f4f7f8;
+}
+
+/* M11 Locations: dignified empty state and legible capacity metrics */
+.locations-empty-state { min-height: 360px; padding: 30px 24px 45px; }
+.locations-empty-state-image { width: clamp(260px, 38vw, 370px); max-width: 100%; margin-bottom: 10px; filter: drop-shadow(0 12px 24px rgba(0,73,54,.10)); }
+.locations-empty-state h3 { font-size: 1.2rem; letter-spacing: -.02em; }
+.locations-empty-state p { font-size: .91rem; max-width: 470px; }
+.locations-empty-add { margin-top: 21px; background: linear-gradient(135deg,#087742,#0a9a56); color: white; border: 0; padding: 12px 23px; border-radius: 12px; font-family: inherit; font-size: .89rem; font-weight: 700; cursor: pointer; box-shadow: 0 9px 20px #0f79442e; }
+.locations-empty-add:hover { filter: brightness(1.06); transform: translateY(-1px); }
+.location-capacity-cell b { color: #153e32; font-weight: 800; }
+.location-reserved-cell small { display:block; font-size:.68rem; margin-top:3px; color:#667a88; }
+@media (max-width: 768px) { .locations-empty-state-image { width: min(310px, 80vw); } }

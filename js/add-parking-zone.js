@@ -28,6 +28,14 @@ const addParkingZoneState = {
 };
 
 function addZoneToast(message) {
+  if (typeof window.showParkinToast === "function") {
+    const issue = /unable|could not|failed|error|add at least/i.test(String(message));
+    window.showParkinToast(message, {
+      title: issue ? "Review parking zone" : "Parking Zone",
+      type: issue ? "warning" : "info",
+    });
+    return;
+  }
   const toast = addParkingZoneState.root?.querySelector("[data-add-zone-toast]");
   if (!toast) return;
   toast.textContent = message;

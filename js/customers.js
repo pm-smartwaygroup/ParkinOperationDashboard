@@ -2703,6 +2703,357 @@ function notifyCustomerSuspensionError(error) {
   });
 }
 
+/**
+ * Optional Google Places suggestions for customer addresses. The address field
+ * is always editable, even if Google Maps is blocked or the key lacks Places.
+ * This only chooses text; it never claims official National Address verification.
+ */
+const CUSTOMER_ADDRESS_MIN_CHARACTERS = 3;
+function customerAddressCharacterCount(value) {
+  // Count visible, non-whitespace characters. Supports Arabic and surrogate pairs.
+  return Array.from(String(value || "").trim().replace(/\s/g, "")).length;
+}
+function customerAddressPredictionText(value) {
+  if (typeof value === "string") return value;
+  return value?.text || value?.toString?.() || "";
+}
+
+function installCustomerAddressAutocomplete(form, selector) {
+  const input = form?.querySelector(selector);
+  if (!input || input.dataset.parkinAddressBound === "true") return;
+  input.dataset.parkinAddressBound = "true";
+  input.setAttribute("autocomplete", "off");
+  input.setAttribute("role", "combobox");
+  input.setAttribute("aria-autocomplete", "list");
+  input.setAttribute("aria-expanded", "false");
+
+  const list = document.createElement("div");
+  list.className = "customer-address-suggestions";
+  list.id = `${input.id}-suggestions`;
+  list.setAttribute("role", "listbox");
+  list.hidden = true;
+  input.setAttribute("aria-controls", list.id);
+  input.insertAdjacentElement("afterend", list);
+  input.parentElement?.classList.add("customer-address-search-field");
+
+  const help = document.createElement("small");
+  help.className = "customer-address-search-help";
+  help.textContent = "Enter 3 or more characters for Google Maps suggestions, or type the address manually. This is not Saudi National Address verification.";
+  list.insertAdjacentElement("afterend", help);
+
+  let predictions = [];
+  let highlighted = -1;
+  let generation = 0;
+  let debounceTimer = null;
+  let sessionToken = null;
+  let applyingSelection = false;
+
+  function hide() {
+    predictions = [];
+    highlighted = -1;
+    list.replaceChildren();
+    list.hidden = true;
+    input.setAttribute("aria-expanded", "false");
+    input.removeAttribute("aria-activedescendant");
+  }
+  function highlight(index) {
+    highlighted = index;
+    [...list.querySelectorAll('[role="option"]')].forEach((item, i) => {
+      item.setAttribute("aria-selected", String(i === highlighted));
+      item.classList.toggle("is-active", i === highlighted);
+    });
+    if (highlighted >= 0) {
+      input.setAttribute("aria-activedescendant", `${list.id}-option-${highlighted}`);
+    } else {
+      input.removeAttribute("aria-activedescendant");
+    }
+  }
+  async function choose(prediction) {
+    const token = ++generation;
+    window.clearTimeout(debounceTimer);
+    hide();
+    let address = customerAddressPredictionText(prediction?.text);
+    try {
+      if (typeof prediction?.toPlace === "function") {
+        const place = prediction.toPlace();
+        await place.fetchFields({ fields: ["formattedAddress"] });
+        if (place.formattedAddress) address = place.formattedAddress;
+      }
+    } catch {
+      // A predicted label is usable even when Place Details is unavailable.
+    }
+    if (token !== generation || !input.isConnected || !form.isConnected) return;
+    if (!String(address || "").trim()) return;
+    applyingSelection = true;
+    input.value = String(address).trim().slice(0, 500);
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+    input.dispatchEvent(new Event("change", { bubbles: true }));
+    applyingSelection = false;
+    sessionToken = null;
+    input.focus();
+  }
+  function show(suggestions) {
+    predictions = suggestions
+      .map((suggestion) => suggestion?.placePrediction)
+      .filter(Boolean)
+      .slice(0, 6);
+    list.replaceChildren();
+    highlighted = -1;
+    if (!predictions.length) return hide();
+    predictions.forEach((prediction, index) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.id = `${list.id}-option-${index}`;
+      button.className = "customer-address-suggestion";
+      button.setAttribute("role", "option");
+      button.setAttribute("aria-selected", "false");
+      const title = document.createElement("span");
+      title.textContent = customerAddressPredictionText(prediction.mainText) ||
+        customerAddressPredictionText(prediction.text);
+      const secondary = document.createElement("small");
+      secondary.textContent = customerAddressPredictionText(prediction.secondaryText);
+      button.append(title, secondary);
+      button.addEventListener("pointerdown", (event) => event.preventDefault());
+      button.addEventListener("click", () => { void choose(prediction); });
+      list.appendChild(button);
+    });
+    const attribution = document.createElement("div");
+    attribution.className = "customer-address-attribution";
+    attribution.textContent = "Google Maps";
+    list.appendChild(attribution);
+    list.hidden = false;
+    input.setAttribute("aria-expanded", "true");
+  }
+  async function search(query, token) {
+    try {
+      const maps = window.google?.maps;
+      if (!maps?.importLibrary) return hide();
+      const places = await maps.importLibrary("places");
+      if (token !== generation || !input.isConnected) return;
+      if (!places?.AutocompleteSuggestion?.fetchAutocompleteSuggestions) return hide();
+      if (!sessionToken && places.AutocompleteSessionToken) {
+        sessionToken = new places.AutocompleteSessionToken();
+      }
+      const response = await places.AutocompleteSuggestion.fetchAutocompleteSuggestions({
+        input: query,
+        includedRegionCodes: ["sa"],
+        region: "sa",
+        language: "en",
+        ...(sessionToken ? { sessionToken } : {}),
+      });
+      if (token !== generation || !input.isConnected || input.value.trim() !== query) return;
+      show(response?.suggestions || []);
+    } catch {
+      if (token === generation) hide();
+      // Manual entry stays available. Do not expose customer address in logs.
+    }
+  }
+  input.addEventListener("input", () => {
+    if (applyingSelection) return;
+    const token = ++generation;
+    window.clearTimeout(debounceTimer);
+    hide();
+    const query = input.value.trim();
+    if (customerAddressCharacterCount(query) < CUSTOMER_ADDRESS_MIN_CHARACTERS) return;
+    debounceTimer = window.setTimeout(() => { void search(query, token); }, 300);
+  });
+  input.addEventListener("keydown", (event) => {
+    if (list.hidden || !predictions.length) return;
+    if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+      event.preventDefault();
+      const step = event.key === "ArrowDown" ? 1 : -1;
+      highlight((highlighted + step + predictions.length) % predictions.length);
+    } else if (event.key === "Enter" && highlighted >= 0) {
+      event.preventDefault();
+      void choose(predictions[highlighted]);
+    } else if (event.key === "Escape") {
+      ++generation;
+      hide();
+    }
+  });
+  input.addEventListener("blur", () => {
+    window.setTimeout(() => { ++generation; hide(); }, 150);
+  });
+}
+
+/** SPL calls go to the authenticated NestJS backend, never to SPL from the browser. */
+function installCustomerSplAddressActions(form, prefix) {
+  if (!form || form.dataset.parkinSplBound === "true") return;
+  const searchButton = form.querySelector("[data-spl-search]");
+  const verifyButton = form.querySelector("[data-spl-verify]");
+  const result = form.querySelector("[data-spl-result]");
+  const matches = form.querySelector("[data-spl-matches]");
+  if (!searchButton || !verifyButton || !result || !matches) return;
+  form.dataset.parkinSplBound = "true";
+  let requestVersion = 0;
+  let busy = false;
+  const buttons = [searchButton, verifyButton];
+  const setBusy = (state) => {
+    busy = state;
+    buttons.forEach((button) => { button.disabled = state; });
+  };
+  const clearResults = () => {
+    requestVersion++;
+    matches.replaceChildren();
+    result.textContent = "Address changed. Recheck with SPL if needed. Proof not verified.";
+  };
+  for (const [, suffix] of CUSTOMER_NATIONAL_ADDRESS_FIELDS) {
+    form.querySelector(`#${prefix}-${suffix}`)?.addEventListener("input", clearResults);
+  }
+  form.querySelector(prefix === "edit" ? "#edit-address" : "#customer-address")
+    ?.addEventListener("input", clearResults);
+
+  async function callSpl(path, options) {
+    const response = await fetch(`${getCustomerManagementApiBaseUrl()}/national-address/${path}`, {
+      ...options,
+      headers: getCustomerManagementAuthHeaders(),
+    });
+    const payload = await response.json().catch(() => null);
+    if (!response.ok) {
+      if (response.status === 503) throw new Error("SPL service is unavailable or not configured.");
+      if (response.status === 429) throw new Error("Please allow five seconds between SPL requests.");
+      if (response.status === 401 || response.status === 403) throw new Error("You do not have permission to use SPL address services.");
+      throw new Error("Could not complete SPL request.");
+    }
+    return payload?.data ?? payload;
+  }
+
+  searchButton.addEventListener("click", async () => {
+    if (busy) return;
+    const version = ++requestVersion;
+    matches.replaceChildren();
+    const values = getCustomerNationalAddressValues(prefix);
+    const freeText = form.querySelector(prefix === "edit" ? "#edit-address" : "#customer-address")?.value.trim() || "";
+    // Prefer the building/postal pair documented for SPL search.
+    const q = /^\d{4}$/.test(values.nationalAddressBuildingNumber) && /^\d{5}$/.test(values.nationalAddressPostalCode)
+      ? `${values.nationalAddressBuildingNumber} ${values.nationalAddressPostalCode}` : freeText;
+    if (q.length < 3) { result.textContent = "Enter a building/postal pair or an address of at least 3 characters."; return; }
+    setBusy(true);
+    result.textContent = "Searching official SPL address records...";
+    try {
+      const query = new URLSearchParams({ purpose: "customer", q });
+      const payload = await callSpl(`search?${query.toString()}`, { method: "GET" });
+      if (version !== requestVersion || !form.isConnected) return;
+      const addresses = Array.isArray(payload?.addresses) ? payload.addresses : null;
+      if (!addresses) throw new Error("Invalid SPL search response.");
+      if (!addresses.length) { result.textContent = "No matching SPL address was returned."; return; }
+      result.textContent = "Choose an official address result to fill the form. The proof remains unverified.";
+      addresses.slice(0, 10).forEach((address) => {
+        const option = document.createElement("button");
+        option.type = "button";
+        option.className = "customer-national-address-spl-match";
+        option.textContent = [address.address1, address.address2].filter(Boolean).join(", ") || "SPL address";
+        option.addEventListener("click", () => {
+          const mappings = {
+            "national-building": address.buildingNumber,
+            "national-street": address.street,
+            "national-district": address.district,
+            "national-city": address.city,
+            "national-postal": address.postalCode,
+            "national-additional": address.additionalNumber,
+          };
+          for (const [suffix, value] of Object.entries(mappings)) {
+            const field = form.querySelector(`#${prefix}-${suffix}`);
+            if (field && typeof value === "string") {
+              field.value = value;
+              field.dispatchEvent(new Event("input", { bubbles: true }));
+            }
+          }
+          const primary = form.querySelector(prefix === "edit" ? "#edit-address" : "#customer-address");
+          if (primary) {
+            primary.value = [address.address1, address.address2].filter(Boolean).join(", ").slice(0, 500);
+            primary.dispatchEvent(new Event("input", { bubbles: true }));
+          }
+          matches.replaceChildren();
+          result.textContent = "Address fields filled from SPL search. Run Check address with SPL to confirm existence. Proof not verified.";
+        });
+        matches.appendChild(option);
+      });
+    } catch (error) {
+      if (version === requestVersion) result.textContent = error.message || "SPL search unavailable.";
+    } finally { setBusy(false); }
+  });
+
+  verifyButton.addEventListener("click", async () => {
+    if (busy) return;
+    const values = getCustomerNationalAddressValues(prefix);
+    const buildingNumber = values.nationalAddressBuildingNumber;
+    const postalCode = values.nationalAddressPostalCode;
+    const additionalNumber = values.nationalAddressAdditionalNumber;
+    if (!/^\d{4}$/.test(buildingNumber) || !/^\d{5}$/.test(postalCode) || !/^\d{4}$/.test(additionalNumber)) {
+      result.textContent = "Enter a 4-digit building number, 5-digit postal code and 4-digit additional number.";
+      return;
+    }
+    const version = ++requestVersion;
+    matches.replaceChildren();
+    setBusy(true);
+    result.textContent = "Checking address existence with SPL...";
+    try {
+      const payload = await callSpl("verify", {
+        method: "POST",
+        body: JSON.stringify({ purpose: "customer", buildingNumber, postalCode, additionalNumber }),
+      });
+      if (version !== requestVersion || !form.isConnected) return;
+      if (payload?.addressExists === true && payload?.source === "SPL_NATIONAL_ADDRESS") {
+        result.textContent = "SPL confirms this address exists. This check is not saved, and does not verify the address holder or proof.";
+      } else if (payload?.addressExists === false && payload?.source === "SPL_NATIONAL_ADDRESS") {
+        result.textContent = "SPL did not find this address. Check the numbers or contact SPL. Proof not verified.";
+      } else {
+        throw new Error("Unrecognized SPL verification response.");
+      }
+    } catch (error) {
+      if (version === requestVersion) result.textContent = error.message || "SPL verification unavailable.";
+    } finally { setBusy(false); }
+  });
+}
+
+/** Saudi National Address values remain unverified without authorized SPL integration. */
+const CUSTOMER_NATIONAL_ADDRESS_FIELDS = [
+  ["nationalAddressShortCode", "national-short"],
+  ["nationalAddressBuildingNumber", "national-building"],
+  ["nationalAddressStreet", "national-street"],
+  ["nationalAddressDistrict", "national-district"],
+  ["nationalAddressCity", "national-city"],
+  ["nationalAddressPostalCode", "national-postal"],
+  ["nationalAddressAdditionalNumber", "national-additional"],
+];
+function getCustomerNationalAddressValues(prefix) {
+  const values = {};
+  for (const [key, suffix] of CUSTOMER_NATIONAL_ADDRESS_FIELDS) {
+    values[key] = document.querySelector(`#${prefix}-${suffix}`)?.value.trim() || "";
+  }
+  return values;
+}
+
+/** Client-side format check only. Never equate format completion with SPL verification. */
+function customerNationalAddressFormatStatus(values) {
+  const fields = Object.values(values);
+  if (fields.every((value) => !value)) return "Not entered";
+  const complete = /^[A-Za-z]{4}[0-9]{4}$/.test(values.nationalAddressShortCode) &&
+    /^[0-9]{4}$/.test(values.nationalAddressBuildingNumber) &&
+    Boolean(values.nationalAddressStreet) &&
+    Boolean(values.nationalAddressDistrict) &&
+    Boolean(values.nationalAddressCity) &&
+    /^[0-9]{5}$/.test(values.nationalAddressPostalCode) &&
+    /^[0-9]{4}$/.test(values.nationalAddressAdditionalNumber);
+  return complete ? "Format complete" : "Format incomplete";
+}
+function installCustomerNationalAddressFormatFeedback(form, prefix) {
+  if (!form || form.dataset.parkinNationalAddressFeedbackBound === "true") return;
+  const indicator = form.querySelector("[data-national-address-format]");
+  if (!indicator) return;
+  form.dataset.parkinNationalAddressFeedbackBound = "true";
+  const update = () => {
+    indicator.textContent = customerNationalAddressFormatStatus(getCustomerNationalAddressValues(prefix));
+  };
+  for (const [, suffix] of CUSTOMER_NATIONAL_ADDRESS_FIELDS) {
+    form.querySelector(`#${prefix}-${suffix}`)?.addEventListener("input", update);
+    form.querySelector(`#${prefix}-${suffix}`)?.addEventListener("change", update);
+  }
+  update();
+}
+
+
 async function loadAddCustomerPage() {
   const container = document.querySelector("#add-customer-container");
   if (!container) return;
@@ -2734,6 +3085,9 @@ async function loadAddCustomerPage() {
   await initializeAddCustomerCompanyContext();
 
   bindAddCustomerForm();
+  installCustomerAddressAutocomplete(container.querySelector("#add-customer-form"), "#customer-address");
+  installCustomerNationalAddressFormatFeedback(container.querySelector("#add-customer-form"), "customer");
+  installCustomerSplAddressActions(container.querySelector("#add-customer-form"), "customer");
 }
 
 function bindAddCustomerForm() {
@@ -3004,6 +3358,11 @@ function bindAddCustomerForm() {
       memberSince: memberSince?.value || undefined,
       preferredLanguage: language?.value.trim() || undefined,
       communicationPreference: communication?.value.trim() || undefined,
+      nationality: document.querySelector("#customer-nationality")?.value.trim() || "",
+      address: document.querySelector("#customer-address")?.value.trim() || "",
+      ...getCustomerNationalAddressValues("customer"),
+      emergencyContactName: document.querySelector("#emergency-contact-name")?.value.trim() || "",
+      emergencyContactPhone: document.querySelector("#emergency-contact-phone")?.value.trim() || "",
       notes: notes?.value.trim() || undefined,
       ...(automaticSuspension ? { automaticSuspension } : {}),
     };
@@ -3261,12 +3620,20 @@ async function loadCustomerDetailsPage(
   customerDetailsAbortController = controller;
   const requestId = ++customerDetailsRequestId;
 
+  // Do not show the previous customer's sensitive fields or bookings while
+  // another customer is loading from the API.
+  if (container.dataset.customerId !== customerId) {
+    container.replaceChildren();
+    container.dataset.loaded = "false";
+    container.dataset.customerId = customerId;
+  }
+
   hideAllCustomerViews();
 
   view.classList.remove("hidden");
 
   try {
-    if (container.dataset.loaded !== "true" || !container.innerHTML.trim()) {
+    if (container.dataset.loaded !== "true" || !container.querySelector(".customer-details-page")) {
       const response = await fetch("/pages/customer-details.html", {
         signal: controller.signal,
       });
@@ -3322,7 +3689,7 @@ async function loadCustomerDetailsPage(
     renderCustomerOperationalAccess(customer);
     renderCustomerVehicles(customer, vehicles, vehiclesResult.reason);
     renderCustomerActivity(customer, vehicles || []);
-    renderUnavailableCustomerBookings();
+    renderCustomerBookings(null, "loading");
     renderComingSoonPaymentMethods();
     bindCustomerDetailsActions();
     bindCustomerDetailsTabs();
@@ -3330,6 +3697,23 @@ async function loadCustomerDetailsPage(
     window.applyDashboardPermissionVisibility?.(container);
 
     activateCustomerDetailsTab(initialTab);
+    if (!window.hasDashboardPermission?.("bookings.view")) {
+      renderCustomerBookings(null, "restricted");
+    } else {
+      try {
+        const bookings = await fetchCustomerBookings(databaseId, controller.signal);
+        if (!controller.signal.aborted && requestId === customerDetailsRequestId &&
+            getDashboardRoute().name === "customer-details" && getCurrentCustomerId() === customerId) {
+          renderCustomerBookings(bookings, "ready");
+        }
+      } catch (bookingError) {
+        if (bookingError?.name !== "AbortError" && !controller.signal.aborted &&
+            requestId === customerDetailsRequestId && getDashboardRoute().name === "customer-details" &&
+            getCurrentCustomerId() === customerId) {
+          renderCustomerBookings(null, bookingError?.status === 403 ? "restricted" : "error");
+        }
+      }
+    }
   } catch (error) {
     if (
       error?.name === "AbortError" ||
@@ -3417,7 +3801,14 @@ async function loadEditCustomerPage() {
     container.dataset.loaded = "true";
   }
 
+  // Never display stale contact details from a previously viewed customer.
+  // Re-enable the form only after this exact customer's scoped GET succeeds.
+  const editForm = container.querySelector("#edit-customer-form");
+  if (editForm) editForm.hidden = true;
   bindEditCustomerActions();
+  installCustomerAddressAutocomplete(editForm, "#edit-address");
+  installCustomerNationalAddressFormatFeedback(editForm, "edit");
+  installCustomerSplAddressActions(editForm, "edit");
   window.applyDashboardPermissionVisibility?.(container);
 
   // Clear the previous customer's summary immediately when changing routes.
@@ -3453,6 +3844,7 @@ async function loadEditCustomerPage() {
   populateEditCustomerForm(customer);
   renderEditCustomerOverview(customer, null, null);
   bindEditCustomerActions();
+  if (editForm) editForm.hidden = false;
   window.applyDashboardPermissionVisibility?.(container);
 
   // Vehicles are loaded using the existing permission-protected vehicle API.
@@ -3508,17 +3900,17 @@ function populateEditCustomerForm(customer) {
   const notesCount = document.querySelector("#edit-notes-count");
   if (notesCount) notesCount.textContent = String((customer.notes || "").length);
 
-  // The current Customer model has no address, nationality or emergency fields.
-  // The legacy form contains illustrative values: do not display or save them.
-  ["#edit-nationality", "#edit-address", "#edit-emergency-contact", "#edit-emergency-phone"].forEach((selector) => {
-    const field = document.querySelector(selector);
-    if (!field) return;
-    field.value = "";
-    field.required = false;
-    field.disabled = true;
-    field.title = "Not yet supported by the current customer API";
-    field.setAttribute("aria-label", `${field.id.replace(/^edit-/, "").replace(/-/g, " ")} (not yet integrated)`);
-  });
+  // These fields come from the actual Customer API. Empty legacy values stay empty.
+  setValue("#edit-nationality", customer.nationality || "");
+  setValue("#edit-address", customer.address || "");
+  for (const [key, suffix] of CUSTOMER_NATIONAL_ADDRESS_FIELDS) {
+    setValue(`#edit-${suffix}`, customer[key] || "");
+  }
+  const formatIndicator = document.querySelector("#edit-customer-form [data-national-address-format]");
+  if (formatIndicator) formatIndicator.textContent = customerNationalAddressFormatStatus(getCustomerNationalAddressValues("edit"));
+  setValue("#edit-emergency-contact", customer.emergencyContactName || "");
+  // The field already displays the +966 country-code picker.
+  setValue("#edit-emergency-phone", String(customer.emergencyContactPhone || "").replace(/^\+966/, ""));
   populateCustomerSuspensionForm(
     document.querySelector("#edit-customer-form"),
     customer.automaticSuspension,
@@ -3837,6 +4229,133 @@ function renderCustomerActivity(customer, vehicles) {
   });
 }
 
+/** Customer bookings are independently authorized and server-filtered by customerId. */
+const CUSTOMER_BOOKING_PAGE_SIZE = 100;
+const CUSTOMER_BOOKING_MAX = 10000;
+const CUSTOMER_BOOKING_OPEN_STATUSES = new Set([
+  "CONFIRMED", "VEHICLE_PARKED", "RETURN_REQUESTED",
+  "RETRIEVAL_IN_PROGRESS", "READY_FOR_HANDOVER",
+]);
+
+async function fetchCustomerBookings(customerId, signal) {
+  const base = getCustomerManagementApiBaseUrl().replace(/\/$/, "");
+  const all = [];
+  let total = null;
+  let pages = null;
+  for (let page = 1; page <= CUSTOMER_BOOKING_MAX / CUSTOMER_BOOKING_PAGE_SIZE; page++) {
+    const query = new URLSearchParams({
+      customerId, page: String(page), limit: String(CUSTOMER_BOOKING_PAGE_SIZE),
+    });
+    const response = await fetch(`${base}/bookings?${query}`, {
+      headers: getCustomerManagementAuthHeaders(), signal, cache: "no-store",
+    });
+    if (!response.ok) {
+      const error = new Error("Customer booking history is not available.");
+      error.status = response.status;
+      throw error;
+    }
+    const body = await response.json().catch(() => null);
+    const data = body?.data ?? body;
+    const pagination = data?.pagination;
+    if (!Array.isArray(data?.bookings) ||
+        !Number.isSafeInteger(pagination?.total) || pagination.total < 0 ||
+        !Number.isSafeInteger(pagination?.totalPages) || pagination.totalPages < 1 ||
+        pagination.page !== page) {
+      throw new Error("Incomplete customer booking API response.");
+    }
+    if (total === null) {
+      total = pagination.total;
+      pages = pagination.totalPages;
+      if (total > CUSTOMER_BOOKING_MAX || pages !== Math.max(1, Math.ceil(total / CUSTOMER_BOOKING_PAGE_SIZE))) {
+        throw new Error("Customer booking history exceeds the safe reporting limit.");
+      }
+    }
+    if (pagination.total !== total || pagination.totalPages !== pages) {
+      throw new Error("Customer bookings changed during loading. Refresh to retry.");
+    }
+    for (const booking of data.bookings) {
+      // Fail closed if the server ignores the customerId filter or returns the wrong account.
+      if (!booking || !booking.id || booking.customerId !== customerId || !booking.createdAt) {
+        throw new Error("Customer booking response contains unexpected records.");
+      }
+      all.push(booking);
+    }
+    if (page === pages) {
+      if (all.length !== total || new Set(all.map(item => item.id)).size !== total) {
+        throw new Error("Incomplete or duplicate customer booking records.");
+      }
+      return all;
+    }
+  }
+  throw new Error("Customer booking page limit exceeded.");
+}
+
+function renderCustomerBookings(bookings, state) {
+  const page = document.querySelector(".customer-details-page");
+  if (!page) return;
+  const message = page.querySelector("[data-customer-booking-message]");
+  const note = page.querySelector("[data-booking-unavailable]");
+  const list = page.querySelector("[data-customer-booking-list]");
+  list?.replaceChildren();
+  if (state !== "ready" || !Array.isArray(bookings)) {
+    renderUnavailableCustomerBookings();
+    if (note) note.textContent = state === "restricted"
+      ? "Booking details are not available for your account."
+      : state === "loading"
+        ? "Loading verified customer booking records…"
+        : "Unable to load verified booking history. No totals are shown.";
+    if (message) {
+      message.hidden = false;
+      message.querySelector("h3").textContent = state === "restricted"
+        ? "Bookings restricted" : state === "loading" ? "Loading booking history" : "Booking history unavailable";
+      message.querySelector("p").textContent = note?.textContent || "Booking history unavailable.";
+    }
+    if (list) list.hidden = true;
+    return;
+  }
+  const status = (value) => String(value || "").toUpperCase();
+  const open = bookings.filter(item => CUSTOMER_BOOKING_OPEN_STATUSES.has(status(item.status))).length;
+  const completed = bookings.filter(item => status(item.status) === "COMPLETED").length;
+  const cancelled = bookings.filter(item => status(item.status) === "CANCELLED").length;
+  const totals = {
+    "[data-overview-total-bookings]": bookings.length,
+    "[data-overview-active-bookings]": open,
+    "[data-booking-count]": bookings.length,
+    "[data-booking-total]": bookings.length,
+    "[data-booking-completed]": completed,
+    "[data-booking-upcoming]": open,
+    "[data-booking-cancelled]": cancelled,
+  };
+  Object.entries(totals).forEach(([selector, value]) => setCustomerDetailText(page, selector, value));
+  if (note) note.textContent = "Counts are based on authorized booking records. Payment settlement is not available.";
+  if (message) {
+    message.hidden = bookings.length > 0;
+    message.querySelector("h3").textContent = "No bookings found";
+    message.querySelector("p").textContent = "No booking records are associated with this customer.";
+  }
+  if (list) {
+    list.hidden = bookings.length === 0;
+    const dateTime = new Intl.DateTimeFormat("en-GB", {
+      timeZone: "Asia/Riyadh", dateStyle: "medium", timeStyle: "short",
+    });
+    for (const booking of bookings) {
+      const row = document.createElement("article");
+      row.className = "customer-live-booking-row";
+      const title = document.createElement("strong");
+      title.textContent = booking.bookingCode || booking.id;
+      const details = document.createElement("span");
+      const date = new Date(booking.createdAt);
+      const dateLabel = Number.isNaN(date.getTime()) ? "Date unavailable" : dateTime.format(date) + " AST";
+      details.textContent = `${dateLabel} · ${booking.location?.name || "Location not recorded"}`;
+      const badge = document.createElement("span");
+      badge.className = "customer-booking-status";
+      badge.textContent = String(booking.status || "Unknown").replaceAll("_", " ");
+      row.append(title, details, badge);
+      list.append(row);
+    }
+  }
+}
+
 function renderUnavailableCustomerBookings() {
   const page = document.querySelector(".customer-details-page");
   if (!page) return;
@@ -3907,6 +4426,16 @@ function populateCustomerDetails(customer) {
   setCustomerDetailText(page, "[data-contact-name]", name);
   setCustomerDetailText(page, "[data-contact-phone]", phone);
   setCustomerDetailText(page, "[data-contact-email]", email);
+  setCustomerDetailText(page, "[data-customer-nationality]", customer.nationality || "—");
+  setCustomerDetailText(page, "[data-contact-address]", customer.address || "—");
+  for (const [key, suffix] of CUSTOMER_NATIONAL_ADDRESS_FIELDS) {
+    setCustomerDetailText(page, `[data-national-address-${suffix}]`, customer[key] || "—");
+  }
+  // No client-controlled verification status; only a trusted provider may confirm one.
+  setCustomerDetailText(page, "[data-national-address-status]", "Not verified");
+  const emergency = [customer.emergencyContactName, customer.emergencyContactPhone]
+    .filter(Boolean).join(" · ");
+  setCustomerDetailText(page, "[data-contact-emergency]", emergency || "—");
   setCustomerDetailText(
     page,
     "[data-customer-avatar]",
@@ -3932,6 +4461,11 @@ function getEditCustomerFormValues(form) {
     memberSince: value("#edit-member-since"),
     preferredLanguage: value("#edit-language"),
     communicationPreference: value("#edit-communication"),
+    nationality: value("#edit-nationality"),
+    address: value("#edit-address"),
+    ...getCustomerNationalAddressValues("edit"),
+    emergencyContactName: value("#edit-emergency-contact"),
+    emergencyContactPhone: value("#edit-emergency-phone"),
     notes: value("#edit-notes"),
     automaticSuspension: getCustomerSuspensionFormValues(form),
   };
@@ -4008,13 +4542,7 @@ async function handleEditCustomerSubmit(event) {
     notes: values.notes || undefined,
     ...(suspensionChanged ? { automaticSuspension: suspensionPayload } : {}),
   };
-  console.debug("[Customers] PATCH customer", {
-    displayId,
-    databaseId,
-    url,
-    payload,
-  });
-
+  // Do not log customer contact or emergency data to the browser console.
   try {
     const response = await fetch(url, {
       method: "PATCH",
@@ -5073,6 +5601,21 @@ function bindCustomerAddVehicleForm() {
 }
 
 function showCustomerVehicleCreatedModal(vehicle) {
+  // Vehicle creation is a simple acknowledgement: use the shared toast and
+  // include the identifying plate, rather than covering the whole dashboard.
+  if (typeof window.showParkinToast === "function") {
+    const plate = vehicle.plateDisplayEnglish || [
+      vehicle.plateNumberEnglish,
+      String(vehicle.plateLettersEnglish || "").split("").join(" "),
+    ].filter(Boolean).join(" ");
+    const summary = [plate, vehicle.make, vehicle.model, vehicle.year]
+      .filter(Boolean).join(" · ");
+    window.showParkinToast(summary || "Vehicle is ready for assignment.", {
+      type: "success",
+      title: "Vehicle created successfully",
+    });
+    return;
+  }
   document.querySelector("#customer-vehicle-result-modal")?.remove();
 
   const modal = document.createElement("div");
@@ -5145,6 +5688,10 @@ function showCustomerVehicleCreatedModal(vehicle) {
 }
 
 function showCustomerVehicleError(message) {
+  if (typeof window.showParkinToast === "function") {
+    window.showParkinToast(message, { type: "error", title: "Unable to save vehicle" });
+    return;
+  }
   document.querySelector("#customer-vehicle-error-modal")?.remove();
 
   const modal = document.createElement("div");

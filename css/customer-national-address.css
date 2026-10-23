@@ -1,0 +1,67 @@
+/* Customer-provided Saudi National Address, not authority-verified. */
+.customer-national-address {
+  margin: 20px 0; padding: 20px;
+  border: 1px solid #dbe8e2; border-radius: 14px; background: #f9fcfa;
+}
+.customer-national-address-heading {
+  display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between;
+  align-items: flex-start; margin-bottom: 15px;
+}
+.customer-national-address-heading h3 { font-size: 16px; margin: 0 0 5px; color: #203a32; }
+.customer-national-address-heading p { margin: 0; font-size: 12px; color: #64736b; }
+.customer-national-address-unverified {
+  display: inline-flex; align-items: center; background: #fff4da; color: #795509;
+  border: 1px solid #f1da9a; padding: 5px 10px; border-radius: 20px;
+  font-size: 11px; font-weight: 700; white-space: nowrap;
+}
+.customer-national-address-grid {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px;
+}
+.customer-national-address-grid label { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.customer-national-address-grid label > span { font-size: 12px; font-weight: 600; color: #32483d; }
+.customer-national-address-grid input {
+  width: 100%; min-width: 0; box-sizing: border-box; border: 1px solid #d7e3dd;
+  border-radius: 9px; padding: 11px 12px; font: inherit; font-size: 13px;
+  color: #233b32; background: #fff;
+}
+.customer-national-address-grid input:focus-visible { outline: 2px solid #388a67; outline-offset: 1px; }
+.customer-national-address-disclaimer { margin: 15px 0 0; color: #596d61; font-size: 11px; line-height: 1.6; }
+@media (max-width: 680px) { .customer-national-address { padding: 14px; } .customer-national-address-grid { grid-template-columns: 1fr; } }
+
+.customer-national-address-details { border-top: 1px solid #e2ebe5; padding-top: 9px; }
+.customer-national-address-details > summary {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  cursor: pointer; padding: 10px 0; font-size: 13px; font-weight: 600;
+}
+.customer-national-address-details > summary span {
+  font-size: 11px; color: #795509; background: #fff4da;
+  border: 1px solid #f1da9a; padding: 4px 8px; border-radius: 14px;
+}
+.customer-national-address-records { padding: 5px 0 10px; }
+
+/* Local completeness is deliberately separate from official SPL verification. */
+.customer-national-address-verification {
+  display: flex; flex-wrap: wrap; gap: 12px 18px;
+  align-items: center; justify-content: space-between;
+  margin-top: 15px; padding: 12px 14px;
+  border: 1px solid #dce9e2; border-radius: 10px; background: #fff;
+}
+.customer-national-address-format { font-size: 12px; color: #3c5d50; }
+.customer-national-address-format strong { font-weight: 700; }
+.customer-national-address-spl-link, .customer-national-address-proof-link a {
+  font-size: 12px; font-weight: 600; color: #086b3b;
+  text-decoration: underline; text-underline-offset: 2px;
+}
+.customer-national-address-spl-link:focus-visible, .customer-national-address-proof-link a:focus-visible {
+  outline: 2px solid #388a67; outline-offset: 3px;
+}
+
+/* National Address server-side SPL actions. No key is ever present in browser code. */
+.customer-national-address-spl-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 14px 0; }
+.customer-national-address-spl-button { border: 1px solid #b5d6c8; border-radius: 8px; padding: 9px 15px; color: #0b6140; background: #f8fdfb; cursor: pointer; font: inherit; }
+.customer-national-address-spl-button:hover:not(:disabled) { background: #e9f6ef; }
+.customer-national-address-spl-button:disabled { opacity: .55; cursor: wait; }
+.customer-national-address-spl-result { flex-basis: 100%; margin: 3px 0; color: #42586b; font-size: .87rem; }
+.customer-national-address-spl-matches { width: 100%; display: grid; gap: 6px; }
+.customer-national-address-spl-match { width: 100%; text-align: start; cursor: pointer; border: 1px solid #d5e2da; border-radius: 8px; padding: 11px 14px; background: #fff; color: #183e2e; font: inherit; }
+.customer-national-address-spl-match:hover, .customer-national-address-spl-match:focus-visible { background: #e9f6ef; }

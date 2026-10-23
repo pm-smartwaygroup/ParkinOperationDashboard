@@ -95,10 +95,11 @@
 
         <div class="three-columns">
           <label>
-            <span> Nationality <b>*</b> </span>
+            <span> Nationality </span>
 
-            <select id="edit-nationality" required>
-              <option value="Saudi Arabia" selected>Saudi Arabia</option>
+            <select id="edit-nationality">
+              <option value="">Not recorded</option>
+              <option value="Saudi Arabia">Saudi Arabia</option>
               <option value="Pakistan">Pakistan</option>
               <option value="India">India</option>
               <option value="Egypt">Egypt</option>
@@ -129,15 +130,64 @@
         </div>
 
         <label>
-          <span> Address <b>*</b> </span>
+          <span> Address </span>
 
           <input
             type="text"
             id="edit-address"
-            value="Olaya Street, Riyadh, Riyadh, Saudi Arabia"
-            required
+              autocomplete="off"
+            value=""
+            maxlength="500"
           />
         </label>
+
+        <section class="customer-national-address" aria-label="Saudi National Address">
+          <div class="customer-national-address-heading">
+            <div><h3>Saudi National Address</h3><p>Optional structured address details provided by the customer.</p></div>
+            <span class="customer-national-address-unverified" aria-label="Verification status: Not verified">Not verified</span>
+          </div>
+          <div class="customer-national-address-grid">
+            <label>
+              <span>Short Address</span>
+              <input id="edit-national-short" type="text" maxlength="8" placeholder="e.g. RRRD2929" pattern="[A-Za-z]{4}[0-9]{4}" title="Four letters followed by four digits" autocapitalize="characters" />
+            </label>
+            <label>
+              <span>Building Number</span>
+              <input id="edit-national-building" type="text" maxlength="4" placeholder="4 digits" inputmode="numeric" pattern="[0-9]{4}" title="Exactly four digits" />
+            </label>
+            <label>
+              <span>Street Name</span>
+              <input id="edit-national-street" type="text" maxlength="160" placeholder="Enter street name" />
+            </label>
+            <label>
+              <span>District</span>
+              <input id="edit-national-district" type="text" maxlength="120" placeholder="Enter district" />
+            </label>
+            <label>
+              <span>City</span>
+              <input id="edit-national-city" type="text" maxlength="120" placeholder="Enter city" />
+            </label>
+            <label>
+              <span>Postal Code</span>
+              <input id="edit-national-postal" type="text" maxlength="5" placeholder="5 digits" inputmode="numeric" pattern="[0-9]{5}" title="Exactly five digits" />
+            </label>
+            <label>
+              <span>Additional Number</span>
+              <input id="edit-national-additional" type="text" maxlength="4" placeholder="4 digits" inputmode="numeric" pattern="[0-9]{4}" title="Exactly four digits" />
+            </label>
+          </div>
+          <div class="customer-national-address-verification" aria-label="National Address verification options">
+            <span class="customer-national-address-format">Input check: <strong data-national-address-format aria-live="polite">Not entered</strong></span>
+            <a class="customer-national-address-spl-link" href="https://proof.address.gov.sa/" target="_blank" rel="noopener noreferrer">Verify proof on official SPL website <span aria-hidden="true">↗</span></a>
+          </div>
+          <div class="customer-national-address-spl-actions" aria-label="SPL National Address API">
+            <button type="button" class="customer-national-address-spl-button" data-spl-search>Find address in SPL</button>
+            <button type="button" class="customer-national-address-spl-button" data-spl-verify>Check address with SPL</button>
+            <p class="customer-national-address-spl-result" data-spl-result role="status" aria-live="polite">SPL lookup is available when the administrator configures a subscription key. Proof and holder verification are separate.</p>
+            <div class="customer-national-address-spl-matches" data-spl-matches aria-label="SPL address matches"></div>
+          </div>
+          <p class="customer-national-address-disclaimer">The input check validates only the format and completeness of the fields, not whether the address is registered. SPL verification opens separately and requires the proof number, ID or business account, and CAPTCHA. ParkIn remains <strong>Not verified</strong> until an authorized SPL verification integration is available.</p>
+        </section>
 
         <div class="two-columns">
           <label>
@@ -146,7 +196,8 @@
             <input
               type="text"
               id="edit-emergency-contact"
-              value="Ahmed Ali (Brother)"
+              value=""
+              maxlength="160"
             />
           </label>
 
@@ -164,7 +215,7 @@
                 <i class="fa-solid fa-chevron-down"></i>
               </button>
 
-              <input type="tel" id="edit-emergency-phone" value="55 987 6543" />
+              <input type="tel" id="edit-emergency-phone" value="" maxlength="32" />
             </div>
 
             <small class="edit-field-help">

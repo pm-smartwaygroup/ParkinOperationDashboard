@@ -437,6 +437,7 @@ async function loadRevenueFeatureScripts() {
 
 async function loadReportsFeatureScripts() {
   await loadDashboardScript("/js/reports-bookings-api.js");
+  await loadDashboardScript("/js/reports-directories-api.js");
   await loadDashboardScript("/js/reports.js");
 }
 
@@ -1662,28 +1663,27 @@ const backToLocationsBtn = document.querySelector(".back-to-locations");
 const cancelLocationBtn = document.querySelector(".cancel-location");
 const addLocationForm = document.querySelector(".add-location-layout");
 const locationImageInput = document.querySelector("#location-image");
+let savedLocationImage = null;
 
 locationImageInput?.addEventListener("change", (event) => {
   const file = event.target.files?.[0];
   if (!file) return;
-
-  const previewImage = document.querySelector(".preview-card img");
-  const previewTitle = document.querySelector(".preview-card b");
-  const previewSize = document.querySelector(".preview-card small");
-
-  if (previewImage) {
-    const objectUrl = URL.createObjectURL(file);
-    previewImage.src = objectUrl;
-    previewImage.onload = () => URL.revokeObjectURL(objectUrl);
+  if (!(["image/png", "image/jpeg", "image/webp"].includes(file.type)) || file.size > 5 * 1024 * 1024) {
+    locationImageInput.value = "";
+    alert("Choose a PNG, JPG or WEBP image no larger than 5 MB.");
+    return;
   }
+  const objectUrl = URL.createObjectURL(file);
+  setLocationImagePreview(objectUrl, file.name, `${(file.size / 1048576).toFixed(2)} MB`, true);
+  const img = addLocationForm.querySelector(".preview-card img");
+  if (img) img.onload = () => URL.revokeObjectURL(objectUrl);
+});
 
-  if (previewTitle) {
-    previewTitle.textContent = file.name;
-  }
-
-  if (previewSize) {
-    previewSize.textContent = `${(file.size / 1024 / 1024).toFixed(2)} MB`;
-  }
+addLocationForm?.querySelector(".preview-card button")?.addEventListener("click", () => {
+  locationImageInput.value = "";
+  // Cancelling a replacement restores the persisted image. It does not delete it.
+  if (savedLocationImage) setLocationImagePreview(savedLocationImage.url, savedLocationImage.label, savedLocationImage.size);
+  else setLocationImagePreview("");
 });
 
 function showMainDashboardView() {
@@ -2348,7 +2348,7 @@ function getDashboardRoutePermission(hash) {
 
   if (route.name === "user-management/add") return "users.create";
   if (route.name === "user-management") return "users.view";
-  if (route.name === "add-location") return "locations.create";
+  if (route.name === "add-location") return addLocationForm?.dataset.editId ? "locations.edit" : "locations.create";
   if (route.name === "add-driver") return "drivers.create";
   if (route.name === "add-customer") return "customers.create";
   if (route.name === "valet") return "valet_operations.view";
@@ -2706,15 +2706,28 @@ function renderLocationsEmptyState(
   tbody.innerHTML = `
     <div class="locations-empty-state">
       <img
-        src="/assets/location-empty-state.svg"
+        src="/assets/illustrations/locations-empty-premium.svg"
         alt=""
         class="locations-empty-state-image"
       />
       <h3>${title}</h3>
       <p>${message}</p>
+      ${title === "No parking locations yet" &&
+        typeof hasDashboardPermission === "function" &&
+        hasDashboardPermission("locations.create") ? `
+        <button type="button" class="locations-empty-add" data-add-first-location>
+          <i class="fa-solid fa-plus" aria-hidden="true"></i> Add Your First Location
+        </button>` : ""}
     </div>
   `;
 }
+
+document.getElementById("locations-table-body")?.addEventListener("click", (event) => {
+  if (event.target.closest("[data-add-first-location]")) {
+    resetLocationForm();
+    showAddLocationView();
+  }
+});
 
 function renderLocationPagination(page, totalPages) {
   const pagination = document.getElementById("locations-pagination");
@@ -2861,7 +2874,9 @@ async function loadLocations(page = 1) {
     tbody.innerHTML = "";
 
     if (locations.length === 0) {
-      renderLocationsEmptyState(tbody);
+      renderLocationsEmptyState(tbody,
+        "No parking locations yet",
+        "Create your first valet parking location to start managing capacity and bookings.");
 
       if (locationsResultCount) {
         locationsResultCount.textContent = "0 locations found";
@@ -2912,24 +2927,24 @@ async function loadLocations(page = 1) {
             ${type}
           </span>
 
+          <span data-label="Capacity" class="location-capacity-cell">
+            <b>${Number.isInteger(location.capacity) && location.capacity > 0 ? location.capacity : "Not set"}</b>
+          </span>
+
+          <span data-label="Reserved Now" class="location-reserved-cell">
+            ${Number.isInteger(location.reservedNow) ? location.reservedNow : "—"}
+            <small>${Number.isInteger(location.availableSpaces) ? `${location.availableSpaces} available` : "Availability unknown"}</small>
+          </span>
+
+          <span data-label="Vehicles Parked" class="location-parked-cell">
+            ${Number.isInteger(location.parkedVehicles) ? location.parkedVehicles : "—"}
+          </span>
+
           <span data-label="Occupancy">
-            <i
-              class="ring green"
-              style="--value:0%"
-            >0%</i>
-          </span>
-
-          <span data-label="Revenue">
-            <b>SAR 0</b>
-            <small>Today</small>
-          </span>
-
-          <span data-label="Vehicles">
-            0
-          </span>
-
-          <span data-label="Wait Time">
-            0 min
+            ${Number.isFinite(location.occupancyPercent) ? `
+            <i class="ring ${location.occupancyPercent >= 100 ? "red" : "green"}"
+               style="--value:${Math.min(100, Math.max(0, location.occupancyPercent))}%">${location.occupancyPercent}%</i>
+            ` : "—"}
           </span>
 
           <span data-label="Status">
@@ -2977,7 +2992,7 @@ async function loadLocations(page = 1) {
 }
 
 function resetLocationStatistics() {
-  const values = ["0", "0", "0", "0%", "SAR 0"];
+  const values = ["—", "—", "—", "—", "—"];
 
   const notes = [
     "Current access scope",
@@ -3070,12 +3085,16 @@ async function loadLocationStatistics() {
       total ? `${inactivePercent}% of total` : "0% of total",
     );
 
-    setCard(3, `${Number(stats.averageOccupancy) || 0}%`, "Current occupancy");
-
-    setCard(
-      4,
-      `SAR ${(Number(stats.totalRevenueToday) || 0).toLocaleString()}`,
-      "Today",
+    setCard(3,
+      stats.averageOccupancy === null || stats.averageOccupancy === undefined
+        ? "—" : `${Number(stats.averageOccupancy).toFixed(0)}%`,
+      "Vehicles currently parked / capacity",
+    );
+    setCard(4,
+      stats.totalRevenueToday === null || stats.totalRevenueToday === undefined
+        ? "—" : `SAR ${Number(stats.totalRevenueToday).toLocaleString()}`,
+      stats.totalRevenueToday === null || stats.totalRevenueToday === undefined
+        ? "Settlement data unavailable" : "Today",
     );
   } catch (error) {
     console.error("Load location statistics error:", error);
@@ -3098,50 +3117,115 @@ async function getLocationById(id) {
   return result.data || result;
 }
 
-function fillLocationForm(location) {
-  addLocationForm.dataset.editId = location.id;
+/** Read/write fields through elements, not form.name/form.type native properties. */
+function locationFormField(name) {
+  return addLocationForm?.elements.namedItem(name);
+}
 
-  addLocationForm.name.value = location.name || "";
-  addLocationForm.type.value = location.type || "";
-  addLocationForm.city.value = location.city || "";
-  addLocationForm.district.value = location.district || "";
-  addLocationForm.address.value = location.address || "";
-  addLocationForm.latitude.value = location.latitude || "";
-  addLocationForm.longitude.value = location.longitude || "";
-  addLocationForm.postalCode.value = location.postalCode || "";
-  addLocationForm.contactPhone.value = location.contactPhone || "";
-  addLocationForm.email.value = location.email || "";
-  addLocationForm.website.value = location.website || "";
-  addLocationForm.timezone.value = location.timezone || "Asia/Riyadh";
-  addLocationForm.openingTime.value = location.openingTime || "08:00";
-  addLocationForm.closingTime.value = location.closingTime || "23:00";
-  addLocationForm.capacity.value = location.capacity || "";
-  addLocationForm.notes.value = location.notes || "";
+const LOCATION_EDITABLE_FIELDS = [
+  "name", "type", "city", "district", "address", "latitude", "longitude",
+  "postalCode", "contactPhone", "email", "website", "timezone",
+  "openingTime", "closingTime", "capacity", "notes",
+];
 
-  const statusInput = addLocationForm.querySelector(
-    `input[name="status"][value="${location.status}"]`,
-  );
-
-  if (statusInput) statusInput.checked = true;
-
-  const previewImage = document.querySelector(".preview-card img");
-  const previewTitle = document.querySelector(".preview-card b");
-  const previewSize = document.querySelector(".preview-card small");
-
-  if (previewImage) {
-    previewImage.src = getImageUrl(location.imageUrl);
+function setLocationField(name, value) {
+  const field = locationFormField(name);
+  if (!field || !("value" in field)) return;
+  // The backend can return a Saudi city absent from the initial short list.
+  // Retain its real value instead of silently submitting an empty city.
+  if (name === "city" && value && field.options &&
+    ![...field.options].some((item) => item.value === String(value))) {
+    const option = document.createElement("option");
+    option.value = String(value);
+    option.textContent = String(value);
+    option.dataset.parkinLocationDynamic = "true";
+    field.appendChild(option);
   }
+  field.value = value == null ? "" : String(value);
+}
 
-  if (previewTitle) {
-    previewTitle.textContent = location.imageUrl
-      ? location.imageUrl.split("/").pop()
-      : "No image uploaded";
-  }
+function updateLocationNotesCount() {
+  const length = locationFormField("notes")?.value.length || 0;
+  const counter = addLocationForm?.querySelector(".textarea-count");
+  if (counter) counter.textContent = `${length} / 500`;
+}
 
-  if (previewSize) {
-    previewSize.textContent = location.imageUrl ? "Saved image" : "";
+function updateLocationStatusStyles() {
+  addLocationForm?.querySelectorAll('.status-select label').forEach((label) => {
+    label.classList.toggle('selected', Boolean(label.querySelector('input[type="radio"]:checked')));
+  });
+}
+
+function setLocationImagePreview(url, label = "", size = "", isNewUpload = false) {
+  const card = addLocationForm?.querySelector(".preview-card");
+  const image = card?.querySelector("img");
+  if (!card || !image) return;
+  card.hidden = !url;
+  if (url) image.src = url;
+  else image.removeAttribute("src");
+  const title = card.querySelector("b");
+  const info = card.querySelector("small");
+  if (title) title.textContent = label;
+  if (info) info.textContent = size;
+  const cancelUpload = card.querySelector("button");
+  if (cancelUpload) {
+    cancelUpload.hidden = !isNewUpload;
+    cancelUpload.title = "Cancel new image selection";
+    cancelUpload.setAttribute("aria-label", "Cancel new image selection");
   }
 }
+
+function fillLocationForm(location) {
+  if (!location?.id) throw new Error("Missing location ID.");
+  addLocationForm.reset();
+  locationImageInput.value = "";
+  addLocationForm.dataset.editId = location.id;
+  // Company ownership is immutable on PATCH. Show it without resubmitting it.
+  addLocationForm.dataset.editCompanyId = String(
+    location.companyId || location.company?.id || "",
+  );
+  for (const name of LOCATION_EDITABLE_FIELDS) {
+    const defaultValue = name === "timezone" ? "Asia/Riyadh" :
+      name === "openingTime" ? "08:00" : name === "closingTime" ? "23:00" : "";
+    setLocationField(name, location[name] ?? defaultValue);
+  }
+  const validStatuses = ["ACTIVE", "INACTIVE", "SUSPENDED"];
+  const statusValue = validStatuses.includes(location.status) ? location.status : "ACTIVE";
+  const status = addLocationForm.querySelector(
+    `input[name="status"][value="${statusValue}"]`,
+  );
+  if (status) status.checked = true;
+  updateLocationStatusStyles();
+  updateLocationNotesCount();
+  savedLocationImage = location.imageUrl ? {
+    url: getImageUrl(location.imageUrl),
+    label: location.imageUrl.split("/").pop(),
+    size: "Saved image. Select a new file to replace.",
+  } : null;
+  if (savedLocationImage) {
+    setLocationImagePreview(savedLocationImage.url, savedLocationImage.label, savedLocationImage.size);
+  } else setLocationImagePreview("");
+  addLocationForm.dispatchEvent(new CustomEvent("parkin:location-form-loaded"));
+}
+
+function resetLocationForm() {
+  addLocationForm.reset();
+  locationImageInput.value = "";
+  delete addLocationForm.dataset.editId;
+  delete addLocationForm.dataset.editCompanyId;
+  updateLocationNotesCount();
+  updateLocationStatusStyles();
+  setLocationImagePreview("");
+  savedLocationImage = null;
+  const button = addLocationForm.querySelector(".save-location");
+  if (button) button.textContent = "Save Location";
+  addLocationForm.dispatchEvent(new CustomEvent("parkin:location-form-cleared"));
+}
+
+addLocationForm?.querySelector('[name="notes"]')?.addEventListener("input", updateLocationNotesCount);
+addLocationForm?.querySelectorAll('[name="status"]').forEach((input) =>
+  input.addEventListener("change", updateLocationStatusStyles));
+
 
 locationSearch?.addEventListener("input", filterLocations);
 locationStatusFilter?.addEventListener("change", filterLocations);
@@ -3193,6 +3277,7 @@ actionsMenu.addEventListener("click", async (event) => {
     }
 
     if (actionText.includes("Edit Location")) {
+      if (!hasDashboardPermission("locations.edit")) throw new Error("You cannot edit locations.");
       const location = await getLocationById(selectedLocationId);
 
       closeLocationActionsMenu();
@@ -3235,8 +3320,16 @@ locationDetailsModal.innerHTML = `
         <div><span>Type</span><strong id="details-type">-</strong></div>
         <div><span>Status</span><strong id="details-status">-</strong></div>
         <div><span>Capacity</span><strong id="details-capacity">-</strong></div>
+        <div><span>District</span><strong id="details-district">-</strong></div>
+        <div><span>Postal Code</span><strong id="details-postal">-</strong></div>
+        <div><span>Latitude</span><strong id="details-latitude">-</strong></div>
+        <div><span>Longitude</span><strong id="details-longitude">-</strong></div>
         <div><span>Phone</span><strong id="details-phone">-</strong></div>
         <div><span>Email</span><strong id="details-email">-</strong></div>
+        <div><span>Website</span><strong id="details-website">-</strong></div>
+        <div><span>Timezone</span><strong id="details-timezone">-</strong></div>
+        <div><span>Opening</span><strong id="details-opening">-</strong></div>
+        <div><span>Closing</span><strong id="details-closing">-</strong></div>
         <div class="wide"><span>Address</span><strong id="details-address">-</strong></div>
         <div class="wide"><span>Notes</span><strong id="details-notes">-</strong></div>
       </div>
@@ -3283,7 +3376,20 @@ function openLocationDetailsModal(location) {
   document.getElementById("details-status").textContent =
     location.status || "-";
   document.getElementById("details-capacity").textContent =
-    location.capacity || "-";
+    location.capacity ?? "-";
+  const details = {
+    "details-district": location.district,
+    "details-postal": location.postalCode,
+    "details-latitude": location.latitude,
+    "details-longitude": location.longitude,
+    "details-website": location.website,
+    "details-timezone": location.timezone,
+    "details-opening": location.openingTime,
+    "details-closing": location.closingTime,
+  };
+  for (const [id, value] of Object.entries(details)) {
+    document.getElementById(id).textContent = value == null || value === "" ? "-" : String(value);
+  }
   document.getElementById("details-phone").textContent =
     location.contactPhone || "-";
   document.getElementById("details-email").textContent = location.email || "-";
@@ -3418,6 +3524,71 @@ window.addEventListener("scroll", closeLocationActionsMenu, true);
 handleDashboardRoute();
 filterLocations();
 
+/**
+ * /companies/options is authenticated and scoped by NestJS.
+ * An existing location's company is display-only because PATCH forbids changing it.
+ */
+let locationCompanyLoadRequest = 0;
+async function loadLocationCompanyOptions() {
+  const requestId = ++locationCompanyLoadRequest;
+  const select = locationFormField("companyId");
+  const message = addLocationForm?.querySelector("[data-location-company-message]");
+  if (!select || !message) return;
+
+  const isEdit = Boolean(addLocationForm.dataset.editId);
+  const existingCompanyId = addLocationForm.dataset.editCompanyId || "";
+  select.disabled = true;
+  select.required = !isEdit;
+  select.replaceChildren(new Option("Loading authorized companies...", ""));
+  message.textContent = "Loading active companies...";
+
+  try {
+    const token = localStorage.getItem("parkin_access_token");
+    if (!token) throw new Error("Sign in to load companies.");
+    const response = await fetch(`${API_BASE_URL}/companies/options`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const body = await response.json().catch(() => null);
+    if (!response.ok) {
+      throw new Error(response.status === 403
+        ? "You do not have access to company options."
+        : "Unable to load authorized companies.");
+    }
+    const options = body?.data ?? body;
+    if (!Array.isArray(options)) throw new Error("Invalid company options response.");
+    if (requestId !== locationCompanyLoadRequest) return;
+
+    select.replaceChildren(new Option("Select company", ""));
+    const knownIds = new Set();
+    for (const company of options) {
+      if (!company || typeof company.id !== "string" ||
+          typeof company.name !== "string" || !company.name.trim() ||
+          knownIds.has(company.id)) continue;
+      knownIds.add(company.id);
+      select.add(new Option(company.name, company.id));
+    }
+    if (isEdit) {
+      if (existingCompanyId && !knownIds.has(existingCompanyId)) {
+        select.add(new Option("Existing company (unavailable in active list)", existingCompanyId));
+      }
+      select.value = existingCompanyId;
+      select.disabled = true;
+      message.textContent = "Location company cannot be changed after creation.";
+      return;
+    }
+    if (knownIds.size === 1) select.value = [...knownIds][0];
+    select.disabled = knownIds.size === 0;
+    message.textContent = knownIds.size
+      ? "Choose the company responsible for this location."
+      : "No active companies available. Create or activate a company under Companies first.";
+  } catch (error) {
+    if (requestId !== locationCompanyLoadRequest) return;
+    select.replaceChildren(new Option(isEdit ? "Company unchanged" : "Company unavailable", ""));
+    select.disabled = true;
+    message.textContent = error.message || "Unable to load companies.";
+  }
+}
+
 function showAddLocationView() {
   dashboardSections.forEach((section) => section.classList.add("hidden"));
   locationsView?.classList.add("hidden");
@@ -3428,24 +3599,19 @@ function showAddLocationView() {
 
   document.querySelector(".dashboard-title h1").textContent = "Locations";
   document.querySelector(".dashboard-title p").textContent =
-    "Create a new valet parking location";
+    addLocationForm?.dataset.editId ? "Update valet parking location details" : "Create a new valet parking location";
 
   setActiveNav("#locations");
   window.location.hash = "add-location";
+  void loadLocationCompanyOptions();
 }
 
 function backToLocationsView() {
+  locationCompanyLoadRequest += 1;
   addLocationView?.classList.add("hidden");
+  resetLocationForm();
   showLocationsView();
   window.location.hash = "locations";
-
-  delete addLocationForm.dataset.editId;
-  document.querySelector(".save-location").textContent = "Save Location";
-
-  document.querySelector(".preview-card img").src =
-    "/public/assets/parkin-valet-hero.jpg";
-  document.querySelector(".preview-card b").textContent = "Riyadh Mall.jpg";
-  document.querySelector(".preview-card small").textContent = "2.4 MB";
 }
 
 function showDashboardAlert(
@@ -3458,6 +3624,22 @@ function showDashboardAlert(
     onConfirm = null,
   } = {},
 ) {
+  // Non-blocking messages belong in the global toast stack. Dialogs are
+  // reserved for genuine decisions, such as the Sign Out confirmation.
+  if (typeof onConfirm !== "function" && !cancelButtonText &&
+      typeof window.showParkinToast === "function") {
+    const defaultTitles = {
+      error: "Please check the information",
+      warning: "Attention required",
+      info: "Information",
+      success: "Success",
+    };
+    return window.showParkinToast(message, {
+      type,
+      title: title === "Unable to continue" ? (defaultTitles[type] || defaultTitles.error) : title,
+    });
+  }
+
   document.querySelector("#dashboard-alert-modal")?.remove();
 
   const typeConfig = {
@@ -3653,15 +3835,35 @@ window.showDashboardAlert = showDashboardAlert;
 
 window.nativeAlert = window.alert.bind(window);
 
-window.alert = function (message) {
+window.showDashboardSuccess = function (message, title = "All done!") {
   showDashboardAlert(message, {
+    title,
+    type: "success",
+    buttonText: "Continue",
+  });
+};
+
+window.alert = function (message) {
+  const text = String(message ?? "");
+  // Legacy modules still use alert for successful actions. Preserve errors as
+  // errors, but route unequivocal completion messages through the success UI.
+  const successful = /\b(successfully|success|completed successfully)\b/i.test(text) &&
+    !/\b(not successful|unsuccessful|failed|error|unable|invalid)\b/i.test(text);
+  showDashboardAlert(text, successful ? {
+    title: "All done!",
+    type: "success",
+    buttonText: "Continue",
+  } : {
     title: "Please check the information",
     type: "error",
     buttonText: "Okay",
   });
 };
 
-addLocationBtn?.addEventListener("click", showAddLocationView);
+addLocationBtn?.addEventListener("click", () => {
+  resetLocationForm();
+  showAddLocationView();
+});
 backToLocationsBtn?.addEventListener("click", backToLocationsView);
 cancelLocationBtn?.addEventListener("click", backToLocationsView);
 
@@ -3677,11 +3879,25 @@ addLocationForm?.addEventListener("submit", async (event) => {
   try {
     const formData = new FormData(addLocationForm);
 
-    if (formData.get("capacity")) {
-      formData.set("capacity", String(Number(formData.get("capacity"))));
+    const rawCapacity = String(formData.get("capacity") ?? "").trim();
+    const capacity = Number(rawCapacity);
+    if (!/^[1-9]\d*$/.test(rawCapacity) ||
+        !Number.isSafeInteger(capacity) || capacity > 100000) {
+      throw new Error("Enter a whole-number location capacity between 1 and 100,000.");
     }
+    formData.set("capacity", String(capacity));
 
     const editId = addLocationForm.dataset.editId;
+    if (editId) {
+      // The backend explicitly rejects companyId on location updates.
+      formData.delete("companyId");
+    } else {
+      const companyId = String(formData.get("companyId") || "").trim();
+      if (!companyId) {
+        throw new Error("Select an active company before saving this location.");
+      }
+      formData.set("companyId", companyId);
+    }
 
     const method = editId ? "PATCH" : "POST";
 
@@ -3702,25 +3918,32 @@ addLocationForm?.addEventListener("submit", async (event) => {
     if (!response.ok) {
       throw new Error(result.message || "Failed to save location");
     }
+    const savedLocation = result?.data ?? result;
+    // Creation must return an actual saved ID and the accepted capacity.
+    if (!savedLocation?.id || Number(savedLocation.capacity) !== capacity) {
+      throw new Error("The API did not confirm the saved location capacity. Check Locations before trying again.");
+    }
+    // Re-read persistence instead of declaring success solely on a 2xx response.
+    const persisted = await getLocationById(savedLocation.id).catch(() => {
+      throw new Error("Location may have been created, but its saved details could not be read. Do not resubmit until you check the Locations list.");
+    });
+    if (Number(persisted.capacity) !== capacity) {
+      throw new Error("Location was created but its stored capacity differs. Do not create another location; check the existing record.");
+    }
 
-    alert(
-      editId
-        ? "Location updated successfully."
-        : "Location saved successfully.",
+    window.showDashboardSuccess(
+      editId ? "Your location changes have been saved."
+        : "Your new parking location is ready.",
+      editId ? "Location updated!" : "Location created!",
     );
 
-    delete addLocationForm.dataset.editId;
-
-    addLocationForm.reset();
-
+    // backToLocationsView already reloads the list and KPI stats.
     backToLocationsView();
-
-    await loadLocations();
   } catch (error) {
     alert(error.message || "Something went wrong.");
   } finally {
     saveButton.disabled = false;
-    saveButton.textContent = "Save Location";
+    saveButton.textContent = addLocationForm.dataset.editId ? "Update Location" : "Save Location";
   }
 });
 

@@ -377,6 +377,14 @@ async function initParkingZonesMap(root) {
 }
 
 function showParkingZoneToast(root, message) {
+  if (typeof window.showParkinToast === "function") {
+    const issue = /unable|could not|failed|error/i.test(String(message));
+    window.showParkinToast(message, {
+      title: issue ? "Parking Zone unavailable" : "Parking Zones",
+      type: issue ? "warning" : "info",
+    });
+    return;
+  }
   const toast = root.querySelector("[data-zone-toast]");
   toast.textContent = message;
   toast.classList.add("is-visible");

@@ -50,7 +50,7 @@
         </div>
         <div class="customer-profile-info-item">
           <i class="fa-solid fa-globe"></i>
-          <div><span>Nationality</span><b>Saudi Arabia</b></div>
+          <div><span>Nationality</span><b data-customer-nationality>—</b></div>
         </div>
         <div class="customer-profile-info-item">
           <i class="fa-regular fa-calendar"></i>
@@ -152,8 +152,21 @@
               <p><span>Full Name</span><b data-contact-name>—</b></p>
               <p><span>Phone Number</span><b data-contact-phone>—</b></p>
               <p><span>Email Address</span><b data-contact-email>—</b></p>
-              <p><span>Address</span><b>—</b></p>
-              <p><span>Emergency Contact</span><b>—</b></p>
+              <p><span>Address</span><b data-contact-address>—</b></p>
+              <details class="customer-national-address-details">
+                <summary>Saudi National Address <span data-national-address-status>Not verified</span></summary>
+                <div class="customer-national-address-records">
+                  <p><span>Short Address</span><b data-national-address-national-short>—</b></p>
+                  <p><span>Building Number</span><b data-national-address-national-building>—</b></p>
+                  <p><span>Street Name</span><b data-national-address-national-street>—</b></p>
+                  <p><span>District</span><b data-national-address-national-district>—</b></p>
+                  <p><span>City</span><b data-national-address-national-city>—</b></p>
+                  <p><span>Postal Code</span><b data-national-address-national-postal>—</b></p>
+                  <p><span>Additional Number</span><b data-national-address-national-additional>—</b></p>
+                  <p class="customer-national-address-proof-link"><span>SPL Proof Verification</span><a href="https://proof.address.gov.sa/" target="_blank" rel="noopener noreferrer">Open official website ↗</a></p>
+                </div>
+              </details>
+              <p><span>Emergency Contact</span><b data-contact-emergency>—</b></p>
             </div>
           </article>
           <article class="customer-details-panel">
@@ -253,7 +266,7 @@
                 ><i class="fa-regular fa-clock"></i
               ></span>
               <div>
-                <span>Upcoming</span><strong data-booking-upcoming>—</strong>
+                <span>Open</span><strong data-booking-upcoming>—</strong>
               </div>
             </div>
             <div class="customer-booking-summary-item">
@@ -266,7 +279,7 @@
             </div>
           </div>
           <p class="customer-data-note" data-booking-unavailable>
-            Booking history is not available from the current backend.
+            Loading authorized booking history…
           </p>
         </section>
         <button type="button" class="customer-deactivate-btn">
@@ -384,11 +397,12 @@
 
   <section class="customer-tab-panel" data-customer-panel="bookings">
     <section class="customer-bookings-tab-card">
-      <div class="customer-unavailable-panel">
-        <i class="fa-regular fa-calendar-xmark"></i>
-        <h3>Booking history unavailable</h3>
-        <p>Booking data is not available from the current backend.</p>
+      <div class="customer-unavailable-panel" data-customer-booking-message role="status" aria-live="polite">
+        <i class="fa-regular fa-calendar"></i>
+        <h3>Loading booking history</h3>
+        <p>Retrieving authorized customer bookings…</p>
       </div>
+      <div class="customer-live-booking-list" data-customer-booking-list hidden></div>
     </section>
   </section>
   <section class="customer-tab-panel" data-customer-panel="payment-methods">
